@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="JavaCorruptor:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/JavaCorruptor_jar</output-path>
+    <root id="archive" name="JavaCorruptor.jar">
+      <element id="module-output" name="JavaCorruptor" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/ow2/asm/asm/9.5/asm-9.5.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/ow2/asm/asm-tree/9.5/asm-tree-9.5.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/ow2/asm/asm-commons/9.5/asm-commons-9.5.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

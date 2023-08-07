@@ -172,6 +172,11 @@ namespace Java_Corruptor.UI
                     CreateNoWindow = false
                 }
             };
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+            //redirect the output
+            process.OutputDataReceived += (s, args) => MessageBox.Show(args.Data);
+            process.ErrorDataReceived += (s, args) => MessageBox.Show(args.Data);
             MessageBox.Show(arguments);
             //pipe the output to the console
             MessageBox.Show(Directory.GetCurrentDirectory());
