@@ -1,0 +1,269 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{0CC3144A-8379-4E69-A8DB-DF5F50FE5749}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>JAVACORRUPTOR</RootNamespace>
+    <AssemblyName>JavaCorruptor</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\RTCV\Build\RTC\PLUGINS\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\RTCV\Build\RTC\PLUGINS\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>0</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="NLog">
+      <HintPath>..\..\..\..\..\..\.nuget\packages\nlog\5.1.1\lib\net46\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="PluginHost">
+      <HintPath>..\..\..\RTCV\Build\PluginHost.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="SlimDX">
+      <HintPath>..\..\..\RTCV\Build\SlimDX.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="JavaStashKey.cs" />
+    <Compile Include="JavaBlastLayer.cs" />
+    <Compile Include="JavaBlastUnit.cs" />
+    <Compile Include="JavaStockpile.cs" />
+    <Compile Include="Opcodes.cs" />
+    <Compile Include="UI\Components\EngineControls\RoundingEngineControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Components\EngineControls\RoundingEngineControl.Designer.cs">
+      <DependentUpon>RoundingEngineControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Components\EngineControls\SanitizerEngineControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Components\EngineControls\SanitizerEngineControl.Designer.cs">
+      <DependentUpon>SanitizerEngineControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Components\EngineControls\JavaCustomEngineControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Components\EngineControls\JavaCustomEngineControl.Designer.cs">
+      <DependentUpon>JavaCustomEngineControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Components\EngineControls\StringEngineControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Components\EngineControls\StringEngineControl.Designer.cs">
+      <DependentUpon>StringEngineControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Components\EngineControls\ArithmeticEngineControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Components\EngineControls\ArithmeticEngineControl.Designer.cs">
+      <DependentUpon>ArithmeticEngineControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Components\EngineControls\JavaEngineControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Components\EngineControls\JavaEngineControl.Designer.cs">
+      <DependentUpon>JavaEngineControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Routing\RoutingConstants.cs" />
+    <Compile Include="PluginCore.cs" />
+    <Compile Include="Routing\PluginConnectorRTC.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Routing\PluginConnectorEMU.cs" />
+    <Compile Include="UI\Components\EngineControls\FunctionEngineControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Components\EngineControls\FunctionEngineControl.Designer.cs">
+      <DependentUpon>FunctionEngineControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\JavaStockpileManagerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\JavaStockpileManagerForm.Designer.cs">
+      <DependentUpon>JavaStockpileManagerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\JRESelectorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\JRESelectorForm.Designer.cs">
+      <DependentUpon>JRESelectorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\PluginForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\PluginForm.Designer.cs">
+      <DependentUpon>PluginForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Components\EngineControls\JavaVectorEngineControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Components\EngineControls\JavaVectorEngineControl.Designer.cs">
+      <DependentUpon>JavaVectorEngineControl.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Costura.Fody">
+      <Version>5.7.0</Version>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft-WindowsAPICodePack-Shell">
+      <Version>1.1.5</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="NLog">
+      <Version>5.1.1</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="FodyWeavers.xsd">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UI\Components\EngineControls\RoundingEngineControl.resx">
+      <DependentUpon>RoundingEngineControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Components\EngineControls\SanitizerEngineControl.resx">
+      <DependentUpon>SanitizerEngineControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Components\EngineControls\JavaCustomEngineControl.resx">
+      <DependentUpon>JavaCustomEngineControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Components\EngineControls\StringEngineControl.resx">
+      <DependentUpon>StringEngineControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Components\EngineControls\ArithmeticEngineControl.resx">
+      <DependentUpon>ArithmeticEngineControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Components\EngineControls\JavaEngineControl.resx">
+      <DependentUpon>JavaEngineControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Components\EngineControls\FunctionEngineControl.resx">
+      <DependentUpon>FunctionEngineControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Components\EngineControls\JavaVectorEngineControl.resx">
+      <DependentUpon>JavaVectorEngineControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\JavaStockpileManagerForm.resx">
+      <DependentUpon>JavaStockpileManagerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\JRESelectorForm.resx">
+      <DependentUpon>JRESelectorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\PluginForm.resx">
+      <DependentUpon>PluginForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Formats\" />
+    <Folder Include="Icons\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\RTCV\Source\Frontend\UI\UI.csproj">
+      <Project>{bd376bb2-17ec-4fb0-a9fe-6b1bbf4af3e3}</Project>
+      <Name>UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\RTCV\Source\Libraries\Common\Common.csproj">
+      <Project>{a31c17e1-2eab-434f-a022-20193f2ceab7}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\RTCV\Source\Libraries\CorruptCore\CorruptCore.csproj">
+      <Project>{b5633a86-dc66-4723-88eb-7dfc95458072}</Project>
+      <Name>CorruptCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\RTCV\Source\Libraries\NetCore\NetCore.csproj">
+      <Project>{7e106aec-5614-4206-9e4d-25759c90e8ae}</Project>
+      <Name>NetCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\RTCV\Source\Libraries\Vanguard\Vanguard.csproj">
+      <Project>{364c705e-b7ab-4a94-a59b-88899ce65958}</Project>
+      <Name>Vanguard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\RTCV\Source\Libraries\ZombieCeras\src\Ceras\Ceras.csproj">
+      <Project>{5CD29E13-385E-400B-AA6F-498D9E1C7A0A}</Project>
+      <Name>Ceras</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="JavaCorruptor_packed.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <IkvmReference Include="C:\Users\me\source\repos\RTC_Development\RTCV_Plugin_JavaCorruptor\JavaCorruptor\out\artifacts\JavaCorruptor_jar\JavaCorruptor.jar">
+      <AssemblyName>JarJavaCorruptor</AssemblyName>
+    </IkvmReference>
+  </ItemGroup>
+</Project>

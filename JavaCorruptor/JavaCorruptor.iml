@@ -10,6 +10,8 @@
     <orderEntry type="library" name="ow2.asm" level="project" />
     <orderEntry type="library" name="ow2.asm.tree" level="project" />
     <orderEntry type="library" name="ow2.asm.commons" level="project" />
+    <orderEntry type="library" name="google.code.gson" level="project" />
+    <orderEntry type="library" name="google.collections" level="project" />
     <orderEntry type="library" name="commons-io-2.13.0" level="project" />
   </component>
 </module>
