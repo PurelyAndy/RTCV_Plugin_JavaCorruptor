@@ -1,4 +1,4 @@
-using JAVACORRUPTOR.UI;
+﻿using Java_Corruptor.UI;
 using NLog;
 using RTCV.Common;
 using RTCV.NetCore;
@@ -10,18 +10,17 @@ using System.Windows.Forms;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
-namespace JAVACORRUPTOR
+namespace Java_Corruptor
 {
     [Export(typeof(IPlugin))]
-    public class JAVA_CORRUPTOR : IPlugin
+    public class Java_Corruptor : IPlugin, IDisposable
     {
-        internal static Random Random = new Random();
         //-------[ Plugin metadata ]-------
 
         // >>> Make sure you rename BOTH the namespace and class (Very important)
-        public string Description => "Manipulates bytecode to corrupt Java executables with RTC";
+        public string Description => "This template allows you to quickly craft plugins for RTCV";
         public string Author => "NoSkillPureAndy";
-        public Version Version => new Version(0, 0, 1);
+        public Version Version => new(1, 0, 0);
 
         //-----[ Plugin loading workflow ]-----
 
@@ -45,13 +44,12 @@ namespace JAVACORRUPTOR
 
         #region Plugin Implementation mechanics
 
-        public static RTCSide CurrentSide = RTCSide.Both;
-        public static PluginForm PluginForm = (PluginForm)null;
-        internal static PluginConnectorEMU connectorEMU = (PluginConnectorEMU)null;
-        internal static PluginConnectorRTC connectorRTC = (PluginConnectorRTC)null;
+        public static RTCSide CurrentSide = RTCSide.Server;
+        public static PluginForm PluginForm;
+        internal static PluginConnectorRTC connectorRTC;
 
         // the name of the plugin is auto-generated from the class name.
-        public string Name => nameof(JAVA_CORRUPTOR).Replace("_"," ");
+        public string Name => nameof(Java_Corruptor).Replace("_"," ");
 
         public void Dispose()
         {
@@ -60,62 +58,31 @@ namespace JAVACORRUPTOR
         public bool Start(RTCSide side)
         {
             Logging.GlobalLogger.Info($"{Name} v{Version} initializing on {side} side.");
-            switch (side)
+
+            //Plugin initialization
+
+            connectorRTC = new(this);
+            PluginForm = new(this);
+            S.SET(PluginForm);
+
+
+            // Doing sanity checks before registering the plugin in the OpenTools form
+            if (S.ISNULL<OpenToolsForm>())
             {
-                // Emulator Process
-                case RTCSide.Client:
-                    //Plugin initialization
-                    connectorEMU = new PluginConnectorEMU(this);
-                    PluginForm = new PluginForm(this);
-                    S.SET(PluginForm);
-                    break;
-                case RTCSide.Server:
-                // StandaloneRTC Process (RTCV UI) or Attached mode
-                case RTCSide.Both:
-                {
-                    //Plugin initialization
-
-                    if (side == RTCSide.Both)
-                        connectorEMU = new PluginConnectorEMU(this);
-
-                    connectorRTC = new PluginConnectorRTC(this);
-                    PluginForm = new PluginForm(this);
-                    S.SET(PluginForm);
-
-
-                    // Doing sanity checks before registering the plugin in the OpenTools form
-                    if (S.ISNULL<OpenToolsForm>())
-                    {
-                        Logging.GlobalLogger.Error($"{Name} v{Version} failed to start: Singleton RTC_OpenTools_Form was null.");
-                        return false;
-                    }
-                    if (S.ISNULL<CoreForm>())
-                    {
-                        Logging.GlobalLogger.Error($"{Name} v{Version} failed to start: Singleton UI_CoreForm was null.");
-                        return false;
-                    }
-
-                    string cname = CamelCase(Name);
-                    //Registers the plugin in RTC's OpenTools form (in the Advanced Memory Tools)
-                    switch (FormRequestSide)
-                    {
-                        case RTCSide.Client:
-                            S.GET<OpenToolsForm>().RegisterTool(cname, $"Open {cname}", () => { LocalNetCoreRouter.Route(Ep.EMU_SIDE, Commands.SHOW_WINDOW, true); });
-                            break;
-                        case RTCSide.Server:
-                            S.GET<OpenToolsForm>().RegisterTool(cname, $"Open {cname}", () => { LocalNetCoreRouter.Route(Ep.RTC_SIDE, Commands.SHOW_WINDOW, true); });
-                            break;
-                        case RTCSide.Both: //if you use this, you might want to pop a different form on each side. see SHOW_WINDOW in PluginConnectorEMU.cs and PluginConnectorRTC.cs
-                            S.GET<OpenToolsForm>().RegisterTool(cname, $"Open {cname}", () => {
-                                LocalNetCoreRouter.Route(Ep.EMU_SIDE, Commands.SHOW_WINDOW, true);
-                                LocalNetCoreRouter.Route(Ep.RTC_SIDE, Commands.SHOW_WINDOW, true);
-                            });
-                            break;
-                    }
-
-                    break;
-                }
+                Logging.GlobalLogger.Error(
+                    $"{Name} v{Version} failed to start: Singleton RTC_OpenTools_Form was null.");
+                return false;
             }
+            if (S.ISNULL<CoreForm>())
+            {
+                Logging.GlobalLogger.Error(
+                    $"{Name} v{Version} failed to start: Singleton UI_CoreForm was null.");
+                return false;
+            }
+
+            //S.GET<OpenToolsForm>().RegisterTool(cname, $"Open {cname}", () => { LocalNetCoreRouter.Route(Ep.RTC_SIDE, Commands.SHOW_WINDOW, true); });
+            UICore.mtForm.cbSelectBox.Items.Add(PluginForm);
+
 
 
             Logging.GlobalLogger.Info($"{Name} v{Version} initialized.");
@@ -125,10 +92,11 @@ namespace JAVACORRUPTOR
 
         public bool Stop()
         {
-            if (CurrentSide != RTCSide.Client || S.ISNULL<PluginForm>() || S.GET<PluginForm>().IsDisposed)
-                return true;
-            S.GET<PluginForm>().HideOnClose = false;
-            S.GET<PluginForm>().Close();
+            if (CurrentSide == RTCSide.Client && !S.ISNULL<PluginForm>() && !S.GET<PluginForm>().IsDisposed)
+            {
+                S.GET<PluginForm>().HideOnClose = false;
+                S.GET<PluginForm>().Close();
+            }
             return true;
         }
 
@@ -147,10 +115,11 @@ namespace JAVACORRUPTOR
 
         public bool StopPlugin()
         {
-            if (S.ISNULL<PluginForm>() || S.GET<PluginForm>().IsDisposed)
-                return true;
-            S.GET<PluginForm>().HideOnClose = false;
-            S.GET<PluginForm>().Close();
+            if (!S.ISNULL<PluginForm>() && !S.GET<PluginForm>().IsDisposed)
+            {
+                S.GET<PluginForm>().HideOnClose = false;
+                S.GET<PluginForm>().Close();
+            }
             return true;
         }
 

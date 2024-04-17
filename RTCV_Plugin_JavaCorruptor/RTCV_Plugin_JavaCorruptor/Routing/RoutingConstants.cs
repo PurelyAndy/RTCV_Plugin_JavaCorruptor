@@ -1,14 +1,14 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JAVACORRUPTOR
+namespace Java_Corruptor
 {
     internal static class Ep
     {
-        public const string PREFIX = nameof(JAVA_CORRUPTOR);
+        public const string PREFIX = nameof(Java_Corruptor);
         public const string EMU_SIDE = PREFIX + "EMU";
         public const string RTC_SIDE = PREFIX + "RTC";
     }

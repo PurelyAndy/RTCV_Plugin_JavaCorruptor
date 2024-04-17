@@ -1,17 +1,17 @@
-using JAVACORRUPTOR.UI;
+﻿using Java_Corruptor.UI;
 using RTCV.Common;
 using RTCV.CorruptCore;
 using RTCV.NetCore;
 using System;
 using System.Windows.Forms;
 
-namespace JAVACORRUPTOR
+namespace Java_Corruptor
 {
     internal class PluginConnectorEMU : IRoutable
     {
-        JAVA_CORRUPTOR plugin;
+        Java_Corruptor plugin;
 
-        public PluginConnectorEMU(JAVA_CORRUPTOR _plugin)
+        public PluginConnectorEMU(Java_Corruptor _plugin)
         {
             plugin = _plugin;
             LocalNetCoreRouter.registerEndpoint(this, Ep.EMU_SIDE);
@@ -29,8 +29,8 @@ namespace JAVACORRUPTOR
                         {
                             if (((Control)S.GET<PluginForm>()).IsDisposed)
                             {
-                                JAVA_CORRUPTOR.PluginForm = new PluginForm(plugin);
-                                S.SET<PluginForm>(JAVA_CORRUPTOR.PluginForm);
+                                Java_Corruptor.PluginForm = new PluginForm(plugin);
+                                S.SET<PluginForm>(Java_Corruptor.PluginForm);
                             }
                             ((Control)S.GET<PluginForm>()).Show();
                             ((Form)S.GET<PluginForm>()).Activate();

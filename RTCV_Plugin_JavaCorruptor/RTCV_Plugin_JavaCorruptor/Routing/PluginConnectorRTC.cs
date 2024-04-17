@@ -1,24 +1,24 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using JAVACORRUPTOR;
+using Java_Corruptor;
 using RTCV.CorruptCore;
 using RTCV.NetCore;
 using System.Windows.Forms;
-using JAVACORRUPTOR.UI;
+using Java_Corruptor.UI;
 using RTCV.Common;
 
-namespace JAVACORRUPTOR
+namespace Java_Corruptor
 {
     /// <summary>
     /// This lies on the emulator side
     /// </summary>
     class PluginConnectorRTC : IRoutable
     {
-        JAVA_CORRUPTOR plugin;
-        public PluginConnectorRTC(JAVA_CORRUPTOR _plugin)
+        Java_Corruptor plugin;
+        public PluginConnectorRTC(Java_Corruptor _plugin)
         {
             plugin = _plugin;
 
@@ -39,8 +39,8 @@ namespace JAVACORRUPTOR
                         {
                             if (S.GET<UI.PluginForm>().IsDisposed)
                             {
-                                JAVA_CORRUPTOR.PluginForm = new PluginForm(plugin);
-                                S.SET<PluginForm>(JAVA_CORRUPTOR.PluginForm);
+                                Java_Corruptor.PluginForm = new PluginForm(plugin);
+                                S.SET<PluginForm>(Java_Corruptor.PluginForm);
                             }
                             S.GET<PluginForm>().Show();
                             S.GET<PluginForm>().Activate();

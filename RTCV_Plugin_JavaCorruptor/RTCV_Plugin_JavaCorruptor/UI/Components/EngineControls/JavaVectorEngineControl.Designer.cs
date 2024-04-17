@@ -1,11 +1,14 @@
-﻿namespace JAVACORRUPTOR.UI.Components.EngineControls
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace Java_Corruptor.UI.Components.EngineControls
 {
     partial class JavaVectorEngineControl : JavaEngineControl
     {
         /// <summary> 
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary> 
         /// Clean up any resources being used.
@@ -22,21 +25,20 @@
 
         #region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
+        /// <summary>
+        /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {
             this.label19 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.lbValues = new RTCV.UI.Components.Controls.ListBoxExtended();
             this.lbVectorEngineValueText1 = new System.Windows.Forms.Label();
-            this.cbVectorValueList = new System.Windows.Forms.ComboBox();
-            this.label18 = new System.Windows.Forms.Label();
             this.pnLimiterList = new System.Windows.Forms.Panel();
+            this.lbLimiters = new RTCV.UI.Components.Controls.ListBoxExtended();
             this.lbVectorEngineLimiterText1 = new System.Windows.Forms.Label();
-            this.cbVectorLimiterList = new System.Windows.Forms.ComboBox();
-            this.label13 = new System.Windows.Forms.Label();
             this.engineGroupBox.SuspendLayout();
             this.panel2.SuspendLayout();
             this.pnLimiterList.SuspendLayout();
@@ -44,11 +46,13 @@
             // 
             // engineGroupBox
             // 
+            this.engineGroupBox.Controls.Add(this.label1);
             this.engineGroupBox.Controls.Add(this.panel2);
             this.engineGroupBox.Controls.Add(this.pnLimiterList);
-            this.engineGroupBox.Controls.SetChildIndex(this.placeholderComboBox, 0);
             this.engineGroupBox.Controls.SetChildIndex(this.pnLimiterList, 0);
             this.engineGroupBox.Controls.SetChildIndex(this.panel2, 0);
+            this.engineGroupBox.Controls.SetChildIndex(this.label1, 0);
+            this.engineGroupBox.Controls.SetChildIndex(this.placeholderComboBox, 0);
             // 
             // label19
             // 
@@ -57,117 +61,112 @@
             this.label19.ForeColor = System.Drawing.Color.White;
             this.label19.Location = new System.Drawing.Point(169, 15);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(180, 13);
+            this.label19.Size = new System.Drawing.Size(251, 13);
             this.label19.TabIndex = 148;
-            this.label19.Text = "Corrupts using limiter and value lists";
+            this.label19.Text = "Replaces one zero-operand instruction with another";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic);
+            this.label1.ForeColor = System.Drawing.Color.White;
+            this.label1.Location = new System.Drawing.Point(170, 13);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(215, 13);
+            this.label1.TabIndex = 154;
+            this.label1.Text = "Replaces instructions with other instructions";
             // 
             // panel2
             // 
             this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.panel2.Controls.Add(this.lbValues);
             this.panel2.Controls.Add(this.lbVectorEngineValueText1);
-            this.panel2.Controls.Add(this.cbVectorValueList);
-            this.panel2.Controls.Add(this.label18);
-            this.panel2.Location = new System.Drawing.Point(5, 90);
+            this.panel2.Location = new System.Drawing.Point(221, 33);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(356, 47);
-            this.panel2.TabIndex = 150;
+            this.panel2.Size = new System.Drawing.Size(216, 145);
+            this.panel2.TabIndex = 156;
             this.panel2.Tag = "color:dark2";
+            // 
+            // lbValues
+            // 
+            this.lbValues.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbValues.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(16)))), ((int)(((byte)(16)))));
+            this.lbValues.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.lbValues.Font = new System.Drawing.Font("Segoe UI", 8F);
+            this.lbValues.ForeColor = System.Drawing.Color.White;
+            this.lbValues.FormattingEnabled = true;
+            this.lbValues.Location = new System.Drawing.Point(3, 25);
+            this.lbValues.Name = "lbValues";
+            this.lbValues.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
+            this.lbValues.Size = new System.Drawing.Size(207, 117);
+            this.lbValues.TabIndex = 139;
+            this.lbValues.Tag = "color:dark3";
             // 
             // lbVectorEngineValueText1
             // 
             this.lbVectorEngineValueText1.AutoSize = true;
             this.lbVectorEngineValueText1.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.lbVectorEngineValueText1.ForeColor = System.Drawing.Color.White;
-            this.lbVectorEngineValueText1.Location = new System.Drawing.Point(165, 25);
+            this.lbVectorEngineValueText1.Location = new System.Drawing.Point(3, 7);
             this.lbVectorEngineValueText1.Name = "lbVectorEngineValueText1";
-            this.lbVectorEngineValueText1.Size = new System.Drawing.Size(132, 13);
+            this.lbVectorEngineValueText1.Size = new System.Drawing.Size(40, 13);
             this.lbVectorEngineValueText1.TabIndex = 138;
-            this.lbVectorEngineValueText1.Text = "Replacement instruction";
-            // 
-            // cbVectorValueList
-            // 
-            this.cbVectorValueList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(96)))), ((int)(((byte)(96)))));
-            this.cbVectorValueList.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cbVectorValueList.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.cbVectorValueList.ForeColor = System.Drawing.Color.White;
-            this.cbVectorValueList.FormattingEnabled = true;
-            this.cbVectorValueList.IntegralHeight = false;
-            this.cbVectorValueList.Location = new System.Drawing.Point(8, 19);
-            this.cbVectorValueList.MaxDropDownItems = 15;
-            this.cbVectorValueList.Name = "cbVectorValueList";
-            this.cbVectorValueList.Size = new System.Drawing.Size(152, 21);
-            this.cbVectorValueList.TabIndex = 81;
-            this.cbVectorValueList.Tag = "color:normal";
-            // 
-            // label18
-            // 
-            this.label18.AutoSize = true;
-            this.label18.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.label18.ForeColor = System.Drawing.Color.White;
-            this.label18.Location = new System.Drawing.Point(5, 4);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(38, 13);
-            this.label18.TabIndex = 80;
-            this.label18.Text = "Value:";
+            this.lbVectorEngineValueText1.Text = "Values";
             // 
             // pnLimiterList
             // 
             this.pnLimiterList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.pnLimiterList.Controls.Add(this.lbLimiters);
             this.pnLimiterList.Controls.Add(this.lbVectorEngineLimiterText1);
-            this.pnLimiterList.Controls.Add(this.cbVectorLimiterList);
-            this.pnLimiterList.Controls.Add(this.label13);
-            this.pnLimiterList.Location = new System.Drawing.Point(5, 36);
+            this.pnLimiterList.Location = new System.Drawing.Point(5, 33);
             this.pnLimiterList.Name = "pnLimiterList";
-            this.pnLimiterList.Size = new System.Drawing.Size(356, 47);
-            this.pnLimiterList.TabIndex = 149;
+            this.pnLimiterList.Size = new System.Drawing.Size(207, 145);
+            this.pnLimiterList.TabIndex = 155;
             this.pnLimiterList.Tag = "color:dark2";
+            // 
+            // lbLimiters
+            // 
+            this.lbLimiters.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbLimiters.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(16)))), ((int)(((byte)(16)))));
+            this.lbLimiters.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.lbLimiters.Font = new System.Drawing.Font("Segoe UI", 8F);
+            this.lbLimiters.ForeColor = System.Drawing.Color.White;
+            this.lbLimiters.FormattingEnabled = true;
+            this.lbLimiters.Location = new System.Drawing.Point(3, 25);
+            this.lbLimiters.Name = "lbLimiters";
+            this.lbLimiters.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
+            this.lbLimiters.Size = new System.Drawing.Size(196, 117);
+            this.lbLimiters.TabIndex = 146;
+            this.lbLimiters.Tag = "color:dark3";
             // 
             // lbVectorEngineLimiterText1
             // 
             this.lbVectorEngineLimiterText1.AutoSize = true;
             this.lbVectorEngineLimiterText1.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.lbVectorEngineLimiterText1.ForeColor = System.Drawing.Color.White;
-            this.lbVectorEngineLimiterText1.Location = new System.Drawing.Point(165, 24);
+            this.lbVectorEngineLimiterText1.Location = new System.Drawing.Point(2, 7);
             this.lbVectorEngineLimiterText1.Name = "lbVectorEngineLimiterText1";
-            this.lbVectorEngineLimiterText1.Size = new System.Drawing.Size(128, 13);
+            this.lbVectorEngineLimiterText1.Size = new System.Drawing.Size(46, 13);
             this.lbVectorEngineLimiterText1.TabIndex = 141;
-            this.lbVectorEngineLimiterText1.Text = "Comparison instruction";
-            // 
-            // cbVectorLimiterList
-            // 
-            this.cbVectorLimiterList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(96)))), ((int)(((byte)(96)))));
-            this.cbVectorLimiterList.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cbVectorLimiterList.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.cbVectorLimiterList.ForeColor = System.Drawing.Color.White;
-            this.cbVectorLimiterList.FormattingEnabled = true;
-            this.cbVectorLimiterList.IntegralHeight = false;
-            this.cbVectorLimiterList.Location = new System.Drawing.Point(8, 19);
-            this.cbVectorLimiterList.MaxDropDownItems = 15;
-            this.cbVectorLimiterList.Name = "cbVectorLimiterList";
-            this.cbVectorLimiterList.Size = new System.Drawing.Size(152, 21);
-            this.cbVectorLimiterList.TabIndex = 78;
-            this.cbVectorLimiterList.Tag = "color:normal";
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.label13.ForeColor = System.Drawing.Color.White;
-            this.label13.Location = new System.Drawing.Point(6, 4);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(44, 13);
-            this.label13.TabIndex = 79;
-            this.label13.Text = "Limiter:";
+            this.lbVectorEngineLimiterText1.Text = "Limiters";
             // 
             // JavaVectorEngineControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.Controls.Add(this.label19);
+            this.Location = new System.Drawing.Point(15, 15);
             this.Name = "JavaVectorEngineControl";
-            this.Controls.SetChildIndex(this.engineGroupBox, 0);
             this.Controls.SetChildIndex(this.label19, 0);
+            this.Controls.SetChildIndex(this.engineGroupBox, 0);
             this.engineGroupBox.ResumeLayout(false);
+            this.engineGroupBox.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.pnLimiterList.ResumeLayout(false);
@@ -178,14 +177,14 @@
         }
 
         #endregion
-        private System.Windows.Forms.Label label19;
-        private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.Label lbVectorEngineValueText1;
-        public System.Windows.Forms.ComboBox cbVectorValueList;
-        private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.Panel pnLimiterList;
-        private System.Windows.Forms.Label lbVectorEngineLimiterText1;
-        public System.Windows.Forms.ComboBox cbVectorLimiterList;
-        private System.Windows.Forms.Label label13;
+
+        private Label label19;
+        private Label label1;
+        private Panel panel2;
+        public RTCV.UI.Components.Controls.ListBoxExtended lbValues;
+        private Label lbVectorEngineValueText1;
+        private Panel pnLimiterList;
+        public RTCV.UI.Components.Controls.ListBoxExtended lbLimiters;
+        private Label lbVectorEngineLimiterText1;
     }
 }

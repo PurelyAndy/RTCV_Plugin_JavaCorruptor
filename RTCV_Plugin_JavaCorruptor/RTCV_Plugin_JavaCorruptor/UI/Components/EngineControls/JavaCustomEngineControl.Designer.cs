@@ -1,11 +1,14 @@
-﻿namespace JAVACORRUPTOR.UI.Components.EngineControls
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace Java_Corruptor.UI.Components.EngineControls
 {
     partial class JavaCustomEngineControl : JavaEngineControl
     {
         /// <summary> 
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary> 
         /// Clean up any resources being used.
@@ -88,7 +91,7 @@
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.label2.ForeColor = System.Drawing.Color.White;
-            this.label2.Location = new System.Drawing.Point(316, 33);
+            this.label2.Location = new System.Drawing.Point(388, 35);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(47, 13);
             this.label2.TabIndex = 160;
@@ -99,10 +102,10 @@
             this.tbFind.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(96)))), ((int)(((byte)(96)))));
             this.tbFind.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.tbFind.ForeColor = System.Drawing.Color.White;
-            this.tbFind.Location = new System.Drawing.Point(7, 51);
+            this.tbFind.Location = new System.Drawing.Point(6, 51);
             this.tbFind.Multiline = true;
             this.tbFind.Name = "tbFind";
-            this.tbFind.Size = new System.Drawing.Size(175, 91);
+            this.tbFind.Size = new System.Drawing.Size(212, 127);
             this.tbFind.TabIndex = 162;
             this.tbFind.Tag = "color:normal";
             this.tbFind.Text = "// Find any add instruction\r\n<(I|L|F|D)>ADD";
@@ -116,9 +119,9 @@
             this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSave.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.btnSave.ForeColor = System.Drawing.Color.White;
-            this.btnSave.Location = new System.Drawing.Point(41, 29);
+            this.btnSave.Location = new System.Drawing.Point(128, 28);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(65, 20);
+            this.btnSave.Size = new System.Drawing.Size(55, 20);
             this.btnSave.TabIndex = 163;
             this.btnSave.TabStop = false;
             this.btnSave.Tag = "color:light1";
@@ -131,10 +134,10 @@
             this.tbReplace.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(96)))), ((int)(((byte)(96)))));
             this.tbReplace.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.tbReplace.ForeColor = System.Drawing.Color.White;
-            this.tbReplace.Location = new System.Drawing.Point(188, 51);
+            this.tbReplace.Location = new System.Drawing.Point(223, 51);
             this.tbReplace.Multiline = true;
             this.tbReplace.Name = "tbReplace";
-            this.tbReplace.Size = new System.Drawing.Size(175, 91);
+            this.tbReplace.Size = new System.Drawing.Size(212, 127);
             this.tbReplace.TabIndex = 164;
             this.tbReplace.Tag = "color:normal";
             this.tbReplace.Text = "// Replace it with subtraction\r\n// and multiply by 2 \r\n<$0>SUB\r\nLDC 2<$0>\r\n<$0>MU" +
@@ -149,9 +152,9 @@
             this.btnSaveAs.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSaveAs.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.btnSaveAs.ForeColor = System.Drawing.Color.White;
-            this.btnSaveAs.Location = new System.Drawing.Point(112, 29);
+            this.btnSaveAs.Location = new System.Drawing.Point(189, 28);
             this.btnSaveAs.Name = "btnSaveAs";
-            this.btnSaveAs.Size = new System.Drawing.Size(65, 20);
+            this.btnSaveAs.Size = new System.Drawing.Size(64, 20);
             this.btnSaveAs.TabIndex = 165;
             this.btnSaveAs.TabStop = false;
             this.btnSaveAs.Tag = "color:light1";
@@ -168,19 +171,15 @@
             this.btnLoad.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnLoad.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.btnLoad.ForeColor = System.Drawing.Color.White;
-            this.btnLoad.Location = new System.Drawing.Point(193, 29);
+            this.btnLoad.Location = new System.Drawing.Point(259, 28);
             this.btnLoad.Name = "btnLoad";
-            this.btnLoad.Size = new System.Drawing.Size(65, 20);
+            this.btnLoad.Size = new System.Drawing.Size(55, 20);
             this.btnLoad.TabIndex = 166;
             this.btnLoad.TabStop = false;
             this.btnLoad.Tag = "color:light1";
             this.btnLoad.Text = "Load";
             this.btnLoad.UseVisualStyleBackColor = false;
             this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "openFileDialog1";
             // 
             // JavaCustomEngineControl
             // 
@@ -194,15 +193,15 @@
         }
 
         #endregion
-        private System.Windows.Forms.Label label19;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox tbFind;
-        private System.Windows.Forms.Button btnSaveAs;
-        private System.Windows.Forms.TextBox tbReplace;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-        private System.Windows.Forms.Button btnLoad;
-        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private Label label19;
+        private Label label1;
+        private Label label2;
+        private TextBox tbFind;
+        private Button btnSaveAs;
+        private TextBox tbReplace;
+        private Button btnSave;
+        private SaveFileDialog saveFileDialog1;
+        private Button btnLoad;
+        private OpenFileDialog openFileDialog1;
     }
 }

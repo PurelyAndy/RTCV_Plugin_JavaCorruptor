@@ -8,12 +8,14 @@
     <ProjectGuid>{0CC3144A-8379-4E69-A8DB-DF5F50FE5749}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>JAVACORRUPTOR</RootNamespace>
+    <RootNamespace>Java</RootNamespace>
     <AssemblyName>JavaCorruptor</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,7 +43,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>latest</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>0</WarningLevel>
   </PropertyGroup>
@@ -51,12 +53,20 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>latest</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <!--
+    <Reference Include="JavaTemplatePlugin">
+      <HintPath>..\..\..\FileStub-Vanguard\FileStub\bin\Debug\TEMPLATES\JavaTemplatePlugin.dll</HintPath>
+    </Reference>
+	-->
     <Reference Include="NLog">
       <HintPath>..\..\..\..\..\..\.nuget\packages\nlog\5.1.1\lib\net46\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="ObjectWeb.Asm">
+      <HintPath>Deps\ObjectWeb.Asm.dll</HintPath>
     </Reference>
     <Reference Include="PluginHost">
       <HintPath>..\..\..\RTCV\Build\PluginHost.dll</HintPath>
@@ -70,6 +80,7 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -79,24 +90,79 @@
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />
+    <Reference Include="WinFormsSyntaxHighlighter">
+      <HintPath>Deps\WinFormsSyntaxHighlighter.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsmParser.cs" />
+    <Compile Include="AsmUtilities.cs" />
+    <Compile Include="BidirectionalDictionary.cs" />
+    <Compile Include="BlastClasses\JavaBlastLayer.cs" />
+    <Compile Include="BlastClasses\JavaBlastLayerCollection.cs" />
+    <Compile Include="BlastClasses\JavaBlastTools.cs" />
+    <Compile Include="BlastClasses\JavaBlastUnit.cs" />
+    <Compile Include="BlastClasses\SerializedInsnBlastLayer.cs" />
+    <Compile Include="BlastClasses\SerializedInsnBlastLayerCollection.cs" />
+    <Compile Include="BlastClasses\SerializedInsnBlastUnit.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="JavaStashKey.cs" />
-    <Compile Include="JavaBlastLayer.cs" />
-    <Compile Include="JavaBlastUnit.cs" />
     <Compile Include="JavaStockpile.cs" />
-    <Compile Include="Opcodes.cs" />
+    <Compile Include="JavaStockpileManagerUISide.cs" />
+    <Compile Include="JsonConverters\JavaBlastUnitConverter.cs" />
+    <Compile Include="OpcodesWithNoOperands.cs" />
+    <Compile Include="PluginCore.cs" />
+    <Compile Include="Range.cs" />
+    <Compile Include="Routing\PluginConnectorEMU.cs" />
+    <Compile Include="Routing\PluginConnectorRTC.cs" />
+    <Compile Include="Routing\RoutingConstants.cs" />
+    <Compile Include="UI\Components\EngineControls\NukerEngineControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Components\EngineControls\NukerEngineControl.Designer.cs">
+      <DependentUpon>NukerEngineControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Components\JavaGeneralParametersForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Components\JavaGeneralParametersForm.Designer.cs">
+      <DependentUpon>JavaGeneralParametersForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Components\JavaCorruptionEngineForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Components\JavaCorruptionEngineForm.Designer.cs">
+      <DependentUpon>JavaCorruptionEngineForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\DisassemblerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\DisassemblerForm.Designer.cs">
+      <DependentUpon>DisassemblerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\JavaBlastEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\JavaBlastEditorForm.Designer.cs">
+      <DependentUpon>JavaBlastEditorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Components\JavaGlitchHarvesterBlastForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Components\JavaGlitchHarvesterBlastForm.designer.cs">
+      <DependentUpon>JavaGlitchHarvesterBlastForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Components\EngineControls\BlastLayerApplierEngineControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Components\EngineControls\BlastLayerApplierEngineControl.Designer.cs">
+      <DependentUpon>BlastLayerApplierEngineControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Components\EngineControls\RoundingEngineControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="UI\Components\EngineControls\RoundingEngineControl.Designer.cs">
       <DependentUpon>RoundingEngineControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Components\EngineControls\SanitizerEngineControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\Components\EngineControls\SanitizerEngineControl.Designer.cs">
-      <DependentUpon>SanitizerEngineControl.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Components\EngineControls\JavaCustomEngineControl.cs">
       <SubType>UserControl</SubType>
@@ -127,28 +193,24 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Routing\RoutingConstants.cs" />
-    <Compile Include="PluginCore.cs" />
-    <Compile Include="Routing\PluginConnectorRTC.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Routing\PluginConnectorEMU.cs" />
     <Compile Include="UI\Components\EngineControls\FunctionEngineControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="UI\Components\EngineControls\FunctionEngineControl.Designer.cs">
       <DependentUpon>FunctionEngineControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\JavaStockpileManagerForm.cs">
+    <Compile Include="UI\Components\JavaStockpileManagerForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\JavaStockpileManagerForm.Designer.cs">
+    <Compile Include="UI\Components\JavaStockpileManagerForm.Designer.cs">
       <DependentUpon>JavaStockpileManagerForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\JRESelectorForm.cs">
+    <Compile Include="UI\Components\JavaStashHistoryForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\JRESelectorForm.Designer.cs">
-      <DependentUpon>JRESelectorForm.cs</DependentUpon>
+    <Compile Include="UI\Components\JavaStashHistoryForm.designer.cs">
+      <DependentUpon>JavaStashHistoryForm.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\PluginForm.cs">
       <SubType>Form</SubType>
@@ -161,6 +223,12 @@
     </Compile>
     <Compile Include="UI\Components\EngineControls\JavaVectorEngineControl.Designer.cs">
       <DependentUpon>JavaVectorEngineControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\JavaSanitizeToolForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\JavaSanitizeToolForm.Designer.cs">
+      <DependentUpon>JavaSanitizeToolForm.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -185,12 +253,31 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="UI\Components\EngineControls\NukerEngineControl.resx">
+      <DependentUpon>NukerEngineControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Components\JavaGeneralParametersForm.resx">
+      <DependentUpon>JavaGeneralParametersForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Components\JavaCorruptionEngineForm.resx">
+      <DependentUpon>JavaCorruptionEngineForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\DisassemblerForm.resx">
+      <DependentUpon>DisassemblerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\JavaBlastEditorForm.resx">
+      <DependentUpon>JavaBlastEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Components\JavaGlitchHarvesterBlastForm.resx">
+      <DependentUpon>JavaGlitchHarvesterBlastForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Components\EngineControls\BlastLayerApplierEngineControl.resx">
+      <DependentUpon>BlastLayerApplierEngineControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Components\EngineControls\RoundingEngineControl.resx">
       <DependentUpon>RoundingEngineControl.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\Components\EngineControls\SanitizerEngineControl.resx">
-      <DependentUpon>SanitizerEngineControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Components\EngineControls\JavaCustomEngineControl.resx">
       <DependentUpon>JavaCustomEngineControl.cs</DependentUpon>
@@ -215,14 +302,17 @@
       <DependentUpon>JavaVectorEngineControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\JavaStockpileManagerForm.resx">
+    <EmbeddedResource Include="UI\Components\JavaStockpileManagerForm.resx">
       <DependentUpon>JavaStockpileManagerForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\JRESelectorForm.resx">
-      <DependentUpon>JRESelectorForm.cs</DependentUpon>
+    <EmbeddedResource Include="UI\Components\JavaStashHistoryForm.resx">
+      <DependentUpon>JavaStashHistoryForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\PluginForm.resx">
       <DependentUpon>PluginForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\JavaSanitizeToolForm.resx">
+      <DependentUpon>JavaSanitizeToolForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -230,6 +320,11 @@
     <Folder Include="Icons\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\RTCV\Source\Frontend\StandaloneRTC\StandaloneRTC.csproj">
+      <Project>{597d9202-f18d-4b51-bb89-d7e111baf8b5}</Project>
+      <Name>StandaloneRTC</Name>
+      <Private>False</Private>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\RTCV\Source\Frontend\UI\UI.csproj">
       <Project>{bd376bb2-17ec-4fb0-a9fe-6b1bbf4af3e3}</Project>
       <Name>UI</Name>
@@ -254,16 +349,11 @@
       <Project>{5CD29E13-385E-400B-AA6F-498D9E1C7A0A}</Project>
       <Name>Ceras</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="JavaCorruptor_packed.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <ProjectReference Include="..\..\..\FileStub-Vanguard\FileStub\FileStub.csproj">
+      <Project>{3e02b2ba-0900-4bcf-a416-821c949e6c85}</Project>
+      <Name>FileStub</Name>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <IkvmReference Include="C:\Users\me\source\repos\RTC_Development\RTCV_Plugin_JavaCorruptor\JavaCorruptor\out\artifacts\JavaCorruptor_jar\JavaCorruptor.jar">
-      <AssemblyName>JarJavaCorruptor</AssemblyName>
-    </IkvmReference>
-  </ItemGroup>
 </Project>

@@ -1,11 +1,15 @@
-﻿namespace JAVACORRUPTOR.UI.Components.EngineControls
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+using RTCV.UI.Components.Controls;
+
+namespace Java_Corruptor.UI.Components.EngineControls
 {
     partial class RoundingEngineControl : JavaEngineControl
     {
         /// <summary> 
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary> 
         /// Clean up any resources being used.
@@ -39,12 +43,14 @@
             this.tbDecimalPlaces = new System.Windows.Forms.TrackBar();
             this.lbeKinds = new RTCV.UI.Components.Controls.ListBoxExtended();
             this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.engineGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbDecimalPlaces)).BeginInit();
             this.SuspendLayout();
             // 
             // engineGroupBox
             // 
+            this.engineGroupBox.Controls.Add(this.label3);
             this.engineGroupBox.Controls.Add(this.cbDouble);
             this.engineGroupBox.Controls.Add(this.lbeKinds);
             this.engineGroupBox.Controls.Add(this.label2);
@@ -66,6 +72,7 @@
             this.engineGroupBox.Controls.SetChildIndex(this.label2, 0);
             this.engineGroupBox.Controls.SetChildIndex(this.lbeKinds, 0);
             this.engineGroupBox.Controls.SetChildIndex(this.cbDouble, 0);
+            this.engineGroupBox.Controls.SetChildIndex(this.label3, 0);
             // 
             // label19
             // 
@@ -90,7 +97,7 @@
             "Subtraction",
             "Multiplication",
             "Division"});
-            this.lbeOperations.Location = new System.Drawing.Point(6, 48);
+            this.lbeOperations.Location = new System.Drawing.Point(106, 113);
             this.lbeOperations.Name = "lbeOperations";
             this.lbeOperations.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
             this.lbeOperations.Size = new System.Drawing.Size(84, 52);
@@ -102,7 +109,7 @@
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(3, 32);
+            this.label1.Location = new System.Drawing.Point(103, 97);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(65, 13);
             this.label1.TabIndex = 164;
@@ -112,7 +119,7 @@
             // 
             this.cbLong.AutoSize = true;
             this.cbLong.ForeColor = System.Drawing.Color.White;
-            this.cbLong.Location = new System.Drawing.Point(50, 106);
+            this.cbLong.Location = new System.Drawing.Point(260, 60);
             this.cbLong.Name = "cbLong";
             this.cbLong.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.cbLong.Size = new System.Drawing.Size(50, 17);
@@ -124,7 +131,7 @@
             // 
             this.cbInt.AutoSize = true;
             this.cbInt.ForeColor = System.Drawing.Color.White;
-            this.cbInt.Location = new System.Drawing.Point(6, 125);
+            this.cbInt.Location = new System.Drawing.Point(207, 83);
             this.cbInt.Name = "cbInt";
             this.cbInt.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.cbInt.Size = new System.Drawing.Size(38, 17);
@@ -138,7 +145,7 @@
             this.cbFloat.Checked = true;
             this.cbFloat.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbFloat.ForeColor = System.Drawing.Color.White;
-            this.cbFloat.Location = new System.Drawing.Point(6, 106);
+            this.cbFloat.Location = new System.Drawing.Point(207, 60);
             this.cbFloat.Name = "cbFloat";
             this.cbFloat.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.cbFloat.Size = new System.Drawing.Size(49, 17);
@@ -152,7 +159,7 @@
             this.cbDouble.Checked = true;
             this.cbDouble.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbDouble.ForeColor = System.Drawing.Color.White;
-            this.cbDouble.Location = new System.Drawing.Point(41, 125);
+            this.cbDouble.Location = new System.Drawing.Point(250, 83);
             this.cbDouble.Name = "cbDouble";
             this.cbDouble.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.cbDouble.Size = new System.Drawing.Size(60, 17);
@@ -165,19 +172,20 @@
             this.lbDecimalPlaces.AutoSize = true;
             this.lbDecimalPlaces.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.lbDecimalPlaces.ForeColor = System.Drawing.Color.White;
-            this.lbDecimalPlaces.Location = new System.Drawing.Point(190, 32);
+            this.lbDecimalPlaces.Location = new System.Drawing.Point(6, 43);
             this.lbDecimalPlaces.Name = "lbDecimalPlaces";
-            this.lbDecimalPlaces.Size = new System.Drawing.Size(158, 13);
+            this.lbDecimalPlaces.Size = new System.Drawing.Size(163, 13);
             this.lbDecimalPlaces.TabIndex = 171;
-            this.lbDecimalPlaces.Text = "Round to 1.000 decimal place";
+            this.lbDecimalPlaces.Text = "Round to 3.000 decimal places";
             // 
-            // tbRounding
+            // tbDecimalPlaces
             // 
-            this.tbDecimalPlaces.Location = new System.Drawing.Point(186, 48);
+            this.tbDecimalPlaces.AutoSize = false;
+            this.tbDecimalPlaces.Location = new System.Drawing.Point(3, 59);
             this.tbDecimalPlaces.Maximum = 10000;
             this.tbDecimalPlaces.Minimum = 10;
-            this.tbDecimalPlaces.Name = "tbRounding";
-            this.tbDecimalPlaces.Size = new System.Drawing.Size(179, 45);
+            this.tbDecimalPlaces.Name = "tbDecimalPlaces";
+            this.tbDecimalPlaces.Size = new System.Drawing.Size(179, 32);
             this.tbDecimalPlaces.TabIndex = 170;
             this.tbDecimalPlaces.TickFrequency = 1000;
             this.tbDecimalPlaces.Value = 3000;
@@ -196,7 +204,7 @@
             "Variable loads",
             "Field loads",
             "Return values"});
-            this.lbeKinds.Location = new System.Drawing.Point(100, 48);
+            this.lbeKinds.Location = new System.Drawing.Point(9, 113);
             this.lbeKinds.Name = "lbeKinds";
             this.lbeKinds.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
             this.lbeKinds.Size = new System.Drawing.Size(91, 65);
@@ -208,11 +216,22 @@
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.label2.ForeColor = System.Drawing.Color.White;
-            this.label2.Location = new System.Drawing.Point(98, 32);
+            this.label2.Location = new System.Drawing.Point(6, 97);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(35, 13);
             this.label2.TabIndex = 172;
             this.label2.Text = "Kinds";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Segoe UI", 8F);
+            this.label3.ForeColor = System.Drawing.Color.White;
+            this.label3.Location = new System.Drawing.Point(204, 44);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(35, 13);
+            this.label3.TabIndex = 174;
+            this.label3.Text = "Types";
             // 
             // RoundingEngineControl
             // 
@@ -231,16 +250,17 @@
         }
 
         #endregion
-        private System.Windows.Forms.Label label19;
-        public RTCV.UI.Components.Controls.ListBoxExtended lbeOperations;
-        private System.Windows.Forms.Label label1;
-        public System.Windows.Forms.CheckBox cbLong;
-        public System.Windows.Forms.CheckBox cbInt;
-        public System.Windows.Forms.CheckBox cbFloat;
-        public System.Windows.Forms.CheckBox cbDouble;
-        public RTCV.UI.Components.Controls.ListBoxExtended lbeKinds;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label lbDecimalPlaces;
-        public System.Windows.Forms.TrackBar tbDecimalPlaces;
+        private Label label19;
+        public ListBoxExtended lbeOperations;
+        private Label label1;
+        public CheckBox cbLong;
+        public CheckBox cbInt;
+        public CheckBox cbFloat;
+        public CheckBox cbDouble;
+        public ListBoxExtended lbeKinds;
+        private Label label2;
+        private Label lbDecimalPlaces;
+        public TrackBar tbDecimalPlaces;
+        private Label label3;
     }
 }
