@@ -1,0 +1,14 @@
+GridName:Java Corruptor
+GridSize:15,12 //This determines the size of the area used for controls
+
+CreateGrid //Don't remove this, IsResizable goes after if needed
+IsResizable //Having this allows the form to be resized (only with External)
+
+/---------------------------------------| Pos X | Pos Y | Size X | Size Y | Anchor |---------
+SetTileForm:JavaGeneralParametersForm,  	0,  	0,	    5,	    5,  	13
+SetTileForm:JavaCorruptionEngineForm,	    5,	    0,	    10, 	5,  	9
+SetTileForm:JavaGlitchHarvesterBlastForm,   0,	    5,	    6,	    2,  	5
+SetTileForm:JavaStashHistoryForm,	        0,	    7,  	6,	    5,  	7
+SetTileForm:JavaStockpileManagerForm,	    6,	    5,	    9,	    7,  	15
+
+LoadTo:Main // You can load to Main or to External (External makes a new window)

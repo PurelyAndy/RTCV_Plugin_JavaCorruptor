@@ -68,6 +68,8 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // panel2
             // 
+            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.panel2.Controls.Add(this.lbValueFunctions);
             this.panel2.Controls.Add(this.lbVectorEngineValueText1);
@@ -79,12 +81,43 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // lbValueFunctions
             // 
+            this.lbValueFunctions.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lbValueFunctions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(16)))), ((int)(((byte)(16)))));
             this.lbValueFunctions.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lbValueFunctions.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.lbValueFunctions.ForeColor = System.Drawing.Color.White;
             this.lbValueFunctions.FormattingEnabled = true;
-            this.lbValueFunctions.Items.AddRange(new object[] { "POP,random()", "abs", "acos", "asin", "atan", "cbrt", "ceil", "cos", "cosh", "exp", "expm1", "floor", "log", "log1p", "log10", "nextDown", "nextUp", "rint", "round", "signum", "sin", "sinh", "sqrt", "tan", "tanh", "toDegrees", "toRadians", "ulp" });
+            this.lbValueFunctions.Items.AddRange(new object[] {
+            "POP,random()",
+            "abs",
+            "acos",
+            "asin",
+            "atan",
+            "cbrt",
+            "ceil",
+            "cos",
+            "cosh",
+            "exp",
+            "expm1",
+            "floor",
+            "log",
+            "log1p",
+            "log10",
+            "nextDown",
+            "nextUp",
+            "rint",
+            "round",
+            "signum",
+            "sin",
+            "sinh",
+            "sqrt",
+            "tan",
+            "tanh",
+            "toDegrees",
+            "toRadians",
+            "ulp"});
             this.lbValueFunctions.Location = new System.Drawing.Point(3, 25);
             this.lbValueFunctions.Name = "lbValueFunctions";
             this.lbValueFunctions.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
@@ -105,6 +138,8 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // pnLimiterList
             // 
+            this.pnLimiterList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.pnLimiterList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.pnLimiterList.Controls.Add(this.lbLimiterFunctions);
             this.pnLimiterList.Controls.Add(this.lbVectorEngineLimiterText1);
@@ -116,13 +151,42 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // lbLimiterFunctions
             // 
-            this.lbLimiterFunctions.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbLimiterFunctions.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lbLimiterFunctions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(16)))), ((int)(((byte)(16)))));
             this.lbLimiterFunctions.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lbLimiterFunctions.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.lbLimiterFunctions.ForeColor = System.Drawing.Color.White;
             this.lbLimiterFunctions.FormattingEnabled = true;
-            this.lbLimiterFunctions.Items.AddRange(new object[] { "abs", "acos", "asin", "atan", "cbrt", "ceil", "cos", "cosh", "exp", "expm1", "floor", "log", "log1p", "log10", "nextDown", "nextUp", "rint", "round", "signum", "sin", "sinh", "sqrt", "tan", "tanh", "toDegrees", "toRadians", "ulp" });
+            this.lbLimiterFunctions.Items.AddRange(new object[] {
+            "abs",
+            "acos",
+            "asin",
+            "atan",
+            "cbrt",
+            "ceil",
+            "cos",
+            "cosh",
+            "exp",
+            "expm1",
+            "floor",
+            "log",
+            "log1p",
+            "log10",
+            "nextDown",
+            "nextUp",
+            "rint",
+            "round",
+            "signum",
+            "sin",
+            "sinh",
+            "sqrt",
+            "tan",
+            "tanh",
+            "toDegrees",
+            "toRadians",
+            "ulp"});
             this.lbLimiterFunctions.Location = new System.Drawing.Point(3, 25);
             this.lbLimiterFunctions.Name = "lbLimiterFunctions";
             this.lbLimiterFunctions.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
@@ -153,6 +217,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.pnLimiterList.ResumeLayout(false);
             this.pnLimiterList.PerformLayout();
             this.ResumeLayout(false);
+
         }
 
         #endregion

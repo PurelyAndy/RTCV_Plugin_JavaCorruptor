@@ -14,7 +14,7 @@ using Java_Corruptor.BlastClasses;
 using ObjectWeb.Asm.Tree;
 using WinFormsSyntaxHighlighter;
 
-namespace Java.UI
+namespace Java_Corruptor.UI
 {
     public partial class DisassemblerForm : RTCV.UI.Modular.ColorizedForm
     {

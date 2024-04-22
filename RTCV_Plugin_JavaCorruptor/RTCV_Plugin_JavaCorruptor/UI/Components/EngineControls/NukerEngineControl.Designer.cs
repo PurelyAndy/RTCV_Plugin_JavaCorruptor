@@ -148,6 +148,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // btnHelp
             // 
+            this.btnHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnHelp.BackColor = System.Drawing.Color.Transparent;
             this.btnHelp.FlatAppearance.BorderSize = 0;
             this.btnHelp.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -178,6 +179,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // cbSkipInit
             // 
+            this.cbSkipInit.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.cbSkipInit.AutoSize = true;
             this.cbSkipInit.Checked = true;
             this.cbSkipInit.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -192,6 +194,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // cbSkipClinit
             // 
+            this.cbSkipClinit.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.cbSkipClinit.AutoSize = true;
             this.cbSkipClinit.Checked = true;
             this.cbSkipClinit.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -233,6 +236,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // cbBoolRuntimeRandom
             // 
+            this.cbBoolRuntimeRandom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbBoolRuntimeRandom.AutoSize = true;
             this.cbBoolRuntimeRandom.ForeColor = System.Drawing.Color.White;
             this.cbBoolRuntimeRandom.Location = new System.Drawing.Point(281, 3);
@@ -245,6 +249,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // cbFalse
             // 
+            this.cbFalse.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.cbFalse.AutoSize = true;
             this.cbFalse.Checked = true;
             this.cbFalse.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -260,6 +265,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // cbTrue
             // 
+            this.cbTrue.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.cbTrue.AutoSize = true;
             this.cbTrue.Checked = true;
             this.cbTrue.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -312,18 +318,23 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbCharacters
             // 
+            this.tbCharacters.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbCharacters.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(96)))), ((int)(((byte)(96)))));
             this.tbCharacters.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.tbCharacters.ForeColor = System.Drawing.Color.White;
-            this.tbCharacters.Location = new System.Drawing.Point(3, 26);
+            this.tbCharacters.Location = new System.Drawing.Point(3, 23);
             this.tbCharacters.Multiline = true;
             this.tbCharacters.Name = "tbCharacters";
-            this.tbCharacters.Size = new System.Drawing.Size(416, 90);
+            this.tbCharacters.Size = new System.Drawing.Size(416, 93);
             this.tbCharacters.TabIndex = 190;
             this.tbCharacters.Tag = "color:normal";
+            this.tbCharacters.Text = "abcdefghijklmnopqrstuvwxyz1234567890";
             // 
             // cbCharRuntimeRandom
             // 
+            this.cbCharRuntimeRandom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbCharRuntimeRandom.AutoSize = true;
             this.cbCharRuntimeRandom.ForeColor = System.Drawing.Color.White;
             this.cbCharRuntimeRandom.Location = new System.Drawing.Point(281, 3);
@@ -364,6 +375,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // cbDoubleRuntimeRandom
             // 
+            this.cbDoubleRuntimeRandom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbDoubleRuntimeRandom.AutoSize = true;
             this.cbDoubleRuntimeRandom.ForeColor = System.Drawing.Color.White;
             this.cbDoubleRuntimeRandom.Location = new System.Drawing.Point(281, 3);
@@ -381,11 +393,14 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.lbDoubleMaximum.ForeColor = System.Drawing.Color.White;
             this.lbDoubleMaximum.Location = new System.Drawing.Point(3, 23);
             this.lbDoubleMaximum.Name = "lbDoubleMaximum";
-            this.lbDoubleMaximum.Size = new System.Drawing.Size(0, 13);
+            this.lbDoubleMaximum.Size = new System.Drawing.Size(68, 13);
             this.lbDoubleMaximum.TabIndex = 166;
+            this.lbDoubleMaximum.Text = "Maximum: 3";
             // 
             // tbDoubleMaximum
             // 
+            this.tbDoubleMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbDoubleMaximum.AutoSize = false;
             this.tbDoubleMaximum.Location = new System.Drawing.Point(3, 39);
             this.tbDoubleMaximum.Maximum = 350000;
@@ -409,6 +424,8 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbDoubleMinimum
             // 
+            this.tbDoubleMinimum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbDoubleMinimum.AutoSize = false;
             this.tbDoubleMinimum.Location = new System.Drawing.Point(3, 86);
             this.tbDoubleMinimum.Maximum = 0;
@@ -428,8 +445,9 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.lbDoubleMinimum.ForeColor = System.Drawing.Color.White;
             this.lbDoubleMinimum.Location = new System.Drawing.Point(3, 70);
             this.lbDoubleMinimum.Name = "lbDoubleMinimum";
-            this.lbDoubleMinimum.Size = new System.Drawing.Size(0, 13);
+            this.lbDoubleMinimum.Size = new System.Drawing.Size(71, 13);
             this.lbDoubleMinimum.TabIndex = 164;
+            this.lbDoubleMinimum.Text = "Minimum: -3";
             // 
             // pgFloat
             // 
@@ -449,6 +467,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // cbFloatRuntimeRandom
             // 
+            this.cbFloatRuntimeRandom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbFloatRuntimeRandom.AutoSize = true;
             this.cbFloatRuntimeRandom.ForeColor = System.Drawing.Color.White;
             this.cbFloatRuntimeRandom.Location = new System.Drawing.Point(281, 3);
@@ -466,11 +485,14 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.lbFloatMaximum.ForeColor = System.Drawing.Color.White;
             this.lbFloatMaximum.Location = new System.Drawing.Point(3, 23);
             this.lbFloatMaximum.Name = "lbFloatMaximum";
-            this.lbFloatMaximum.Size = new System.Drawing.Size(0, 13);
+            this.lbFloatMaximum.Size = new System.Drawing.Size(68, 13);
             this.lbFloatMaximum.TabIndex = 170;
+            this.lbFloatMaximum.Text = "Maximum: 3";
             // 
             // tbFloatMaximum
             // 
+            this.tbFloatMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbFloatMaximum.AutoSize = false;
             this.tbFloatMaximum.Location = new System.Drawing.Point(3, 39);
             this.tbFloatMaximum.Maximum = 350000;
@@ -483,6 +505,8 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbFloatMinimum
             // 
+            this.tbFloatMinimum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbFloatMinimum.AutoSize = false;
             this.tbFloatMinimum.Location = new System.Drawing.Point(3, 86);
             this.tbFloatMinimum.Maximum = 0;
@@ -502,8 +526,9 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.lbFloatMinimum.ForeColor = System.Drawing.Color.White;
             this.lbFloatMinimum.Location = new System.Drawing.Point(3, 70);
             this.lbFloatMinimum.Name = "lbFloatMinimum";
-            this.lbFloatMinimum.Size = new System.Drawing.Size(0, 13);
+            this.lbFloatMinimum.Size = new System.Drawing.Size(71, 13);
             this.lbFloatMinimum.TabIndex = 168;
+            this.lbFloatMinimum.Text = "Minimum: -3";
             // 
             // cbFloat
             // 
@@ -535,6 +560,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // cbLongRuntimeRandom
             // 
+            this.cbLongRuntimeRandom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbLongRuntimeRandom.AutoSize = true;
             this.cbLongRuntimeRandom.ForeColor = System.Drawing.Color.White;
             this.cbLongRuntimeRandom.Location = new System.Drawing.Point(281, 3);
@@ -552,11 +578,14 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.lbLongMaximum.ForeColor = System.Drawing.Color.White;
             this.lbLongMaximum.Location = new System.Drawing.Point(3, 23);
             this.lbLongMaximum.Name = "lbLongMaximum";
-            this.lbLongMaximum.Size = new System.Drawing.Size(0, 13);
+            this.lbLongMaximum.Size = new System.Drawing.Size(68, 13);
             this.lbLongMaximum.TabIndex = 174;
+            this.lbLongMaximum.Text = "Maximum: 3";
             // 
             // tbLongMaximum
             // 
+            this.tbLongMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbLongMaximum.AutoSize = false;
             this.tbLongMaximum.Location = new System.Drawing.Point(3, 39);
             this.tbLongMaximum.Maximum = 350;
@@ -569,6 +598,8 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbLongMinimum
             // 
+            this.tbLongMinimum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbLongMinimum.AutoSize = false;
             this.tbLongMinimum.Location = new System.Drawing.Point(3, 86);
             this.tbLongMinimum.Maximum = 0;
@@ -588,8 +619,9 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.lbLongMinimum.ForeColor = System.Drawing.Color.White;
             this.lbLongMinimum.Location = new System.Drawing.Point(3, 70);
             this.lbLongMinimum.Name = "lbLongMinimum";
-            this.lbLongMinimum.Size = new System.Drawing.Size(0, 13);
+            this.lbLongMinimum.Size = new System.Drawing.Size(71, 13);
             this.lbLongMinimum.TabIndex = 172;
+            this.lbLongMinimum.Text = "Minimum: -3";
             // 
             // cbLong
             // 
@@ -621,6 +653,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // cbIntRuntimeRandom
             // 
+            this.cbIntRuntimeRandom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbIntRuntimeRandom.AutoSize = true;
             this.cbIntRuntimeRandom.ForeColor = System.Drawing.Color.White;
             this.cbIntRuntimeRandom.Location = new System.Drawing.Point(281, 3);
@@ -638,11 +671,14 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.lbIntMaximum.ForeColor = System.Drawing.Color.White;
             this.lbIntMaximum.Location = new System.Drawing.Point(3, 23);
             this.lbIntMaximum.Name = "lbIntMaximum";
-            this.lbIntMaximum.Size = new System.Drawing.Size(0, 13);
+            this.lbIntMaximum.Size = new System.Drawing.Size(68, 13);
             this.lbIntMaximum.TabIndex = 178;
+            this.lbIntMaximum.Text = "Maximum: 3";
             // 
             // tbIntMaximum
             // 
+            this.tbIntMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbIntMaximum.AutoSize = false;
             this.tbIntMaximum.Location = new System.Drawing.Point(3, 39);
             this.tbIntMaximum.Maximum = 350;
@@ -655,6 +691,8 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbIntMinimum
             // 
+            this.tbIntMinimum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbIntMinimum.AutoSize = false;
             this.tbIntMinimum.Location = new System.Drawing.Point(3, 86);
             this.tbIntMinimum.Maximum = 0;
@@ -674,8 +712,9 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.lbIntMinimum.ForeColor = System.Drawing.Color.White;
             this.lbIntMinimum.Location = new System.Drawing.Point(3, 70);
             this.lbIntMinimum.Name = "lbIntMinimum";
-            this.lbIntMinimum.Size = new System.Drawing.Size(0, 13);
+            this.lbIntMinimum.Size = new System.Drawing.Size(71, 13);
             this.lbIntMinimum.TabIndex = 176;
+            this.lbIntMinimum.Text = "Minimum: -3";
             // 
             // cbInt
             // 
@@ -707,6 +746,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // cbShortRuntimeRandom
             // 
+            this.cbShortRuntimeRandom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbShortRuntimeRandom.AutoSize = true;
             this.cbShortRuntimeRandom.ForeColor = System.Drawing.Color.White;
             this.cbShortRuntimeRandom.Location = new System.Drawing.Point(281, 3);
@@ -724,11 +764,14 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.lbShortMaximum.ForeColor = System.Drawing.Color.White;
             this.lbShortMaximum.Location = new System.Drawing.Point(3, 23);
             this.lbShortMaximum.Name = "lbShortMaximum";
-            this.lbShortMaximum.Size = new System.Drawing.Size(0, 13);
+            this.lbShortMaximum.Size = new System.Drawing.Size(68, 13);
             this.lbShortMaximum.TabIndex = 182;
+            this.lbShortMaximum.Text = "Maximum: 3";
             // 
             // tbShortMaximum
             // 
+            this.tbShortMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbShortMaximum.AutoSize = false;
             this.tbShortMaximum.Location = new System.Drawing.Point(3, 39);
             this.tbShortMaximum.Maximum = 350;
@@ -741,6 +784,8 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbShortMinimum
             // 
+            this.tbShortMinimum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbShortMinimum.AutoSize = false;
             this.tbShortMinimum.Location = new System.Drawing.Point(3, 86);
             this.tbShortMinimum.Maximum = 0;
@@ -760,8 +805,9 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.lbShortMinimum.ForeColor = System.Drawing.Color.White;
             this.lbShortMinimum.Location = new System.Drawing.Point(3, 70);
             this.lbShortMinimum.Name = "lbShortMinimum";
-            this.lbShortMinimum.Size = new System.Drawing.Size(0, 13);
+            this.lbShortMinimum.Size = new System.Drawing.Size(71, 13);
             this.lbShortMinimum.TabIndex = 180;
+            this.lbShortMinimum.Text = "Minimum: -3";
             // 
             // cbShort
             // 
@@ -795,6 +841,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // cbByteRuntimeRandom
             // 
+            this.cbByteRuntimeRandom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbByteRuntimeRandom.AutoSize = true;
             this.cbByteRuntimeRandom.ForeColor = System.Drawing.Color.White;
             this.cbByteRuntimeRandom.Location = new System.Drawing.Point(281, 3);
@@ -812,11 +859,14 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.lbByteMaximum.ForeColor = System.Drawing.Color.White;
             this.lbByteMaximum.Location = new System.Drawing.Point(3, 20);
             this.lbByteMaximum.Name = "lbByteMaximum";
-            this.lbByteMaximum.Size = new System.Drawing.Size(0, 13);
+            this.lbByteMaximum.Size = new System.Drawing.Size(80, 13);
             this.lbByteMaximum.TabIndex = 186;
+            this.lbByteMaximum.Text = "Maximum: 127";
             // 
             // tbByteMaximum
             // 
+            this.tbByteMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbByteMaximum.AutoSize = false;
             this.tbByteMaximum.Location = new System.Drawing.Point(3, 36);
             this.tbByteMaximum.Maximum = 127;
@@ -829,6 +879,8 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbByteMinimum
             // 
+            this.tbByteMinimum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbByteMinimum.AutoSize = false;
             this.tbByteMinimum.Location = new System.Drawing.Point(3, 83);
             this.tbByteMinimum.Maximum = 0;
@@ -848,8 +900,9 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.lbByteMinimum.ForeColor = System.Drawing.Color.White;
             this.lbByteMinimum.Location = new System.Drawing.Point(3, 67);
             this.lbByteMinimum.Name = "lbByteMinimum";
-            this.lbByteMinimum.Size = new System.Drawing.Size(0, 13);
+            this.lbByteMinimum.Size = new System.Drawing.Size(83, 13);
             this.lbByteMinimum.TabIndex = 184;
+            this.lbByteMinimum.Text = "Minimum: -128";
             // 
             // cbByte
             // 
@@ -865,6 +918,9 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tabControl1
             // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.pgByte);
             this.tabControl1.Controls.Add(this.pgShort);
             this.tabControl1.Controls.Add(this.pgInt);
@@ -904,7 +960,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             this.cbString.AutoSize = true;
             this.cbString.ForeColor = System.Drawing.Color.White;
-            this.cbString.Location = new System.Drawing.Point(3, 2);
+            this.cbString.Location = new System.Drawing.Point(3, 3);
             this.cbString.Name = "cbString";
             this.cbString.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.cbString.Size = new System.Drawing.Size(99, 17);
@@ -917,19 +973,21 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.rbCharset.AutoSize = true;
             this.rbCharset.Checked = true;
             this.rbCharset.ForeColor = System.Drawing.Color.White;
-            this.rbCharset.Location = new System.Drawing.Point(103, 1);
+            this.rbCharset.Location = new System.Drawing.Point(103, 2);
             this.rbCharset.Name = "rbCharset";
             this.rbCharset.Size = new System.Drawing.Size(76, 17);
             this.rbCharset.TabIndex = 202;
             this.rbCharset.TabStop = true;
             this.rbCharset.Text = "Charset (5)";
             this.rbCharset.UseVisualStyleBackColor = true;
+            this.rbCharset.CheckedChanged += new System.EventHandler(this.rbCharset_CheckedChanged);
             // 
             // rbOnePerLine
             // 
+            this.rbOnePerLine.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.rbOnePerLine.AutoSize = true;
             this.rbOnePerLine.ForeColor = System.Drawing.Color.White;
-            this.rbOnePerLine.Location = new System.Drawing.Point(204, 1);
+            this.rbOnePerLine.Location = new System.Drawing.Point(204, 2);
             this.rbOnePerLine.Name = "rbOnePerLine";
             this.rbOnePerLine.Size = new System.Drawing.Size(82, 17);
             this.rbOnePerLine.TabIndex = 201;
@@ -938,11 +996,12 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // cbStringRuntimeRandom
             // 
+            this.cbStringRuntimeRandom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbStringRuntimeRandom.AutoSize = true;
             this.cbStringRuntimeRandom.Checked = true;
             this.cbStringRuntimeRandom.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbStringRuntimeRandom.ForeColor = System.Drawing.Color.White;
-            this.cbStringRuntimeRandom.Location = new System.Drawing.Point(281, 2);
+            this.cbStringRuntimeRandom.Location = new System.Drawing.Point(281, 3);
             this.cbStringRuntimeRandom.Name = "cbStringRuntimeRandom";
             this.cbStringRuntimeRandom.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.cbStringRuntimeRandom.Size = new System.Drawing.Size(138, 17);
@@ -962,13 +1021,16 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbStringText
             // 
+            this.tbStringText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbStringText.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(96)))), ((int)(((byte)(96)))));
             this.tbStringText.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.tbStringText.ForeColor = System.Drawing.Color.White;
-            this.tbStringText.Location = new System.Drawing.Point(3, 25);
+            this.tbStringText.Location = new System.Drawing.Point(3, 23);
             this.tbStringText.Multiline = true;
             this.tbStringText.Name = "tbStringText";
-            this.tbStringText.Size = new System.Drawing.Size(413, 93);
+            this.tbStringText.Size = new System.Drawing.Size(416, 93);
             this.tbStringText.TabIndex = 203;
             this.tbStringText.Tag = "color:normal";
             this.tbStringText.Text = "abcdefghijklmnop0123456789";
@@ -1016,6 +1078,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.pgString.ResumeLayout(false);
             this.pgString.PerformLayout();
             this.ResumeLayout(false);
+
         }
 
         private System.Windows.Forms.TabPage pgString;

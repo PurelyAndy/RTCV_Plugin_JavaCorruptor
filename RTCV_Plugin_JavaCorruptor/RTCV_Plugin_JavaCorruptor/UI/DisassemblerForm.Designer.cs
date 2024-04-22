@@ -1,4 +1,4 @@
-﻿namespace Java.UI
+﻿namespace Java_Corruptor.UI
 {
     partial class DisassemblerForm
     {

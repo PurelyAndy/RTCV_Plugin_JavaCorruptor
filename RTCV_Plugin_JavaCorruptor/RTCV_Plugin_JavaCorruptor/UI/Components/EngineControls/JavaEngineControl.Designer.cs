@@ -38,7 +38,9 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // engineGroupBox
             // 
-            this.engineGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.engineGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.engineGroupBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.engineGroupBox.Controls.Add(this.placeholderComboBox);
             this.engineGroupBox.Location = new System.Drawing.Point(0, 3);
@@ -56,7 +58,14 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.placeholderComboBox.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.placeholderComboBox.ForeColor = System.Drawing.Color.White;
             this.placeholderComboBox.FormattingEnabled = true;
-            this.placeholderComboBox.Items.AddRange(new object[] { "Vector Engine", "Arithmetic Engine", "Function Engine", "Custom Engine", "String Engine", "Rounding Engine", "Nuker Engine" });
+            this.placeholderComboBox.Items.AddRange(new object[] {
+            "Vector Engine",
+            "Arithmetic Engine",
+            "Function Engine",
+            "Custom Engine",
+            "String Engine",
+            "Rounding Engine",
+            "Nuker Engine"});
             this.placeholderComboBox.Location = new System.Drawing.Point(0, 6);
             this.placeholderComboBox.Name = "placeholderComboBox";
             this.placeholderComboBox.Size = new System.Drawing.Size(165, 21);
@@ -74,6 +83,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.Tag = "color:dark1";
             this.engineGroupBox.ResumeLayout(false);
             this.ResumeLayout(false);
+
         }
 
         #endregion

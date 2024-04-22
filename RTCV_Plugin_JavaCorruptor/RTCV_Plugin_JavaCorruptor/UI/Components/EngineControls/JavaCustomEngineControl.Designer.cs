@@ -41,16 +41,20 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.btnLoad = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.engineGroupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // engineGroupBox
             // 
+            this.engineGroupBox.Controls.Add(this.splitContainer1);
             this.engineGroupBox.Controls.Add(this.btnLoad);
             this.engineGroupBox.Controls.Add(this.btnSaveAs);
-            this.engineGroupBox.Controls.Add(this.tbReplace);
             this.engineGroupBox.Controls.Add(this.btnSave);
-            this.engineGroupBox.Controls.Add(this.tbFind);
             this.engineGroupBox.Controls.Add(this.label2);
             this.engineGroupBox.Controls.Add(this.label1);
             this.engineGroupBox.Controls.Add(this.label19);
@@ -58,11 +62,10 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.engineGroupBox.Controls.SetChildIndex(this.placeholderComboBox, 0);
             this.engineGroupBox.Controls.SetChildIndex(this.label1, 0);
             this.engineGroupBox.Controls.SetChildIndex(this.label2, 0);
-            this.engineGroupBox.Controls.SetChildIndex(this.tbFind, 0);
             this.engineGroupBox.Controls.SetChildIndex(this.btnSave, 0);
-            this.engineGroupBox.Controls.SetChildIndex(this.tbReplace, 0);
             this.engineGroupBox.Controls.SetChildIndex(this.btnSaveAs, 0);
             this.engineGroupBox.Controls.SetChildIndex(this.btnLoad, 0);
+            this.engineGroupBox.Controls.SetChildIndex(this.splitContainer1, 0);
             // 
             // label19
             // 
@@ -71,9 +74,9 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.label19.ForeColor = System.Drawing.Color.White;
             this.label19.Location = new System.Drawing.Point(169, 12);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(196, 13);
+            this.label19.Size = new System.Drawing.Size(251, 13);
             this.label19.TabIndex = 148;
-            this.label19.Text = "You must save or load before corrupting";
+            this.label19.Text = "Right click \"Corruption Engine\" and detach to resize";
             // 
             // label1
             // 
@@ -88,6 +91,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // label2
             // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.label2.ForeColor = System.Drawing.Color.White;
@@ -100,20 +104,21 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // tbFind
             // 
             this.tbFind.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(96)))), ((int)(((byte)(96)))));
+            this.tbFind.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tbFind.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.tbFind.ForeColor = System.Drawing.Color.White;
-            this.tbFind.Location = new System.Drawing.Point(6, 51);
+            this.tbFind.Location = new System.Drawing.Point(0, 0);
             this.tbFind.Multiline = true;
             this.tbFind.Name = "tbFind";
-            this.tbFind.Size = new System.Drawing.Size(212, 127);
+            this.tbFind.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.tbFind.Size = new System.Drawing.Size(215, 127);
             this.tbFind.TabIndex = 162;
             this.tbFind.Tag = "color:normal";
             this.tbFind.Text = "// Find any add instruction\r\n<(I|L|F|D)>ADD";
             // 
             // btnSave
             // 
-            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.btnSave.BackColor = System.Drawing.Color.Gray;
             this.btnSave.FlatAppearance.BorderSize = 0;
             this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -132,11 +137,13 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // tbReplace
             // 
             this.tbReplace.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(96)))), ((int)(((byte)(96)))));
+            this.tbReplace.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tbReplace.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.tbReplace.ForeColor = System.Drawing.Color.White;
-            this.tbReplace.Location = new System.Drawing.Point(223, 51);
+            this.tbReplace.Location = new System.Drawing.Point(0, 0);
             this.tbReplace.Multiline = true;
             this.tbReplace.Name = "tbReplace";
+            this.tbReplace.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.tbReplace.Size = new System.Drawing.Size(212, 127);
             this.tbReplace.TabIndex = 164;
             this.tbReplace.Tag = "color:normal";
@@ -145,8 +152,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // btnSaveAs
             // 
-            this.btnSaveAs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSaveAs.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.btnSaveAs.BackColor = System.Drawing.Color.Gray;
             this.btnSaveAs.FlatAppearance.BorderSize = 0;
             this.btnSaveAs.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -164,8 +170,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // btnLoad
             // 
-            this.btnLoad.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnLoad.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.btnLoad.BackColor = System.Drawing.Color.Gray;
             this.btnLoad.FlatAppearance.BorderSize = 0;
             this.btnLoad.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -181,6 +186,27 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.btnLoad.UseVisualStyleBackColor = false;
             this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
             // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.IsSplitterFixed = true;
+            this.splitContainer1.Location = new System.Drawing.Point(6, 51);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.tbFind);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.tbReplace);
+            this.splitContainer1.Size = new System.Drawing.Size(430, 127);
+            this.splitContainer1.SplitterDistance = 215;
+            this.splitContainer1.SplitterWidth = 3;
+            this.splitContainer1.TabIndex = 167;
+            // 
             // JavaCustomEngineControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -188,6 +214,12 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.Name = "JavaCustomEngineControl";
             this.engineGroupBox.ResumeLayout(false);
             this.engineGroupBox.PerformLayout();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -203,5 +235,6 @@ namespace Java_Corruptor.UI.Components.EngineControls
         private SaveFileDialog saveFileDialog1;
         private Button btnLoad;
         private OpenFileDialog openFileDialog1;
+        private SplitContainer splitContainer1;
     }
 }

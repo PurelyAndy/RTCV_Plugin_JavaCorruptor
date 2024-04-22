@@ -79,6 +79,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // lbPercentage
             // 
+            this.lbPercentage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lbPercentage.AutoSize = true;
             this.lbPercentage.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.lbPercentage.ForeColor = System.Drawing.Color.White;
@@ -90,6 +91,8 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbPercentage
             // 
+            this.tbPercentage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbPercentage.AutoSize = false;
             this.tbPercentage.Location = new System.Drawing.Point(3, 139);
             this.tbPercentage.Maximum = 100;
@@ -113,6 +116,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // cbMode
             // 
+            this.cbMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbMode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(96)))), ((int)(((byte)(96)))));
             this.cbMode.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cbMode.Font = new System.Drawing.Font("Segoe UI", 8F);
@@ -134,6 +138,8 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbCharacters
             // 
+            this.tbCharacters.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbCharacters.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(96)))), ((int)(((byte)(96)))));
             this.tbCharacters.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.tbCharacters.ForeColor = System.Drawing.Color.White;
@@ -147,6 +153,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // lbMode
             // 
+            this.lbMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lbMode.AutoSize = true;
             this.lbMode.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.lbMode.ForeColor = System.Drawing.Color.White;
@@ -158,6 +165,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // cbOnlySpaces
             // 
+            this.cbOnlySpaces.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbOnlySpaces.AutoSize = true;
             this.cbOnlySpaces.Checked = true;
             this.cbOnlySpaces.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -172,6 +180,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // cbRuntimeRandom
             // 
+            this.cbRuntimeRandom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbRuntimeRandom.AutoSize = true;
             this.cbRuntimeRandom.ForeColor = System.Drawing.Color.White;
             this.cbRuntimeRandom.Location = new System.Drawing.Point(261, 91);

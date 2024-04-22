@@ -79,6 +79,50 @@ public partial class NukerEngineControl
     private bool _byte, _short, _int, _long, _float, _double, _char, _bool, _void, _string;
     private bool _byteRuntimeRandom, _shortRuntimeRandom, _intRuntimeRandom, _longRuntimeRandom, _floatRuntimeRandom, _doubleRuntimeRandom, _charRuntimeRandom, _boolRuntimeRandom, _stringRuntimeRandom;
     private double _byteMinimum, _byteMaximum, _shortMinimum, _shortMaximum, _intMinimum, _intMaximum, _longMinimum, _longMaximum, _floatMinimum, _floatMaximum, _doubleMinimum, _doubleMaximum;
+
+    private void rbCharset_CheckedChanged(object sender, EventArgs e)
+    {
+        if (!rbCharset.Checked)
+            return;
+
+        // feeling lazy right now
+        Form inputForm = new()
+        {
+            Width = 400,
+            Height = 400,
+            Text = "Close the window when you're done",
+            FormBorderStyle = FormBorderStyle.FixedDialog,
+            MaximizeBox = false,
+            MinimizeBox = false,
+            StartPosition = FormStartPosition.CenterScreen,
+        };
+
+        System.Windows.Forms.Label label = new()
+        {
+            Text = $"Enter the number of characters to use ({_charsetAmount})",
+            Location = new(10, 10),
+            AutoSize = true,
+        };
+        inputForm.Controls.Add(label);
+
+        TrackBar trackBar = new()
+        {
+            Minimum = 1,
+            Maximum = 300,
+            Location = new(10, 30),
+            Width = 380,
+            TickFrequency = 10,
+            Value = 5,
+        };
+        trackBar.Scroll += (_, _) =>
+            label.Text = $"Enter the number of characters to use ({_charsetAmount = trackBar.Value})";
+        inputForm.Controls.Add(trackBar);
+
+        inputForm.ShowDialog();
+
+        rbCharset.Text = $"Charset ({_charsetAmount})";
+    }
+
     private string _characters;
     private bool _true, _false;
     private string _stringText;
@@ -560,54 +604,22 @@ public partial class NukerEngineControl
         // We can do this because the trackbar names are tb{Type}Minimum/Maximum, and the labels are lb{Type}Minimum/Maximum
         string associatedLabelName = "l" + ((TrackBar)sender).Name[1..];
         System.Windows.Forms.Label associatedLabel = (System.Windows.Forms.Label)Controls.Find(associatedLabelName, true)[0];
-        associatedLabel.Text = ((TrackBar)sender).Value.ToString();
+        bool max = associatedLabelName.EndsWith("Maximum");
+        if (max)
+            associatedLabel.Text = "Maximum: " + ((TrackBar)sender).Value.ToString();
+        else
+            associatedLabel.Text = "Minimum: " + ((TrackBar)sender).Value.ToString();
     }
 
     private void UpdateFloatTrackbar(object sender, EventArgs e)
     {
         string associatedLabelName = "l" + ((TrackBar)sender).Name[1..];
         System.Windows.Forms.Label associatedLabel = (System.Windows.Forms.Label)Controls.Find(associatedLabelName, true)[0];
-        associatedLabel.Text = ((double)((TrackBar)sender).Value / 1000).ToString(CultureInfo.CurrentCulture);
-    }
-
-    private void rbCharset_Click(object sender, EventArgs e)
-    {
-        // feeling lazy right now
-        Form inputForm = new()
-        {
-            Width = 400,
-            Height = 400,
-            Text = "Close the window when you're done",
-            FormBorderStyle = FormBorderStyle.FixedDialog,
-            MaximizeBox = false,
-            MinimizeBox = false,
-            StartPosition = FormStartPosition.CenterScreen,
-        };
-
-        System.Windows.Forms.Label label = new()
-        {
-            Text = $"Enter the number of characters to use ({_charsetAmount})",
-            Location = new(10, 10),
-            AutoSize = true,
-        };
-        inputForm.Controls.Add(label);
-
-        TrackBar trackBar = new()
-        {
-            Minimum = 1,
-            Maximum = 300,
-            Location = new(10, 30),
-            Width = 380,
-            TickFrequency = 10,
-            Value = 5,
-        };
-        trackBar.Scroll += (_, _) =>
-            label.Text = $"Enter the number of characters to use ({_charsetAmount = trackBar.Value})";
-        inputForm.Controls.Add(trackBar);
-
-        inputForm.ShowDialog();
-
-        rbCharset.Text = $"Charset ({_charsetAmount})";
+        bool max = associatedLabelName.EndsWith("Maximum");
+        if (max)
+            associatedLabel.Text = "Maximum: " + ((double)((TrackBar)sender).Value / 1000).ToString(CultureInfo.CurrentCulture);
+        else
+            associatedLabel.Text = "Minimum: " + ((double)((TrackBar)sender).Value / 1000).ToString(CultureInfo.CurrentCulture);
     }
 
     private void cbFalse_CheckedChanged(object sender, EventArgs e)
