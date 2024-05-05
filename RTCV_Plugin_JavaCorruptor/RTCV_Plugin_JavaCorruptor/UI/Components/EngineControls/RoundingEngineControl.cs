@@ -11,7 +11,7 @@ public partial class RoundingEngineControl
     //TODO: although this is a double, the math doesn't work out for decimal amounts of places. 
     // to elaborate here's an example. (2.56 * (10 ^ 2)) / (10 ^ 1) = 2.6. (2.56 * (10 ^ 2)) / (10 ^ 2) = 2.56.
     // but what if we do (2.56 * (10 ^ 1.5)) / (10 ^ 1.5)? you might expect it to be 2.58, since that's halfway between 2.5 and 2.6, but it's not because that's not how math works.
-    // i would like it to be 2.58, but i'm not sure what the proper equation is.
+    // i would like it to be 2.58, but i'm not sure what the proper equation is. google has been unhelpful so far, and i'm not too clever when it comes to math.
     // i'm going to leave it as is for now because maybe some interesting pattern comes out of it anyway.
     private double _places;
     private bool _constants, _mathOperations, _variableLoads, _fieldLoads, _returnValues;

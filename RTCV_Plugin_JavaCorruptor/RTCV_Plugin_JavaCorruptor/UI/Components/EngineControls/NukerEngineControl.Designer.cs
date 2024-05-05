@@ -32,9 +32,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NukerEngineControl));
             this.label19 = new System.Windows.Forms.Label();
-            this.btnHelp = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.pgVoid = new System.Windows.Forms.TabPage();
             this.cbSkipInit = new System.Windows.Forms.CheckBox();
@@ -128,12 +126,10 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // engineGroupBox
             // 
-            this.engineGroupBox.Controls.Add(this.btnHelp);
             this.engineGroupBox.Controls.Add(this.tabControl1);
             this.engineGroupBox.Controls.Add(this.label19);
             this.engineGroupBox.Controls.SetChildIndex(this.label19, 0);
             this.engineGroupBox.Controls.SetChildIndex(this.tabControl1, 0);
-            this.engineGroupBox.Controls.SetChildIndex(this.btnHelp, 0);
             this.engineGroupBox.Controls.SetChildIndex(this.placeholderComboBox, 0);
             // 
             // label19
@@ -145,24 +141,6 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(0, 12);
             this.label19.TabIndex = 170;
-            // 
-            // btnHelp
-            // 
-            this.btnHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnHelp.BackColor = System.Drawing.Color.Transparent;
-            this.btnHelp.FlatAppearance.BorderSize = 0;
-            this.btnHelp.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnHelp.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnHelp.ForeColor = System.Drawing.Color.White;
-            this.btnHelp.Image = ((System.Drawing.Image)(resources.GetObject("btnHelp.Image")));
-            this.btnHelp.Location = new System.Drawing.Point(417, 12);
-            this.btnHelp.Name = "btnHelp";
-            this.btnHelp.Size = new System.Drawing.Size(19, 19);
-            this.btnHelp.TabIndex = 215;
-            this.btnHelp.Tag = "color:dark1";
-            this.toolTip1.SetToolTip(this.btnHelp, "what the hell?");
-            this.btnHelp.UseVisualStyleBackColor = false;
-            this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
             // 
             // pgVoid
             // 
@@ -318,9 +296,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbCharacters
             // 
-            this.tbCharacters.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbCharacters.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbCharacters.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(96)))), ((int)(((byte)(96)))));
             this.tbCharacters.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.tbCharacters.ForeColor = System.Drawing.Color.White;
@@ -399,8 +375,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbDoubleMaximum
             // 
-            this.tbDoubleMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbDoubleMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbDoubleMaximum.AutoSize = false;
             this.tbDoubleMaximum.Location = new System.Drawing.Point(3, 39);
             this.tbDoubleMaximum.Maximum = 350000;
@@ -424,8 +399,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbDoubleMinimum
             // 
-            this.tbDoubleMinimum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbDoubleMinimum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbDoubleMinimum.AutoSize = false;
             this.tbDoubleMinimum.Location = new System.Drawing.Point(3, 86);
             this.tbDoubleMinimum.Maximum = 0;
@@ -491,8 +465,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbFloatMaximum
             // 
-            this.tbFloatMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbFloatMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbFloatMaximum.AutoSize = false;
             this.tbFloatMaximum.Location = new System.Drawing.Point(3, 39);
             this.tbFloatMaximum.Maximum = 350000;
@@ -505,8 +478,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbFloatMinimum
             // 
-            this.tbFloatMinimum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbFloatMinimum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbFloatMinimum.AutoSize = false;
             this.tbFloatMinimum.Location = new System.Drawing.Point(3, 86);
             this.tbFloatMinimum.Maximum = 0;
@@ -584,8 +556,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbLongMaximum
             // 
-            this.tbLongMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbLongMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbLongMaximum.AutoSize = false;
             this.tbLongMaximum.Location = new System.Drawing.Point(3, 39);
             this.tbLongMaximum.Maximum = 350;
@@ -598,8 +569,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbLongMinimum
             // 
-            this.tbLongMinimum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbLongMinimum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbLongMinimum.AutoSize = false;
             this.tbLongMinimum.Location = new System.Drawing.Point(3, 86);
             this.tbLongMinimum.Maximum = 0;
@@ -677,8 +647,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbIntMaximum
             // 
-            this.tbIntMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbIntMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbIntMaximum.AutoSize = false;
             this.tbIntMaximum.Location = new System.Drawing.Point(3, 39);
             this.tbIntMaximum.Maximum = 350;
@@ -691,8 +660,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbIntMinimum
             // 
-            this.tbIntMinimum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbIntMinimum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbIntMinimum.AutoSize = false;
             this.tbIntMinimum.Location = new System.Drawing.Point(3, 86);
             this.tbIntMinimum.Maximum = 0;
@@ -770,8 +738,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbShortMaximum
             // 
-            this.tbShortMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbShortMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbShortMaximum.AutoSize = false;
             this.tbShortMaximum.Location = new System.Drawing.Point(3, 39);
             this.tbShortMaximum.Maximum = 350;
@@ -784,8 +751,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbShortMinimum
             // 
-            this.tbShortMinimum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbShortMinimum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbShortMinimum.AutoSize = false;
             this.tbShortMinimum.Location = new System.Drawing.Point(3, 86);
             this.tbShortMinimum.Maximum = 0;
@@ -865,8 +831,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbByteMaximum
             // 
-            this.tbByteMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbByteMaximum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbByteMaximum.AutoSize = false;
             this.tbByteMaximum.Location = new System.Drawing.Point(3, 36);
             this.tbByteMaximum.Maximum = 127;
@@ -879,8 +844,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbByteMinimum
             // 
-            this.tbByteMinimum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbByteMinimum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbByteMinimum.AutoSize = false;
             this.tbByteMinimum.Location = new System.Drawing.Point(3, 83);
             this.tbByteMinimum.Maximum = 0;
@@ -918,9 +882,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.pgByte);
             this.tabControl1.Controls.Add(this.pgShort);
             this.tabControl1.Controls.Add(this.pgInt);
@@ -965,7 +927,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.cbString.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.cbString.Size = new System.Drawing.Size(99, 17);
             this.cbString.TabIndex = 199;
-            this.cbString.Text = "Strings enabled";
+            this.cbString.Text = "Enabled";
             this.cbString.UseVisualStyleBackColor = true;
             // 
             // rbCharset
@@ -1021,9 +983,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbStringText
             // 
-            this.tbStringText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbStringText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbStringText.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(96)))), ((int)(((byte)(96)))));
             this.tbStringText.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.tbStringText.ForeColor = System.Drawing.Color.White;
@@ -1078,8 +1038,10 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.pgString.ResumeLayout(false);
             this.pgString.PerformLayout();
             this.ResumeLayout(false);
-
         }
+
+        #endregion
+
 
         private System.Windows.Forms.TabPage pgString;
 
@@ -1098,9 +1060,6 @@ namespace Java_Corruptor.UI.Components.EngineControls
         public System.Windows.Forms.CheckBox cbInt;
         public System.Windows.Forms.CheckBox cbFloat;
         public System.Windows.Forms.CheckBox cbDouble;
-
-        #endregion
-
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage pgByte;
@@ -1140,7 +1099,6 @@ namespace Java_Corruptor.UI.Components.EngineControls
         public System.Windows.Forms.CheckBox cbFloatRuntimeRandom;
         public System.Windows.Forms.CheckBox cbDoubleRuntimeRandom;
         public System.Windows.Forms.CheckBox cbCharRuntimeRandom;
-        private System.Windows.Forms.Button btnHelp;
         private System.Windows.Forms.ToolTip toolTip1;
         public System.Windows.Forms.CheckBox cbSkipClinit;
         public System.Windows.Forms.CheckBox cbSkipInit;

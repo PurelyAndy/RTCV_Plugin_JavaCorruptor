@@ -15,7 +15,7 @@ public class AsmParser
     private static readonly List<string> _precalculatedLabels;
     static AsmParser()
     {
-        _precalculatedLabels = new();
+        _precalculatedLabels = [];
         for (int i = 0; i < 2400; i++) //2400 is approximately the largest number of labels 
         {
             const int divisor = 26;

@@ -44,7 +44,7 @@ namespace Java_Corruptor.Properties {
         internal static ResourceManager ResourceManager {
             get {
                 if (ReferenceEquals(resourceMan, null)) {
-                    ResourceManager temp = new ResourceManager("JAVACORRUPTOR.Properties.Resources", typeof(Resources).Assembly);
+                    ResourceManager temp = new ResourceManager("Java_Corruptor.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

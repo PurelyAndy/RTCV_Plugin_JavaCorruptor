@@ -26,8 +26,8 @@ namespace Java_Corruptor.UI.Components.EngineControls
 
         #region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
+        /// <summary>
+        /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
@@ -93,11 +93,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.lbeOperations.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.lbeOperations.ForeColor = System.Drawing.Color.White;
             this.lbeOperations.FormattingEnabled = true;
-            this.lbeOperations.Items.AddRange(new object[] {
-            "Addition",
-            "Subtraction",
-            "Multiplication",
-            "Division"});
+            this.lbeOperations.Items.AddRange(new object[] { "Addition", "Subtraction", "Multiplication", "Division" });
             this.lbeOperations.Location = new System.Drawing.Point(352, 126);
             this.lbeOperations.Name = "lbeOperations";
             this.lbeOperations.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
@@ -189,7 +185,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.tbDecimalPlaces.AutoSize = false;
             this.tbDecimalPlaces.Location = new System.Drawing.Point(3, 59);
             this.tbDecimalPlaces.Maximum = 10000;
-            this.tbDecimalPlaces.Minimum = 10;
+            this.tbDecimalPlaces.Minimum = -3000;
             this.tbDecimalPlaces.Name = "tbDecimalPlaces";
             this.tbDecimalPlaces.Size = new System.Drawing.Size(179, 32);
             this.tbDecimalPlaces.TabIndex = 170;
@@ -205,12 +201,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.lbeKinds.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.lbeKinds.ForeColor = System.Drawing.Color.White;
             this.lbeKinds.FormattingEnabled = true;
-            this.lbeKinds.Items.AddRange(new object[] {
-            "Constants",
-            "Math operations",
-            "Variable loads",
-            "Field loads",
-            "Return values"});
+            this.lbeKinds.Items.AddRange(new object[] { "Constants", "Math operations", "Variable loads", "Field loads", "Return values" });
             this.lbeKinds.Location = new System.Drawing.Point(345, 31);
             this.lbeKinds.Name = "lbeKinds";
             this.lbeKinds.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
@@ -255,7 +246,6 @@ namespace Java_Corruptor.UI.Components.EngineControls
             ((System.ComponentModel.ISupportInitialize)(this.tbDecimalPlaces)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion
@@ -269,7 +259,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
         public ListBoxExtended lbeKinds;
         private Label label2;
         private Label lbDecimalPlaces;
-        public TrackBar tbDecimalPlaces;
+        public System.Windows.Forms.TrackBar tbDecimalPlaces;
         private Label label3;
     }
 }

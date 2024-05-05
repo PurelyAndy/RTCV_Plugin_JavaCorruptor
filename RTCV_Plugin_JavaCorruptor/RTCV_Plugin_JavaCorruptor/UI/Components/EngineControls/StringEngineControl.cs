@@ -165,7 +165,7 @@ public partial class StringEngineControl
                 StringBuilder sb = new(cst);
 
                 for (int i = 0; i < cst.Length; i++)
-                    if (JavaGeneralParametersForm.Random.NextDouble() < _percentage)
+                    if (JavaGeneralParametersForm.Random.NextDouble() < _percentage / 2) // divide by 2 because each swap changes 2 characters
                     {
                         int j = JavaGeneralParametersForm.Random.Next(cst.Length);
                         (sb[i], sb[j]) = (sb[j], sb[i]); //this is such a cool feature
@@ -180,7 +180,7 @@ public partial class StringEngineControl
                 StringBuilder sb = new(cst);
 
                 for (int i = 0; i < cst.Length; i++)
-                    if (JavaGeneralParametersForm.Random.NextDouble() < _percentage)
+                    if (JavaGeneralParametersForm.Random.NextDouble() < _percentage / 2) // divide by 2 because each swap changes 2 characters
                     {
                         int r = JavaGeneralParametersForm.Random.Next(2);
                         int j = (r == 0 ? -1 : 1) + i;

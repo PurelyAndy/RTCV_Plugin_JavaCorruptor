@@ -594,11 +594,6 @@ public partial class NukerEngineControl
         }
     }
 
-    private void btnHelp_Click(object sender, EventArgs e)
-    {
-        // TODO: write an explanation for this labyrinth of an engine
-    }
-
     private void UpdateTrackbar(object sender, EventArgs e)
     {
         // We can do this because the trackbar names are tb{Type}Minimum/Maximum, and the labels are lb{Type}Minimum/Maximum
