@@ -63,7 +63,12 @@ public partial class ArithmeticEngineControl
 
     public override InsnList DoCorrupt(AbstractInsnNode insn, AsmParser parser, ref int replaces)
     {
-        InsnList list = new() { insn };
+        InsnList list = [insn];
+        if (_limiters.Length == 0 || _operations.Length == 0)
+        {
+            Logger.Warn("No limiters or no operations selected.");
+            return list;
+        }
 
         int opcode = insn.Opcode;
         if (opcode is < 0x60 or > 0x6f)

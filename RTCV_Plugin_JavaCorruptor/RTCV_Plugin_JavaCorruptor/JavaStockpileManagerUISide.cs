@@ -34,61 +34,34 @@ public static class JavaStockpileManagerUISide
     public static bool StashAfterOperation { get; set; } = true;
     internal static readonly List<JavaStashKey> StashHistory = new();
 
-    private static void PreApplyStashkey(bool clearUnitsBeforeApply = true)
+    internal static bool ApplyStashkey(JavaStashKey sk, bool clearUnitsBeforeApply = true)
     {
-        /*if (clearUnitsBeforeApply) TODO: something about this
-        {
-            LocalNetCoreRouter.Route(NetCore.Endpoints.CorruptCore, NetCore.Commands.Remote.ClearStepBlastUnits, null, true);
-        }
-
-        bool UseSavestates = (bool)AllSpec.VanguardSpec[VSPEC.SUPPORTS_SAVESTATES];
-        LocalNetCoreRouter.Route(NetCore.Endpoints.Vanguard, NetCore.Commands.Remote.PreCorruptAction, null, true);*/
-    }
-
-    private static void PostApplyStashkey(JavaStashKey sk)
-    {
-        /*bool UseSavestates = (bool)AllSpec.VanguardSpec[VSPEC.SUPPORTS_SAVESTATES];
-        bool UseRealtime = (bool)AllSpec.VanguardSpec[VSPEC.SUPPORTS_REALTIME];
-
-        if (Render.RenderAtLoad && UseRealtime)
-        {
-            Render.StartRender();
-        }
-
-        LocalNetCoreRouter.Route(NetCore.Endpoints.Vanguard, NetCore.Commands.Remote.PostCorruptAction);
-
-        SyncObjectSingleton.FormExecute(() =>
-        {
-            UISideHooks.OnStashkeyLoaded(sk);
-        });*/
-    }
-
-    internal static bool ApplyStashkey(JavaStashKey sk, bool loadBeforeOperation = true, bool clearUnitsBeforeApply = true)
-    {
-        PreApplyStashkey(clearUnitsBeforeApply);
-
         bool isCorruptionApplied = sk?.BlastLayer?.MappedLayers?.Count > 0;
 
-        if (loadBeforeOperation)
+        bool mergeWithCurrent = !clearUnitsBeforeApply;
+
+        JavaCorruptionEngineForm ceForm = S.GET<JavaCorruptionEngineForm>();
+        string oldJarName = (string)AllSpec.VanguardSpec[VSPEC.OPENROMFILENAME];
+
+        AsmUtilities.Classes.Clear();
+
+        AllSpec.VanguardSpec.Update(VSPEC.OPENROMFILENAME, sk.JarFilename);
+
+        SerializedInsnBlastLayerCollection bl = sk.BlastLayer;
+
+        if (mergeWithCurrent)
         {
-            if (!LoadState(sk))
+            foreach (var kv in bl)
             {
-                return isCorruptionApplied;
+                JavaCorruptionEngineForm.BlastLayerCollection.Add(kv);
             }
         }
         else
-        {
-            bool mergeWithCurrent = !clearUnitsBeforeApply;
+            JavaCorruptionEngineForm.BlastLayerCollection = bl;
+        
+        ceForm.Corrupt();
+        AllSpec.VanguardSpec.Update(VSPEC.OPENROMFILENAME, oldJarName);
 
-            //APPLYBLASTLAYER
-            //Param 0 is BlastLayer
-            //Param 1 is storeUncorruptBackup
-            //Param 2 is MergeWithCurrent (for fixing blast toggle with inject)
-            //LocalNetCoreRouter.Route(Endpoints.CorruptCore, RTCV.NetCore.Commands.Basic.ApplyBlastLayer, new object[] { sk?.BlastLayer, true, mergeWithCurrent }, true);
-            
-        }
-
-        PostApplyStashkey(sk);
         return isCorruptionApplied;
     }
 
@@ -125,7 +98,6 @@ public static class JavaStockpileManagerUISide
             saveStateWord = s;
         }
 
-        PreApplyStashkey();
         JavaStashKey psk = CurrentSavestateStashKey;
 
         bool UseSavestates = (bool)AllSpec.VanguardSpec[VSPEC.SUPPORTS_SAVESTATES];
@@ -176,7 +148,6 @@ public static class JavaStockpileManagerUISide
             StashHistory.Add(CurrentStashkey);
         }
 
-        PostApplyStashkey(CurrentStashkey);
         return isCorruptionApplied;
     }
 
@@ -185,96 +156,8 @@ public static class JavaStockpileManagerUISide
         StashHistory.RemoveAt(0);
     }
 
-    internal static bool InjectFromStashkey(JavaStashKey sk, bool loadBeforeOperation = true)
-    {
-        /*string saveStateWord = "Savestate"; TODO: something about this
-
-        object renameSaveStateWord = AllSpec.VanguardSpec[VSPEC.RENAME_SAVESTATE];
-        if (renameSaveStateWord != null && renameSaveStateWord is string s)
-        {
-            saveStateWord = s;
-        }
-
-        PreApplyStashkey();
-
-        JavaStashKey psk = CurrentSavestateStashKey;
-
-        if (psk == null)
-        {
-            MessageBox.Show($"The Glitch Harvester could not perform the INJECT action\n\nEither no {saveStateWord} Box was selected in the {saveStateWord} Manager\nor the {saveStateWord} Box itself is empty.");
-            return false;
-        }
-
-        if (sk == null)
-        {
-            throw new ArgumentNullException(nameof(sk));
-        }
-
-        if (psk.SystemCore != sk.SystemCore && !RtcCore.AllowCrossCoreCorruption)
-        {
-            MessageBox.Show("Merge attempt failed: Core mismatch\n\n" + $"{psk.GameName} -> {psk.SystemName} -> {psk.SystemCore}\n{sk.GameName} -> {sk.SystemName} -> {sk.SystemCore}");
-            return false;
-        }
-
-        CurrentStashkey = new JavaStashKey(RtcCore.GetRandomKey(), psk.ParentKey, sk.BlastLayer)
-        {
-            JarFilename = psk.JarFilename,
-            SystemName = psk.SystemName,
-            SystemCore = psk.SystemCore,
-            GameName = psk.GameName,
-            SyncSettings = psk.SyncSettings,
-            StateLocation = psk.StateLocation
-        };
-
-        if (loadBeforeOperation)
-        {
-            if (!LoadState(CurrentStashkey))
-            {
-                return false;
-            }
-        }
-        else
-        {
-            LocalNetCoreRouter.Route(NetCore.Endpoints.CorruptCore, NetCore.Commands.Basic.ApplyBlastLayer, new object[] { CurrentStashkey.BlastLayer, true }, true);
-        }
-
-        bool isCorruptionApplied = CurrentStashkey?.BlastLayer?.Layer?.Count > 0;
-
-        if (StashAfterOperation)
-        {
-            StashHistory.Add(CurrentStashkey);
-        }
-
-        PostApplyStashkey(sk);
-        return isCorruptionApplied;*/
-        return false;
-    }
-
-    internal static bool OriginalFromStashkey(JavaStashKey sk)
-    {
-        PreApplyStashkey();
-
-        if (sk == null)
-        {
-            MessageBox.Show("The Glitch Harvester could not perform the ORIGINAL action\n\nHave you made a corruption yet?");
-            return false;
-        }
-
-        bool isCorruptionApplied = false;
-
-        if (!LoadState(sk, true, false))
-        {
-            return isCorruptionApplied;
-        }
-
-        PostApplyStashkey(sk);
-        return isCorruptionApplied;
-    }
-
     internal static bool MergeStashkeys(List<JavaStashKey> sks, bool loadBeforeOperation = true)
     {
-        PreApplyStashkey();
-
         if (sks?.Count > 1)
         {
             JavaStashKey master = sks[0];
@@ -338,36 +221,10 @@ public static class JavaStockpileManagerUISide
             }
 
 
-            PostApplyStashkey(CurrentStashkey);
             return true;
         }
         MessageBox.Show("You need 2 or more items for Merging");
         return false;
-    }
-
-    internal static bool LoadState(JavaStashKey sk, bool reloadRom = true, bool applyBlastLayer = true)
-    {
-        //TODO: something about this.
-        /*bool success = LocalNetCoreRouter.QueryRoute<bool>(NetCore.Endpoints.CorruptCore, NetCore.Commands.Remote.LoadState, new object[] { sk, reloadRom, applyBlastLayer }, true);
-        return success;*/
-
-        JavaCorruptionEngineForm ceForm = S.GET<JavaCorruptionEngineForm>(); //TODO: is this code meant to be here?
-        string oldJarName = (string)AllSpec.VanguardSpec[VSPEC.OPENROMFILENAME];
-
-        AsmUtilities.Classes.Clear();
-
-        AllSpec.VanguardSpec.Update(VSPEC.OPENROMFILENAME, sk.JarFilename);
-
-        SerializedInsnBlastLayerCollection bl = new();
-        if (applyBlastLayer)
-            bl = sk.BlastLayer;
-        
-        JavaCorruptionEngineForm.BlastLayerCollection = bl;
-        
-        ceForm.Corrupt();
-        AllSpec.VanguardSpec.Update(VSPEC.OPENROMFILENAME, oldJarName);
-
-        return true;
     }
 
     internal static JavaStashKey SaveState(JavaStashKey sk = null)

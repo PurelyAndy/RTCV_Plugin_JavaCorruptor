@@ -22,12 +22,12 @@ public partial class BlastLayerApplierEngineControl
     {
         foreach (MethodNode method in classNode.Methods)
         {
-            string key = classNode.Name + "." + method.Name + method.Desc;
+            string methodIdentifier = classNode.Name + "." + method.Name + method.Desc;
 
-            if (!JavaCorruptionEngineForm.BlastLayerCollection.MappedLayers.ContainsKey(key))
+            if (!JavaCorruptionEngineForm.BlastLayerCollection.MappedLayers.TryGetValue(methodIdentifier, out SerializedInsnBlastLayer layer))
                 continue;
-                        
-            List<JavaBlastUnit> unitList = JsonConvert.DeserializeObject<JavaBlastLayer>(JsonConvert.SerializeObject(JavaCorruptionEngineForm.BlastLayerCollection.MappedLayers[key])).Layer;
+            
+            List<JavaBlastUnit> unitList = JsonConvert.DeserializeObject<JavaBlastLayer>(JsonConvert.SerializeObject(layer)).Layer;
             AbstractInsnNode[] insns = method.Instructions.ToArray();
             //IEnumerable<(AbstractInsnNode Anchor, List<AbstractInsnNode> Instructions, int Replaces)> indexedAnchorsAndNewInsns = unitList.Select(unit => unit.IsEnabled ? (Anchor: insns[unit.Index], unit.Instructions, Replaces: unit.Replaces) : (null, new(), 0) );
             // todo: this is dumb, just do a single loop

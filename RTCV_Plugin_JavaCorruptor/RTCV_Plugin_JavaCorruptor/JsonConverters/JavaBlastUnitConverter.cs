@@ -4,6 +4,7 @@ using System.Dynamic;
 using Java_Corruptor.BlastClasses;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NLog;
 using ObjectWeb.Asm.Tree;
 using RTCV.CorruptCore;
 
@@ -11,6 +12,7 @@ namespace Java_Corruptor.JsonConverters;
 
 public class JavaBlastUnitConverter : JsonConverter
 {
+    private static Logger _logger = LogManager.GetCurrentClassLogger();
     public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
     {
         JavaBlastUnit unit = (JavaBlastUnit)value;

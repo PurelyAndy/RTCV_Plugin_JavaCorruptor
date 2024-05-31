@@ -37,10 +37,10 @@ namespace Java_Corruptor
                     {
                         SyncObjectSingleton.FormExecute(() =>
                         {
-                            if (S.GET<UI.PluginForm>().IsDisposed)
+                            if (S.GET<PluginForm>().IsDisposed)
                             {
-                                Java_Corruptor.PluginForm = new PluginForm(plugin);
-                                S.SET<PluginForm>(Java_Corruptor.PluginForm);
+                                Java_Corruptor.PluginForm = new(plugin);
+                                S.SET(Java_Corruptor.PluginForm);
                             }
                             S.GET<PluginForm>().Show();
                             S.GET<PluginForm>().Activate();
@@ -49,7 +49,7 @@ namespace Java_Corruptor
                     }
                     catch
                     {
-                        Logging.GlobalLogger.Error($"{nameof(PluginConnectorEMU)}: SHOW_WINDOW failed Reason:\r\n" + e.ToString());
+                        Logging.GlobalLogger.Error($"{nameof(PluginConnectorEMU)}: SHOW_WINDOW failed Reason:\r\n{e}");
                         break;
                     }
                 //case Commands.SPECUPDATE:
@@ -75,9 +75,6 @@ namespace Java_Corruptor
                 //    e.setReturnValue(true);
                 //    break;
                 //case Commands.
-
-                default:
-                    break;
             }
 
 

@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Linq;
+using NLog;
 using ObjectWeb.Asm.Tree;
 
 namespace Java_Corruptor.UI.Components.EngineControls;
@@ -46,6 +47,12 @@ public partial class JavaVectorEngineControl
     {
         InsnList list = new();
 
+        if (_values.Length == 0 || _limiters.Length == 0)
+        {
+            Logger.Warn("No limiters or no operations selected.");
+            return list;
+        }
+        
         if (Array.IndexOf(_limiters, (byte)insn.Opcode) != -1)
         {
             list.Add(new InsnNode(_values[JavaGeneralParametersForm.Random.Next(_values.Length)]));

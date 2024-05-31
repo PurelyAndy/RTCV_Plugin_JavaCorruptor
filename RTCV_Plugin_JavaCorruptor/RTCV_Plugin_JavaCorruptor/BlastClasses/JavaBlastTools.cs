@@ -104,7 +104,6 @@ public class JavaBlastTools
     public static void LoadClassesFromCurrentJar()
     {
         string jarName = (string)AllSpec.VanguardSpec[VSPEC.OPENROMFILENAME];
-        
         using FileStream fileStream = File.OpenRead(jarName);
         using ZipArchive zipArchive = new(fileStream, ZipArchiveMode.Read);
         
@@ -114,9 +113,11 @@ public class JavaBlastTools
     internal static void LoadClassesFromJar(ZipArchive zipArchive)
     {
         Stopwatch stopwatch = Stopwatch.StartNew();
+        int classCount = 0;
         foreach (ZipArchiveEntry zipArchiveEntry in zipArchive.Entries)
             if (zipArchiveEntry.FullName.EndsWith(".class"))
             {
+                classCount++;
                 using Stream stream = zipArchiveEntry.Open();
                 byte[] classBytes = new byte[zipArchiveEntry.Length];
                 int bytesRead = 0;
@@ -129,9 +130,9 @@ public class JavaBlastTools
                 ClassNode classNode = new();
                 classReader.Accept(classNode, 0);
 
-                AsmUtilities.Classes.Add(classNode);
+                AsmUtilities.Classes.Add(classNode.Name, classNode);
             }
         stopwatch.Stop();
-        NLog.LogManager.GetCurrentClassLogger().Info($"Loaded {AsmUtilities.Classes.Count} classes in {stopwatch.ElapsedMilliseconds}ms");
+        NLog.LogManager.GetCurrentClassLogger().Info($"Loaded {classCount} classes in {stopwatch.ElapsedMilliseconds}ms");
     }
 }

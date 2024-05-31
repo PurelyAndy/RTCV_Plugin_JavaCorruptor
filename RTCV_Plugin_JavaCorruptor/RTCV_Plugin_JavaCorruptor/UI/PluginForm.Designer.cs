@@ -37,6 +37,7 @@ namespace Java_Corruptor.UI
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PluginForm));
             this.lbTitle = new System.Windows.Forms.Label();
             this.lbVersion = new System.Windows.Forms.Label();
+            this.lbGetStarted = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lbTitle
@@ -44,22 +45,33 @@ namespace Java_Corruptor.UI
             this.lbTitle.AutoSize = true;
             this.lbTitle.Font = new System.Drawing.Font("Segoe UI Light", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbTitle.ForeColor = System.Drawing.Color.White;
-            this.lbTitle.Location = new System.Drawing.Point(6, 6);
+            this.lbTitle.Location = new System.Drawing.Point(6, 20);
             this.lbTitle.Name = "lbTitle";
-            this.lbTitle.Size = new System.Drawing.Size(137, 32);
+            this.lbTitle.Size = new System.Drawing.Size(162, 32);
             this.lbTitle.TabIndex = 15;
-            this.lbTitle.Text = "Discord RPC";
+            this.lbTitle.Text = "Java Corruptor";
             // 
             // lbVersion
             // 
             this.lbVersion.AutoSize = true;
             this.lbVersion.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbVersion.ForeColor = System.Drawing.Color.White;
-            this.lbVersion.Location = new System.Drawing.Point(140, 23);
+            this.lbVersion.Location = new System.Drawing.Point(164, 35);
             this.lbVersion.Name = "lbVersion";
             this.lbVersion.Size = new System.Drawing.Size(36, 13);
             this.lbVersion.TabIndex = 41;
             this.lbVersion.Text = "3.2.1";
+            // 
+            // lbGetStarted
+            // 
+            this.lbGetStarted.AutoSize = true;
+            this.lbGetStarted.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbGetStarted.ForeColor = System.Drawing.Color.White;
+            this.lbGetStarted.Location = new System.Drawing.Point(9, 57);
+            this.lbGetStarted.Name = "lbGetStarted";
+            this.lbGetStarted.Size = new System.Drawing.Size(321, 13);
+            this.lbGetStarted.TabIndex = 142;
+            this.lbGetStarted.Text = "Load the custom layout from the toolbar on the left to get started!";
             // 
             // PluginForm
             // 
@@ -67,6 +79,7 @@ namespace Java_Corruptor.UI
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ClientSize = new System.Drawing.Size(450, 250);
+            this.Controls.Add(this.lbGetStarted);
             this.Controls.Add(this.lbVersion);
             this.Controls.Add(this.lbTitle);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -83,5 +96,6 @@ namespace Java_Corruptor.UI
 
         private System.Windows.Forms.Label lbTitle;
         private System.Windows.Forms.Label lbVersion;
+        private System.Windows.Forms.Label lbGetStarted;
     }
 }

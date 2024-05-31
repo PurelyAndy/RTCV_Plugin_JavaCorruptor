@@ -185,10 +185,9 @@ partial class JavaGlitchHarvesterBlastForm
         this.ResumeLayout(false);
     }
 
-    public System.Windows.Forms.Button btnNewBlastLayerEditor;
-
     #endregion
 
+    public System.Windows.Forms.Button btnNewBlastLayerEditor;
     public System.Windows.Forms.Button btnCorrupt;
     public System.Windows.Forms.Button btnSendRaw;
     public System.Windows.Forms.Button btnRerollSelected;

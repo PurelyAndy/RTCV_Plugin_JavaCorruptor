@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Java_Corruptor.BlastClasses;
 using Newtonsoft.Json;
+using NLog;
 using ObjectWeb.Asm.Tree;
 using RTCV.Common;
 using RTCV.NetCore;
@@ -17,6 +18,7 @@ namespace Java_Corruptor.UI.Components.EngineControls;
 public partial class JavaEngineControl : UserControl
 {
     protected AsmParser Parser = new();
+    protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     public event EventHandler EngineChanged;
     public JavaEngineControl()
     {
@@ -53,10 +55,9 @@ public partial class JavaEngineControl : UserControl
         for (int index = 0; index < classNode.Methods.Count; index++)
         {
             MethodNode methodNode = classNode.Methods[index];
-            List<AbstractInsnNode> insnList = new();
+            List<AbstractInsnNode> insnList = [];
             //InsnList insnList = new();
             AsmParser parser = new();
-            parser.ClearLabels();
             parser.RegisterLabelsFrom(methodNode.Instructions);
 
             //AbstractInsnNode insnNode = methodNode.Instructions.First;
@@ -82,9 +83,10 @@ public partial class JavaEngineControl : UserControl
                     insnList.Add(insnNode);
                     continue;
                 }
-
+                
                 List<AbstractInsnNode> copy = result.ToList();
                 insnList.AddRange(result);
+                result.RemoveAll(true);
                 /*foreach (AbstractInsnNode insn in result)
                     insnList.Add(insn);*/
                 string key = classNode.Name + "." + methodNode.Name + methodNode.Desc;
@@ -100,9 +102,11 @@ public partial class JavaEngineControl : UserControl
                 i += replaces - 1;
             }
 
-            methodNode.Instructions.Clear();
+            methodNode.Instructions.RemoveAll(true);
             foreach (AbstractInsnNode insn in insnList)
+            {
                 methodNode.Instructions.Add(insn);
+            }
             //methodNode.Instructions = insnList;
         }
     }

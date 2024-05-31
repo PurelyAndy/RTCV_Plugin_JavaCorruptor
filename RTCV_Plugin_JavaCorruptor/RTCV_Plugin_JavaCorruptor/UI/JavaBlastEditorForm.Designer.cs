@@ -835,13 +835,6 @@ namespace Java_Corruptor.UI
 			this.rOMToolStripMenuItem.Tag = "";
 			this.rOMToolStripMenuItem.Text = "JAR";
 			// 
-			// runRomWithoutBlastlayerToolStripMenuItem
-			// 
-			this.runRomWithoutBlastlayerToolStripMenuItem.Name = "runRomWithoutBlastlayerToolStripMenuItem";
-			this.runRomWithoutBlastlayerToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-			this.runRomWithoutBlastlayerToolStripMenuItem.Text = "Run JAR Without Blastlayer";
-			this.runRomWithoutBlastlayerToolStripMenuItem.Click += new System.EventHandler(this.RunRomWithoutBlastLayer);
-			// 
 			// replaceRomFromGHToolStripMenuItem
 			// 
 			this.replaceRomFromGHToolStripMenuItem.Name = "replaceRomFromGHToolStripMenuItem";

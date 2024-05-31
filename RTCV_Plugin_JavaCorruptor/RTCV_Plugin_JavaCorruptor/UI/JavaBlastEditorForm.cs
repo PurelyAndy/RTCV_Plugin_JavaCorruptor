@@ -330,7 +330,7 @@ public partial class JavaBlastEditorForm : ColorizedForm
         {
 
             //generate temporary blastlayer for batch processing
-            List<SerializedInsnBlastUnit> layer = new();
+            List<SerializedInsnBlastUnit> layer = [];
             foreach (DataGridViewRow row in dgvBlastEditor.SelectedRows)
             {
                 SerializedInsnBlastUnit bu = (SerializedInsnBlastUnit)row.DataBoundItem;
@@ -487,6 +487,18 @@ public partial class JavaBlastEditorForm : ColorizedForm
         {
             updateMaximum(this, dgvBlastEditor.Rows[e.RowIndex].Cells[BuProperty.Address.ToString()] as DataGridViewNumericUpDownCell, dgvBlastEditor.Rows[e.RowIndex].Cells[BuProperty.Domain.ToString()].Value.ToString());
         }*/
+        
+        // check if the cell changed is ValueString
+        if (changedColumn.Name == BuProperty.ValueString.ToString())
+        {
+            // get the value of the cell
+            string value = dgvBlastEditor.Rows[e.RowIndex].Cells[BuProperty.ValueString.ToString()].Value.ToString();
+            // get the blastunit
+            SerializedInsnBlastUnit bu = (SerializedInsnBlastUnit)dgvBlastEditor.Rows[e.RowIndex].DataBoundItem;
+            // set the value of the blastunit
+            bu.ValueString = value;
+        }
+        
         UpdateBottom();
     }
 
@@ -642,7 +654,7 @@ public partial class JavaBlastEditorForm : ColorizedForm
     {
         UpdateBottom();
 
-        List<DataGridViewRow> col = new();
+        List<DataGridViewRow> col = [];
         //For some reason DataGridViewRowCollection and DataGridViewSelectedRowCollection aren't directly compatible???
         foreach (DataGridViewRow row in dgvBlastEditor.SelectedRows)
         {
@@ -685,7 +697,7 @@ public partial class JavaBlastEditorForm : ColorizedForm
     private void InitializeBottom()
     {
         _property2ControlDict = new();
-        tbMethod.BindingContext = new();
+        tbMethod.BindingContext = [];
 
         _property2ControlDict.Add(BuProperty.Index.ToString(), upDownIndex);
         _property2ControlDict.Add(BuProperty.Method.ToString(), tbMethod);
@@ -698,7 +710,7 @@ public partial class JavaBlastEditorForm : ColorizedForm
 
     private void InitializeDGV()
     {
-        VisibleColumns = new();
+        VisibleColumns = [];
 
         DataGridViewColumn enabled = CreateColumn(BuProperty.isEnabled.ToString(), BuProperty.isEnabled.ToString(), "Enabled",
             new DataGridViewCheckBoxColumn());
@@ -922,7 +934,7 @@ public partial class JavaBlastEditorForm : ColorizedForm
 
     public void RemoveDisabled(object sender, EventArgs e)
     {
-        List<SerializedInsnBlastUnit> buToRemove = new();
+        List<SerializedInsnBlastUnit> buToRemove = [];
 
         dgvBlastEditor.SuspendLayout();
         _batchOperation = true;
@@ -989,9 +1001,7 @@ public partial class JavaBlastEditorForm : ColorizedForm
     public void DuplicateSelected(object sender, EventArgs e)
     {
         if (dgvBlastEditor.SelectedRows.Count == 0)
-        {
             return;
-        }
 
         DataGridViewRow[] reversed = dgvBlastEditor.SelectedRows.Cast<DataGridViewRow>().Reverse()?.ToArray();
         foreach (DataGridViewRow row in reversed)
@@ -1028,12 +1038,10 @@ public partial class JavaBlastEditorForm : ColorizedForm
     private void OpenNoteEditor(object sender, EventArgs e)
     {
         if (dgvBlastEditor.SelectedRows.Count == 0)
-        {
             return;
-        }
 
         SerializedInsnBlastLayer temp = new();
-        List<DataGridViewCell> cellList = new();
+        List<DataGridViewCell> cellList = [];
         foreach (DataGridViewRow row in dgvBlastEditor.SelectedRows)
         {
             if (row.DataBoundItem is not SerializedInsnBlastUnit bu) 
@@ -1340,7 +1348,7 @@ public partial class JavaBlastEditorForm : ColorizedForm
 
     private void AddRow(object sender, EventArgs e)
     {
-        SerializedInsnBlastUnit bu = new(new(), 0, 1, "my/package/MyClass.myMethod(IFLmy/package.Class;)V");
+        SerializedInsnBlastUnit bu = new([], 0, 1, "my/package/MyClass.myMethod(IFLmy/package.Class;)V");
         _bs.Add(bu);
     }
 
@@ -1363,12 +1371,12 @@ public partial class JavaBlastEditorForm : ColorizedForm
 
     internal JavaStashKey[] GetStashKeys()
     {
-        return new[] { CurrentSk, _originalSk };
+        return [CurrentSk, _originalSk];
     }
 
     private void ImportBlastLayerFromCorruptedFile(string filename = null)
     {
-        MessageBox.Show("This is an incredibly useful feature that I will re-implement later");
+        MessageBox.Show("This is a useful feature that will be re-implemented later");
         //TODO: diff should be re-implemented
         /*if (filename == null)
         {
@@ -1433,7 +1441,6 @@ public partial class JavaBlastEditorForm : ColorizedForm
     private void OnBlastEditorRowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e) => UpdateLayerSize();
     private void OnBlastEditorRowsAdded(object sender, DataGridViewRowsAddedEventArgs e) => UpdateLayerSize();
     private void ExportBlastLayerToCSV(object sender, EventArgs e) => ExportToCSV();
-    private void RunRomWithoutBlastLayer(object sender, EventArgs e) => CurrentSk.RunOriginal();
     
     private void RasterizeVMDs(object sender, EventArgs e)
     {
@@ -1441,13 +1448,4 @@ public partial class JavaBlastEditorForm : ColorizedForm
         MessageBox.Show("This feature may be re-implemented later if I decide to turn methods/classes into domains. For now, it's useless.");
         //RasterizeVMDs();
     }
-}
-
-internal static class CanvasAccess
-{
-    internal static void SetTileForm(this CanvasGrid canvasGrid, Form form, int x, int y, int width, int height, bool displayHeader, AnchorStyles anchorStyles) =>
-        typeof(CanvasGrid).GetMethod("SetTileForm", BindingFlags.NonPublic | BindingFlags.Instance)!.Invoke(canvasGrid, [form, x, y, width, height, displayHeader, anchorStyles]);
-    
-    internal static void LoadToNewWindow(this CanvasGrid canvasGrid, string GridID = null, bool silent = false) =>
-        typeof(CanvasGrid).GetMethod("LoadToNewWindow", BindingFlags.NonPublic | BindingFlags.Instance)!.Invoke(canvasGrid, [GridID, silent]);
 }

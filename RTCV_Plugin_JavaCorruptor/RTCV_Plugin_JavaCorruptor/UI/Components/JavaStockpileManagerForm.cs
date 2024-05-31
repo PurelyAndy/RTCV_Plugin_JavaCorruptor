@@ -20,8 +20,10 @@ namespace Java_Corruptor.UI.Components;
 
 public partial class JavaStockpileManagerForm : ComponentForm, IBlockable
 {
-    private new void HandleMouseDown(object s, MouseEventArgs e) => typeof(ComponentForm).GetMethod("HandleMouseDown", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(this, new object[] { s, e });
-    private new void HandleFormClosing(object s, FormClosingEventArgs e) => typeof(ComponentForm).GetMethod("HandleFormClosing", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(this, new object[] { s, e });
+    private new void HandleMouseDown(object s, MouseEventArgs e) => typeof(ComponentForm).GetMethod("HandleMouseDown", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(this,
+        [s, e]);
+    private new void HandleFormClosing(object s, FormClosingEventArgs e) => typeof(ComponentForm).GetMethod("HandleFormClosing", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(this,
+        [s, e]);
 
     private Color? _originalSaveButtonColor;
     private bool _unsavedEdits;
@@ -107,7 +109,7 @@ public partial class JavaStockpileManagerForm : ComponentForm, IBlockable
             // Merge Execution
             if (dgvStockpile.SelectedRows.Count > 1)
             {
-                List<JavaStashKey> sks = new();
+                List<JavaStashKey> sks = [];
 
                 foreach (DataGridViewRow row in dgvStockpile.SelectedRows)
                 {
@@ -238,7 +240,7 @@ public partial class JavaStockpileManagerForm : ComponentForm, IBlockable
 
         ((ToolStripMenuItem)columnsMenu.Items.Add("Replace associated JAR", null, (ob, ev) =>
         {
-            List<JavaStashKey> sks = new();
+            List<JavaStashKey> sks = [];
             foreach (DataGridViewRow row in dgvStockpile.SelectedRows)
             {
                 sks.Add((JavaStashKey)row.Cells[0].Value);
@@ -345,7 +347,7 @@ public partial class JavaStockpileManagerForm : ComponentForm, IBlockable
     }
     public void DuplicateSelected()
     {
-        List<JavaStashKey> sks = new();
+        List<JavaStashKey> sks = [];
         foreach (DataGridViewRow row in dgvStockpile.SelectedRows)
         {
             sks.Add((JavaStashKey)((JavaStashKey)row.Cells[0].Value).Clone());

@@ -2,8 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
 using System.IO.Compression;
 using System.Reflection;
+using NLog;
 using ObjectWeb.Asm;
 using ObjectWeb.Asm.Tree;
 using static ObjectWeb.Asm.Opcodes;
@@ -14,27 +17,21 @@ namespace Java_Corruptor;
 public static class AsmUtilities
 {
     public static readonly BidirectionalDictionary<int, string> Opcodes = new(158);
-    public static readonly BidirectionalDictionary<int, string> Tags = new();
+    public static readonly BidirectionalDictionary<int, string> Tags = new(9);
     public static readonly Dictionary<int, int> Types = new(158);
-
-    public static readonly List<ClassNode> Classes = new();
+    public static readonly Dictionary<string, ClassNode> Classes = [];
+    
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     static AsmUtilities()
     {
-        foreach (FieldInfo field in typeof(Opcodes).GetFields())
+        foreach (FieldInfo field in typeof(Opcodes).GetFields(BindingFlags.Public | BindingFlags.Static))
         {
-            try
-            {
-                if (field.Name.StartsWith("H_"))
-                    Tags.Add((int)field.GetValue(null), field.Name.ToUpper());
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+            if (field.Name.StartsWith("H_"))
+                Tags.Add((int)field.GetValue(null), field.Name.ToUpper());
         }
 
-        #region This hurts.
+        #region Add string versions of each opcode to the Opcodes dictionary.
 
         Opcodes.Add(Aaload, "AALOAD");
         Opcodes.Add(Aastore, "AASTORE");
@@ -197,7 +194,7 @@ public static class AsmUtilities
 
         #endregion
 
-        #region This hurts too.
+        #region Add the type of instruction each opcode is for to the Types dictionary.
 
         Types.Add(Nop, AbstractInsnNode.Insn);
         Types.Add(Aconst_Null, AbstractInsnNode.Insn);
@@ -392,20 +389,14 @@ public static class AsmUtilities
         string className = methodSignature[..indexOf];
         string methodName = methodSignature.Substring(indexOf + 1, methodSignature.IndexOf('(') - indexOf - 1);
         string methodDesc = methodSignature[methodSignature.IndexOf('(')..];
-        //in Main.classes, find the class that contains the method
-        foreach (ClassNode node in Classes) //TODO: use FindClass. Also TODO: make this a dictionary instead of a list, the order doesn't matter and this is probably really slowing things down.
+
+        ClassNode node = FindClass(className);
+
+        foreach (MethodNode methodNode in node.Methods)
         {
-            if (node.Name != className)
+            if (methodNode.Name != methodName || methodNode.Desc != methodDesc)
                 continue;
-
-            foreach (MethodNode methodNode in node.Methods)
-            {
-                if (methodNode.Name != methodName || methodNode.Desc != methodDesc)
-                    continue;
-                method = methodNode;
-                break;
-            }
-
+            method = methodNode;
             break;
         }
 
@@ -419,10 +410,8 @@ public static class AsmUtilities
     /// <returns>The class node, or null if it could not be found.</returns>
     public static ClassNode FindClass(string className)
     {
-        foreach (ClassNode node in Classes)
-            if (node.Name == className)
-                return node;
-        return null;
+        Classes.TryGetValue(className, out ClassNode node);
+        return node;
     }
 
     //TODO: this is a wayyyy larger undertaking than i thought it would be. it needs to validate individual branches and stuff and that's just not happening right now.
@@ -435,7 +424,8 @@ public static class AsmUtilities
     {
         Stack<JType> stack = new();
         AbstractInsnNode[] insns = method.Instructions.ToArray();
-        ConstructorInfo ci = typeof(JType).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(int), typeof(string), typeof(int), typeof(int) }, null);
+        ConstructorInfo ci = typeof(JType).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [typeof(int), typeof(string), typeof(int), typeof(int),
+        ], null);
         for (int i = 0; i < insns.Length; i++)
         {
             AbstractInsnNode insn = insns[i];
@@ -447,7 +437,7 @@ public static class AsmUtilities
                         break;
                     case Aconst_Null:
                     {
-                        stack.Push((JType)ci.Invoke(new object[] { JType.Object, "Ljava/lang/Object;", 0, 0 }));
+                        stack.Push((JType)ci.Invoke([JType.Object, "Ljava/lang/Object;", 0, 0]));
                         break;
                     }
                     case >= Iconst_M1 and <= Iconst_5:
@@ -492,15 +482,13 @@ public static class AsmUtilities
                         else if (ldcInsnNode.Cst is double)
                             stack.Push(JType.DoubleType);
                         else if (ldcInsnNode.Cst is string)
-                            stack.Push((JType)ci.Invoke(new object[] { JType.Object, "Ljava/lang/String;", 0, 0 }));
+                            stack.Push((JType)ci.Invoke([JType.Object, "Ljava/lang/String;", 0, 0]));
                         else if (ldcInsnNode.Cst is Type)
-                            stack.Push((JType)ci.Invoke(new object[] { JType.Object, "Ljava/lang/Class;", 0, 0 }));
+                            stack.Push((JType)ci.Invoke([JType.Object, "Ljava/lang/Class;", 0, 0]));
                         else if (ldcInsnNode.Cst is Handle)
-                            stack.Push((JType)ci.Invoke(new object[]
-                                { JType.Object, "Ljava/lang/invoke/MethodHandle;", 0, 0 }));
+                            stack.Push((JType)ci.Invoke([JType.Object, "Ljava/lang/invoke/MethodHandle;", 0, 0]));
                         else if (ldcInsnNode.Cst is ConstantDynamic)
-                            stack.Push((JType)ci.Invoke(new object[]
-                                { JType.Object, "Ljava/lang/invoke/ConstantDynamic;", 0, 0 }));
+                            stack.Push((JType)ci.Invoke([JType.Object, "Ljava/lang/invoke/ConstantDynamic;", 0, 0]));
                         break;
                     }
                     case Iload:
@@ -538,8 +526,7 @@ public static class AsmUtilities
                     case Aload:
                     {
                         VarInsnNode varInsnNode = (VarInsnNode)insn;
-                        stack.Push((JType)ci.Invoke(new object[]
-                            { JType.Object, method.LocalVariables[varInsnNode.Var].Desc, 0, 0 }));
+                        stack.Push((JType)ci.Invoke([JType.Object, method.LocalVariables[varInsnNode.Var].Desc, 0, 0]));
                         break;
                     }
                     case >= Iload_0 and <= Iload_3:
@@ -577,8 +564,7 @@ public static class AsmUtilities
                     case <= Aload_3:
                     {
                         int index = insn.Opcode - Aload_0;
-                        stack.Push((JType)ci.Invoke(new object[]
-                            { JType.Object, method.LocalVariables[index].Desc, 0, 0 }));
+                        stack.Push((JType)ci.Invoke([JType.Object, method.LocalVariables[index].Desc, 0, 0]));
                         break;
                     }
                     case Iaload:
@@ -623,7 +609,7 @@ public static class AsmUtilities
                         if (type.Sort != JType.Int)
                             return (i, "Array index must be an int, but is a " + type.Sort);
                         stack.Pop();
-                        stack.Push((JType)ci.Invoke(new object[] { JType.Object, "Ljava/lang/Object;", 0, 0 }));
+                        stack.Push((JType)ci.Invoke([JType.Object, "Ljava/lang/Object;", 0, 0]));
                         break;
                     }
                     case Baload:
@@ -1578,7 +1564,7 @@ public static class AsmUtilities
                 ClassNode classNode = new();
                 classReader.Accept(classNode, 0);
 
-                Classes.Add(classNode);
+                Classes.Add(classNode.Name, classNode);
             }
     }
 }

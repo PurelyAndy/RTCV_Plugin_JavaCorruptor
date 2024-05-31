@@ -11,6 +11,7 @@ using System.Windows.Forms.Layout;
 using Ceras;
 using Java_Corruptor.UI.Components.EngineControls;
 using Newtonsoft.Json;
+using NLog;
 using ObjectWeb.Asm.Tree;
 using RTCV.CorruptCore;
 
@@ -20,6 +21,7 @@ namespace Java_Corruptor.BlastClasses;
 [MemberConfig(TargetMember.All)]
 public class SerializedInsnBlastUnit : INote
 {
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     public object Clone()
     {
         SerializedInsnBlastUnit u = ObjectCopierCeras.Clone(this);
@@ -104,7 +106,7 @@ public class SerializedInsnBlastUnit : INote
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
             
-            Instructions = new(value.Split('\n'));
+            Instructions = [..value.Split('\n')];
             for (int i = 0; i < Instructions.Count; i++)
                 Instructions[i] = Instructions[i].Trim();
         }
@@ -134,7 +136,7 @@ public class SerializedInsnBlastUnit : INote
     
     public SerializedInsnBlastUnit()
     {
-        Instructions = new();
+        Instructions = [];
     }
 
     /// <summary>
@@ -152,7 +154,8 @@ public class SerializedInsnBlastUnit : INote
         MethodNode methodNode = AsmUtilities.FindMethod(Method);
         if (methodNode is null)
         {
-            MessageBox.Show("Method not found: " + Method);
+            Logger.Error($"Method {Method} not found");
+            MessageBox.Show($"Method {Method} not found");
             return;
         }
         
@@ -166,7 +169,8 @@ public class SerializedInsnBlastUnit : INote
         {
             if (insnNode is null)
             {
-                MessageBox.Show("Index out of bounds: " + Index);
+                Logger.Error($"Unit index {Index} was out of bounds for method {Method}");
+                MessageBox.Show($"Unit index {Index} was out of bounds for method {Method}");
                 return;
             }
         }
@@ -175,10 +179,11 @@ public class SerializedInsnBlastUnit : INote
         InsnList result = ourEngine.DoCorrupt(insnNode, parser, ref replaces);
         if (replaces == -1 || result is null || result.Size == 0 || (result.Size == 1 && result.First == insnNode))
         {
-            MessageBox.Show("Tried to re-roll but nothing was corrupted. Do the unit's re-roll settings still match the instruction?");
+            MessageBox.Show("Tried to re-roll, but nothing was corrupted. Do the unit's re-roll settings still match the target instruction?");
             return;
         }
 
+        Logger.Info($"Re-rolled {Method} at index {Index} with {replaces} replacements");
         Instructions = result.Select(parser.InsnToString).ToList();
         Replaces = replaces;
     }

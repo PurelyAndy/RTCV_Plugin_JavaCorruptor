@@ -26,19 +26,23 @@ using Java_Corruptor.UI.Components;
 using RTCV.Common;
 using RTCV.Common.CustomExtensions;
 using Java_Corruptor.BlastClasses;
+using NLog;
 
 namespace Java_Corruptor.UI.Components;
 
 public partial class JavaCorruptionEngineForm : ComponentForm, IBlockable
 {
-    private new void HandleMouseDown(object s, MouseEventArgs e) => typeof(ComponentForm).GetMethod("HandleMouseDown", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(this, new object[] { s, e });
-    private new void HandleFormClosing(object s, FormClosingEventArgs e) => typeof(ComponentForm).GetMethod("HandleFormClosing", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(this, new object[] { s, e });
+    private new void HandleMouseDown(object s, MouseEventArgs e) => typeof(ComponentForm).GetMethod("HandleMouseDown", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(this,
+        [s, e]);
+    private new void HandleFormClosing(object s, FormClosingEventArgs e) => typeof(ComponentForm).GetMethod("HandleFormClosing", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(this,
+        [s, e]);
 
     internal static readonly Random Random = new();
     internal JavaEngineControl SelectedEngine;
     private ComboBox _comboBox;
     internal static SerializedInsnBlastLayerCollection BlastLayerCollection = new();
     internal static double Intensity;
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     public JavaCorruptionEngineForm()
     {
@@ -68,7 +72,10 @@ public partial class JavaCorruptionEngineForm : ComponentForm, IBlockable
     {
         ComboBox box = (ComboBox)sender;
         if (box.SelectedIndex == -1)
+        {
+            Logger.Warn("Selected index is -1, returning");
             return;
+        }
 
         javaVectorEngineControl1.Visible = false;
         nukerEngineControl1.Visible = false;
@@ -128,7 +135,7 @@ public partial class JavaCorruptionEngineForm : ComponentForm, IBlockable
             BlastLayerCollection = new();
 
         string jarName = (string)AllSpec.VanguardSpec[VSPEC.OPENROMFILENAME];
-        string outputFileName = jarName.Split('\\').Last() + "_corrupted_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".jar";
+        string outputFileName = Path.GetFileName(jarName) + "_corrupted_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".jar";
         string outputFilePath = Path.Combine(Path.GetDirectoryName(jarName)!, outputFileName);
         string inputFilePath = jarName;
         
@@ -154,7 +161,7 @@ public partial class JavaCorruptionEngineForm : ComponentForm, IBlockable
             {
                 stopwatch.Start();
                 int i = 0;
-                foreach (ClassNode classNode in AsmUtilities.Classes)
+                foreach (ClassNode classNode in AsmUtilities.Classes.Values)
                 {
                     SelectedEngine.Corrupt(classNode);
 
@@ -169,7 +176,7 @@ public partial class JavaCorruptionEngineForm : ComponentForm, IBlockable
                     modifiedClasses.Add(zipArchive.Entries[i++].FullName, classWriter.ToByteArray());
                 }
                 stopwatch.Stop();
-                NLog.LogManager.GetCurrentClassLogger().Info($"Corrupted {AsmUtilities.Classes.Count} classes in {stopwatch.ElapsedMilliseconds}ms");
+                Logger.Info($"Corrupted {AsmUtilities.Classes.Count} classes in {stopwatch.ElapsedMilliseconds}ms");
                 
                 stopwatch.Restart();
                 foreach (ZipArchiveEntry zipArchiveEntry in zipArchive.Entries)
@@ -189,7 +196,7 @@ public partial class JavaCorruptionEngineForm : ComponentForm, IBlockable
                     resources.Add(zipArchiveEntry.FullName, fileBytes);
                 }
                 stopwatch.Stop();
-                NLog.LogManager.GetCurrentClassLogger().Info($"Loaded {resources.Count} resources in {stopwatch.ElapsedMilliseconds}ms");
+                Logger.Info($"Loaded {resources.Count} resources in {stopwatch.ElapsedMilliseconds}ms");
             }
             else
             {
@@ -212,10 +219,15 @@ public partial class JavaCorruptionEngineForm : ComponentForm, IBlockable
 
                         classReader.Accept(classNode, 0);
 
-                        AsmUtilities.Classes.Add(classNode);
+                        AsmUtilities.Classes.Add(classNode.Name, classNode);
+
+                        if (zipArchiveEntry.FullName.Contains("goq.class"))
+                        {
+                            Logger.Info("Corrupted goq.class");
+                        }
 
                         SelectedEngine.Corrupt(classNode);
-
+                        
                         ClassWriter classWriter = new(ClassWriter.Compute_Maxs);
                         classNode.Accept(classWriter);
                         modifiedClasses.Add(zipArchiveEntry.FullName, classWriter.ToByteArray());
@@ -224,7 +236,7 @@ public partial class JavaCorruptionEngineForm : ComponentForm, IBlockable
                         resources.Add(zipArchiveEntry.FullName, fileBytes);
                 }
                 stopwatch.Stop();
-                NLog.LogManager.GetCurrentClassLogger().Info($"Corrupted {AsmUtilities.Classes.Count} classes in {stopwatch.ElapsedMilliseconds}ms");
+                Logger.Info($"Corrupted {AsmUtilities.Classes.Count} classes in {stopwatch.ElapsedMilliseconds}ms");
             }
 
             stopwatch.Restart();
@@ -246,7 +258,7 @@ public partial class JavaCorruptionEngineForm : ComponentForm, IBlockable
                 }
             }
             stopwatch.Stop();
-            NLog.LogManager.GetCurrentClassLogger().Info($"Wrote corrupted jar in {stopwatch.ElapsedMilliseconds}ms");
+            Logger.Info($"Wrote corrupted jar in {stopwatch.ElapsedMilliseconds}ms");
 
             /* We don't need to save a blast layer separately anymore, blasts go to the stash history
             if (!useEngine) // argument for this? we might want to save the blast layer if we're merging blast layers or something
@@ -256,7 +268,7 @@ public partial class JavaCorruptionEngineForm : ComponentForm, IBlockable
             File.WriteAllText(outputFilePath + ".jbl", json);
             */
 
-            S.GET<JavaGeneralParametersForm>().RunPostCorruptAction();
+            gpForm.RunPostCorruptAction();
         }
         
         if (!useEngine)

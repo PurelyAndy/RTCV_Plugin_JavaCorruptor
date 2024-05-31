@@ -106,6 +106,8 @@
     <Compile Include="BlastClasses\SerializedInsnBlastLayerCollection.cs" />
     <Compile Include="BlastClasses\SerializedInsnBlastUnit.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="InvalidInstructionException.cs" />
     <Compile Include="JavaStashKey.cs" />
     <Compile Include="JavaStockpile.cs" />
     <Compile Include="JavaStockpileManagerUISide.cs" />

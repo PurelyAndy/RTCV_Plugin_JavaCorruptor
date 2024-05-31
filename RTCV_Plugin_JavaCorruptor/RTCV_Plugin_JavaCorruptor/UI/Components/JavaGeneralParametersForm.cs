@@ -12,8 +12,10 @@ namespace Java_Corruptor.UI.Components;
 
 public partial class JavaGeneralParametersForm : ComponentForm, IBlockable
 {
-    private new void HandleMouseDown(object s, MouseEventArgs e) => typeof(ComponentForm).GetMethod("HandleMouseDown", BindingFlags.NonPublic | BindingFlags.Instance)!.Invoke(this, new[] { s, e });
-    private new void HandleFormClosing(object s, FormClosingEventArgs e) => typeof(ComponentForm).GetMethod("HandleFormClosing", BindingFlags.NonPublic | BindingFlags.Instance)!.Invoke(this, new[] { s, e });
+    private new void HandleMouseDown(object s, MouseEventArgs e) => typeof(ComponentForm).GetMethod("HandleMouseDown", BindingFlags.NonPublic | BindingFlags.Instance)!.Invoke(this,
+        [s, e]);
+    private new void HandleFormClosing(object s, FormClosingEventArgs e) => typeof(ComponentForm).GetMethod("HandleFormClosing", BindingFlags.NonPublic | BindingFlags.Instance)!.Invoke(this,
+        [s, e]);
     public double Intensity
     {
         get => tbIntensity.Value / 100000d;
@@ -48,6 +50,7 @@ public partial class JavaGeneralParametersForm : ComponentForm, IBlockable
             The intensity slider determines the chance of an instruction being corrupted. At 0%, no corruptions will be applied. At 100%, every instruction that matches the criteria of the corruption engine will be corrupted.
             The "Use last seed" checkbox will use the same seed for the random number generator every time the program is run. This is useful for debugging, but pretty much useless for normal use.
             The "Launch a program after corrupting" checkbox will run a program after the corruption process is complete. You could write a batch script to overwrite the old jar file and then automatically launch your game, for example. The large box below will show the output of the program.
+            The "Create a new JAR for each corruption" checkbox will create a JAR file with a different name for each corruption. Otherwise, the original JAR will be overwritten.
         """, "General Parameters Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
@@ -97,6 +100,7 @@ public partial class JavaGeneralParametersForm : ComponentForm, IBlockable
                 form.tbOutput.SelectionColor = Color.White;
                 form.tbOutput.AppendText(args.Data + Environment.NewLine);
                 form.tbOutput.SelectionColor = form.tbOutput.ForeColor;
+                form.tbOutput.ScrollToCaret();
             }, this);
         };
         p.ErrorDataReceived += (_, args) =>
@@ -109,6 +113,7 @@ public partial class JavaGeneralParametersForm : ComponentForm, IBlockable
                 form.tbOutput.SelectionColor = Color.FromArgb(0xff, 0x40, 0x40);
                 form.tbOutput.AppendText(args.Data + Environment.NewLine);
                 form.tbOutput.SelectionColor = form.tbOutput.ForeColor;
+                form.tbOutput.ScrollToCaret();
             }, this);
         };
         p.Start();

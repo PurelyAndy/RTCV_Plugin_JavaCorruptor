@@ -22,8 +22,10 @@ namespace Java_Corruptor.UI.Components;
 
 public partial class JavaGlitchHarvesterBlastForm : ComponentForm, IBlockable
 {
-    private new void HandleMouseDown(object s, MouseEventArgs e) => typeof(ComponentForm).GetMethod("HandleMouseDown", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(this, new object[] { s, e });
-    private new void HandleFormClosing(object s, FormClosingEventArgs e) => typeof(ComponentForm).GetMethod("HandleFormClosing", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(this, new object[] { s, e });
+    private new void HandleMouseDown(object s, MouseEventArgs e) => typeof(ComponentForm).GetMethod("HandleMouseDown", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(this,
+        [s, e]);
+    private new void HandleFormClosing(object s, FormClosingEventArgs e) => typeof(ComponentForm).GetMethod("HandleFormClosing", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(this,
+        [s, e]);
 
     public bool MergeMode { get; private set; } = false;
     public GlitchHarvesterMode ghMode { get; set; } = GlitchHarvesterMode.CORRUPT; //Current Glitch Harvester mode
@@ -95,7 +97,7 @@ public partial class JavaGlitchHarvesterBlastForm : ComponentForm, IBlockable
                 
                 bl = JavaBlastTools.LoadBlastLayerFromFile(f);
                 JavaStashKey newStashKey = new(RtcCore.GetRandomKey(), null, bl);
-                S.GET<JavaGlitchHarvesterBlastForm>().IsCorruptionApplied = JavaStockpileManagerUISide.ApplyStashkey(newStashKey, false, false);
+                S.GET<JavaGlitchHarvesterBlastForm>().IsCorruptionApplied = JavaStockpileManagerUISide.ApplyStashkey(newStashKey, false);
             }
         }
     }
@@ -113,15 +115,6 @@ public partial class JavaGlitchHarvesterBlastForm : ComponentForm, IBlockable
         if (ghMode == GlitchHarvesterMode.CORRUPT)
         {
             IsCorruptionApplied = JavaStockpileManagerUISide.ApplyStashkey(JavaStockpileManagerUISide.CurrentStashkey, loadBeforeOperation);
-        }
-        else if (ghMode == GlitchHarvesterMode.INJECT)
-        {
-            IsCorruptionApplied = JavaStockpileManagerUISide.InjectFromStashkey(JavaStockpileManagerUISide.CurrentStashkey, loadBeforeOperation);
-            S.GET<JavaStashHistoryForm>().RefreshStashHistory();
-        }
-        else if (ghMode == GlitchHarvesterMode.ORIGINAL)
-        {
-            IsCorruptionApplied = JavaStockpileManagerUISide.OriginalFromStashkey(JavaStockpileManagerUISide.CurrentStashkey);
         }
     }
 
@@ -144,14 +137,6 @@ public partial class JavaGlitchHarvesterBlastForm : ComponentForm, IBlockable
             if (ghMode == GlitchHarvesterMode.CORRUPT)
             {
                 btnCorrupt.Text = "Corrupt";
-            }
-            else if (ghMode == GlitchHarvesterMode.INJECT)
-            {
-                btnCorrupt.Text = "Inject";
-            }
-            else if (ghMode == GlitchHarvesterMode.ORIGINAL)
-            {
-                btnCorrupt.Text = "Original";
             }
         }
     }
@@ -181,7 +166,7 @@ public partial class JavaGlitchHarvesterBlastForm : ComponentForm, IBlockable
 
             if (MergeMode)
             {
-                List<JavaStashKey> sks = new();
+                List<JavaStashKey> sks = [];
 
                 //Reverse before merging because DataGridView selectedrows is backwards for some odd reason
                 var reversed = S.GET<JavaStockpileManagerForm>().dgvStockpile.SelectedRows.Cast<DataGridViewRow>().Reverse();
@@ -204,44 +189,6 @@ public partial class JavaGlitchHarvesterBlastForm : ComponentForm, IBlockable
                 IsCorruptionApplied = JavaStockpileManagerUISide.Corrupt(loadBeforeOperation);
                 S.GET<JavaStashHistoryForm>().RefreshStashHistorySelectLast();
             }
-            else if (ghMode == GlitchHarvesterMode.INJECT)
-            {
-                if (JavaStockpileManagerUISide.CurrentStashkey == null)
-                {
-                    if (JavaStockpileManagerUISide.LastStashkey != null)
-                    {
-                        JavaStockpileManagerUISide.CurrentStashkey = JavaStockpileManagerUISide.LastStashkey;
-                    }
-                    else
-                    {
-                        MessageBox.Show("The Glitch Harvester could not perform the INJECT action\n\nHave you made a corruption yet?");
-     
-                    }
-                        
-                }
-
-                S.GET<JavaStashHistoryForm>().DontLoadSelectedStash = true;
-
-                IsCorruptionApplied = JavaStockpileManagerUISide.InjectFromStashkey(JavaStockpileManagerUISide.CurrentStashkey, loadBeforeOperation);
-                S.GET<JavaStashHistoryForm>().RefreshStashHistorySelectLast();
-            }
-            else if (ghMode == GlitchHarvesterMode.ORIGINAL)
-            {
-                if (JavaStockpileManagerUISide.CurrentStashkey == null)
-                {
-                    if (JavaStockpileManagerUISide.LastStashkey != null)
-                    {
-                        JavaStockpileManagerUISide.CurrentStashkey = JavaStockpileManagerUISide.LastStashkey;
-                    }
-                    else
-                    {
-                        MessageBox.Show("The Glitch Harvester could not perform the ORIGINAL action\n\nHave you made a corruption yet?");
-                    }
-                }
-
-                S.GET<JavaStashHistoryForm>().DontLoadSelectedStash = true;
-                IsCorruptionApplied = JavaStockpileManagerUISide.OriginalFromStashkey(JavaStockpileManagerUISide.CurrentStashkey);
-            }
         }
         finally
         {
@@ -262,12 +209,12 @@ public partial class JavaGlitchHarvesterBlastForm : ComponentForm, IBlockable
             Point locate = e.GetMouseLocation(sender);
 
             ContextMenuStrip columnsMenu = new ContextMenuStrip();
-            columnsMenu.Items.Add("Blast + Send RAW To Stash", null, new EventHandler((ob, ev) =>
+            columnsMenu.Items.Add("Blast + Send RAW To Stash", null, (_, _) =>
             {
                 BlastRawStash();
-            }));
+            });
             columnsMenu.Show(this, locate);
-            columnsMenu.Items.Add("Corrupt", null, new EventHandler((ob, ev) =>
+            columnsMenu.Items.Add("Corrupt", null, (_, _) =>
             {
                 ghModeStore = ghMode;
                 ghMode = GlitchHarvesterMode.CORRUPT;
@@ -275,27 +222,8 @@ public partial class JavaGlitchHarvesterBlastForm : ComponentForm, IBlockable
                 ghMode = ghModeStore;
                 RedrawActionUI();
 
-            }));
+            });
             columnsMenu.Show(this, locate);
-            columnsMenu.Items.Add("Inject", null, new EventHandler((ob, ev) =>
-            {
-                ghModeStore = ghMode;
-                ghMode = GlitchHarvesterMode.INJECT;
-                S.GET<JavaGlitchHarvesterBlastForm>().Corrupt(sender, e);
-                ghMode = ghModeStore;
-                RedrawActionUI();
-            }));
-            columnsMenu.Show(this, locate);
-            columnsMenu.Items.Add("Original", null, new EventHandler((ob, ev) =>
-            {
-                ghModeStore = ghMode;
-                ghMode = GlitchHarvesterMode.ORIGINAL;
-                S.GET<JavaGlitchHarvesterBlastForm>().Corrupt(sender, e);
-                ghMode = ghModeStore;
-                RedrawActionUI();
-            }));
-            columnsMenu.Show(this, locate);
-
         }
     }
 
@@ -367,8 +295,6 @@ public partial class JavaGlitchHarvesterBlastForm : ComponentForm, IBlockable
 
     public void RerollSelected(object sender, EventArgs e)
     {
-        //TODO: reroll support ✔
-        
         if (!btnRerollSelected.Visible)
         {
             return;
@@ -454,16 +380,6 @@ public partial class JavaGlitchHarvesterBlastForm : ComponentForm, IBlockable
             ghMode = GlitchHarvesterMode.CORRUPT;
             RedrawActionUI();
         }))).Checked = (ghMode == GlitchHarvesterMode.CORRUPT);
-        ((ToolStripMenuItem)ghSettingsMenu.Items.Add("Inject", null, new EventHandler((ob, ev) =>
-        {
-            ghMode = GlitchHarvesterMode.INJECT;
-            RedrawActionUI();
-        }))).Checked = (ghMode == GlitchHarvesterMode.INJECT);
-        ((ToolStripMenuItem)ghSettingsMenu.Items.Add("Original", null, new EventHandler((ob, ev) =>
-        {
-            ghMode = GlitchHarvesterMode.ORIGINAL;
-            RedrawActionUI();
-        }))).Checked = (ghMode == GlitchHarvesterMode.ORIGINAL);
 
         ghSettingsMenu.Items.Add(new ToolStripSeparator());
 

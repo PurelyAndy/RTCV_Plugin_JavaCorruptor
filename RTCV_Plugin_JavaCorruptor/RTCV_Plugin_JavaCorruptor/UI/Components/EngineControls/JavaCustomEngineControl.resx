@@ -117,6 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="tbReplace.Text" xml:space="preserve">
+    <value>// Replace it with subtraction
+&lt;$1&gt;SUB
+// multiply it by a random
+// number (decided at runtime)
+// between 0 and 1, converting
+// the type if needed
+&lt;if $1 != D&gt;&lt;$1&gt;2D&lt;else&gt;NOP&lt;/if&gt;
+INVOKESTATIC java/lang/Math.random()D
+DMUL
+/* add another, constant
+random value, this time
+between 1 and 10, again
+converting the type if
+necessary */
+&lt;if $1 != D&gt;D2&lt;$1&gt;&lt;else&gt;NOP&lt;/if&gt;
+LDC &lt;random&lt;$1&gt; 1,10&gt;&lt;$1&gt;
+&lt;$1&gt;ADD
+// finally, add 3, but
+// only half the time
+INVOKESTATIC java/lang/Math.random()D
+LDC 0.5D
+DCMPG
+IFLE &lt;label LessThan&gt;
+LDC 3&lt;$1&gt;
+&lt;$1&gt;ADD
+&lt;label LessThan&gt;:</value>
+  </data>
   <metadata name="saveFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>

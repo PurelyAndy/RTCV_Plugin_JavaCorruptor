@@ -52,8 +52,8 @@ public class JavaBlastLayerCollection : IDictionary<string, JavaBlastLayer>, ILi
         get => MappedLayers[key];
         set
         {
-            if (_mappedLayers.ContainsKey(key))
-                _layer.Layer.RemoveAll(unit => _mappedLayers[key].Layer.Contains(unit));
+            if (_mappedLayers.TryGetValue(key, out JavaBlastLayer layer))
+                _layer.Layer.RemoveAll(unit => layer.Layer.Contains(unit));
 
             _layer.Layer.AddRange(value.Layer);
 

@@ -1,12 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.Dynamic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Forms;
+using Java_Corruptor.BlastClasses;
+using ObjectWeb.Asm;
 using ObjectWeb.Asm.Tree;
+using RTCV.Common;
+using RTCV.Common.CustomExtensions;
+using RTCV.CorruptCore;
+using RTCV.UI;
+using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace Java_Corruptor.UI.Components.EngineControls;
 
@@ -15,8 +27,10 @@ namespace Java_Corruptor.UI.Components.EngineControls;
 public partial class JavaCustomEngineControl
 {
     private string _path = "";
-    private string[] _findInstructions;
+    private string[] _findInstructions, _replaceInstructions;
+    private Regex[] _findRegexes;
     private string _findList, _replaceList, _findText, _replaceText;
+    private Regex _findRegex;
     public JavaCustomEngineControl()
     {
         InitializeComponent();
@@ -60,6 +74,118 @@ public partial class JavaCustomEngineControl
             var texts = SeparateEngineText(fileText);
             tbFind.Text = texts.Find;
             tbReplace.Text = texts.Replace;
+        }
+    }
+    
+    private void EngineTextChanged(object sender, EventArgs e)
+    {
+        btnErrorCheck.BackColor = Color.FromArgb(224, 128, 128);
+        btnErrorCheck.ForeColor = Color.Black;
+    }
+    
+    private void CheckForErrors(object sender, EventArgs e)
+    {
+        Prepare();
+        AsmUtilities.Classes.Clear();
+        JavaBlastTools.LoadClassesFromCurrentJar();
+        List<string> errors = [];
+        foreach (ClassNode clazz in AsmUtilities.Classes.Values)
+        {
+            foreach (MethodNode method in clazz.Methods)
+            {
+                AsmParser parser = new();
+                parser.RegisterLabelsFrom(method.Instructions);
+                AbstractInsnNode insn = method.Instructions.First;
+                int index = 0;
+                while (insn != null)
+                {
+                    AbstractInsnNode currentInsn = insn;
+                    StringBuilder insns = new();
+
+                    for (int i = 0; i < _findInstructions.Length; i++)
+                    {
+                        string insnString = parser.InsnToString(currentInsn);
+
+                        if (!_findRegexes[i].IsMatch(insnString))
+                            break;
+
+                        insns.Append(insnString).Append("\r\n");
+
+                        if (i == _findInstructions.Length - 1)
+                        {
+                            string[] newInsnStrings = ProcessEngineCode(insns, parser);
+                            
+                            for (int j = 0; j < newInsnStrings.Length; j++)
+                            {
+                                string newInsnString = newInsnStrings[j];
+                                if (!parser.ValidateInsn(newInsnString, out string message))
+                                {
+                                    errors.Add($"Error in: {clazz.Name}.{method.Name}{method.Desc}\nat instruction: {index}\ncaused by: {_replaceInstructions[j]}\n{message}");
+                                }
+                            }
+
+                            break;
+                        }
+
+                        currentInsn = currentInsn.Next;
+                    }
+
+                    insn = insn.Next;
+                    index++;
+                }
+            }
+        }
+        
+        if (errors.Any(x => x != null))
+        {
+            bool userIsACoward = false;
+            string errorText = "";
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            List<long> times = [];
+            int i = 0;
+            for (; i < errors.Count; i++)
+            {
+                errorText += $"  {i % 5 + 1}. {errors[i]}\n";
+                if (i % 5 == 4)
+                {
+                    string text = errorText;
+                    text += $"\n\n{errors.Count - 1 - i} more errors found, do you want to see more?";
+                    if (errors.Count > 125 && times.Count > 1)
+                    {
+                        long average = (long)times.GetRange(Math.Max(times.Count - 5, 0), Math.Min(5, times.Count)).Average();
+                        text += $" Keep going! At this rate, it'll take you just {average * (errors.Count - i - 1) / 1000} seconds to finish reading all of these errors!";
+                    }
+                    errorText = "";
+                    if (DialogResult.Yes != MessageBox.Show(text, $"Errors found - {(float)(i + 1)/errors.Count:P2} through", MessageBoxButtons.YesNo, MessageBoxIcon.Error))
+                    {
+                        userIsACoward = true;
+                        break;
+                    }
+                    times.Add(stopwatch.ElapsedMilliseconds);
+                    stopwatch.Restart();
+                }
+            }
+            if (i % 5 != 0 && !userIsACoward)
+                MessageBox.Show(errorText, "Errors found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            stopwatch.Stop();
+            times.Add(stopwatch.ElapsedMilliseconds);
+            if (errors.Count > 125 && !userIsACoward)
+            {
+                if (File.Exists(@"C:\Windows\Media\tada.wav"))
+                {
+                    using SoundPlayer soundPlayer = new(@"C:\Windows\Media\tada.wav");
+                    soundPlayer.Play();
+                }
+                MessageBox.Show(
+                    $"You did it! You read all {errors.Count} of the errors, and it only took you {times.Aggregate((a, b) => a + b) / 1000} seconds!",
+                    "Success!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+        else
+        {
+            MessageBox.Show("No errors found", "Success!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            btnErrorCheck.BackColor = btnSave.BackColor;
+            btnErrorCheck.ForeColor = Color.White;
         }
     }
 
@@ -134,27 +260,43 @@ public partial class JavaCustomEngineControl
         replace = Regex.Replace(replace, @"([^\r])\n", "$1\r\n");
             
         _findInstructions = find.Split(["\r\n"], StringSplitOptions.None);
-        replace.Split(["\r\n"], StringSplitOptions.None);
-        _replaceList = replace;
+        _replaceInstructions = replace.Split(["\r\n"], StringSplitOptions.None);
 
+        EscapeNonRegexSectionsOf(_findInstructions);
+        _findList = string.Join(Environment.NewLine, _findInstructions);
+        if (!_findList.StartsWith("^"))
+            _findList = "^" + _findList;
+        _findList += @"\r?$";
+        _replaceList = replace;
+        
+        _findRegex = new(_findList, RegexOptions.Multiline | RegexOptions.Compiled);
+        _findRegexes = new Regex[_findInstructions.Length];
         for (int i = 0; i < _findInstructions.Length; i++)
         {
-            string parsing = _findInstructions[i];
+            _findRegexes[i] = new(_findInstructions[i], RegexOptions.Compiled);
+        }
+    }
+
+    private static void EscapeNonRegexSectionsOf(IList<string> textList)
+    {
+        for (int i = 0; i < textList.Count; i++)
+        {
+            string parsing = textList[i];
             MatchCollection matches = Regex.Matches(parsing, "(?<=^|(?<!\\\\)>)(.*?)(?=(?<!\\\\)<|$)");
             foreach (Match match in matches)
             {
-                //parsing = parsing.Replace(match.Value, Regex.Escape(match.Value));
                 Regex regex = new(Regex.Escape(match.Value));
-                parsing = regex.Replace(parsing, Regex.Escape(match.Value), 1);
+                parsing = regex.Replace(parsing, Regex.Escape(match.Value), 1); // Escape all the text that isn't in <>
             }
-            //remove < and > unless escaped
+            // Remove the unescaped < and > characters
             parsing = Regex.Replace(parsing, "(?<!\\\\)<", "");
             parsing = Regex.Replace(parsing, "(?<!\\\\)>", "");
             parsing = parsing.Replace("\\\\<", "<");
             parsing = parsing.Replace("\\\\>", ">");
-            _findInstructions[i] = parsing;
+            if (parsing.EndsWith("$"))
+                parsing = parsing[..^1];
+            textList[i] = parsing;
         }
-        _findList = string.Join(Environment.NewLine, _findInstructions);
     }
 
     public override void UpdateUI()
@@ -173,32 +315,18 @@ public partial class JavaCustomEngineControl
         {
             string insnString = parser.InsnToString(currentInsn);
                 
-            if (!Regex.IsMatch(insnString, _findInstructions[i]))
+            if (!_findRegexes[i].IsMatch(insnString))
                 break;
-                
+            
             insns.Append(insnString).Append("\r\n");
                 
             if (i == _findInstructions.Length - 1)
             {
-                MatchCollection m = Regex.Matches(insns.ToString(), _findList, RegexOptions.Multiline);
-                StringBuilder newInsns = new();
-
-                foreach (Match match in m)
-                {
-                    string replace = _replaceList;
-                    for (int j = 0; j < match.Groups.Count; j++)
-                    {
-                        string group = match.Groups[j + 1].Value;
-                        replace = replace.Replace("<$" + (j + 1) + ">", group);
-                    }
-                    newInsns.Append(replace).Append("\r\n");
-                }
-
-                string[] newInsnStrings = newInsns.ToString().Trim().Split(["\r\n"], StringSplitOptions.None);
+                string[] newInsnStrings = ProcessEngineCode(insns, parser);
+                
                 foreach (string newInsnString in newInsnStrings)
                 {
-                    AbstractInsnNode newInsn = parser.ParseInsn(newInsnString);
-                    list.Add(newInsn);
+                    list.Add(parser.ParseInsn(newInsnString));
                 }
 
                 replaces = _findInstructions.Length;
@@ -210,7 +338,77 @@ public partial class JavaCustomEngineControl
 
         return list;
     }
-    
+
+    private string[] ProcessEngineCode(StringBuilder insns, AsmParser parser)
+    {
+        MatchCollection m = _findRegex.Matches(insns.ToString());
+        StringBuilder newInsns = new();
+
+        Regex ifElseRegex = new(@"<if \$(\d+) (==|!=) (.+?(?<!\\))>(.+?(?<!\\))<else>(.+?(?<!\\))</if>");
+        Regex randomRegex = new(@"<random(F|D|I|L) ([1-9]\d*\.\d*|0?\.\d*[1-9]\d*|[1-9]\d*),([1-9]\d*\.\d*|0?\.\d*[1-9]\d*|[1-9]\d*)>");
+        Regex labelNameRegex = new(@"<label (\w+)>");
+        foreach (Match match in m)
+        {
+            string newInsn = _replaceList;
+            for (int j = 0; j < match.Groups.Count; j++)
+            {
+                string matchText = match.Groups[j + 1].Value;
+                newInsn = newInsn.Replace("<$" + (j + 1) + ">", matchText);
+            }
+            MatchCollection ifElseMatches = ifElseRegex.Matches(newInsn);
+            foreach (Match ifElseMatch in ifElseMatches)
+            {
+                string groupText = match.Groups[int.Parse(ifElseMatch.Groups[1].Value)].Value;
+                string operation = ifElseMatch.Groups[2].Value;
+                string value = ifElseMatch.Groups[3].Value.Replace("\\<", "<");
+                string ifTrue = ifElseMatch.Groups[4].Value.Replace("\\<", "<");
+                string ifFalse = ifElseMatch.Groups[5].Value.Replace("\\<", "<");
+                string replacement = "";
+                if (operation == "==")
+                    replacement = groupText == value ? ifTrue : ifFalse;
+                else if (operation == "!=")
+                    replacement = groupText != value ? ifTrue : ifFalse;
+                newInsn = newInsn.Replace(ifElseMatch.Value, replacement);
+            }
+            MatchCollection randomMatches = randomRegex.Matches(newInsn);
+            foreach (Match randomMatch in randomMatches)
+            {
+                string type = randomMatch.Groups[1].Value;
+                string min = randomMatch.Groups[2].Value;
+                string max = randomMatch.Groups[3].Value;
+                Random rand = JavaGeneralParametersForm.Random;
+                string result = type switch
+                {
+                    "F" => ((float)(rand.NextDouble() * (double.Parse(max) - double.Parse(min)) + double.Parse(min))).ToString(CultureInfo.InvariantCulture),
+                    "D" => (rand.NextDouble() * (double.Parse(max) - double.Parse(min)) + double.Parse(min)).ToString(CultureInfo.InvariantCulture),
+                    "I" => rand.Next(int.Parse(min), int.Parse(max)).ToString(),
+                    "L" => rand.NextLong(long.Parse(min), long.Parse(max)).ToString(),
+                    _ => "",
+                };
+                newInsn = newInsn.Replace(randomMatch.Value, result);
+            }
+            Dictionary<string, string> labels = new();
+            MatchCollection labelNameMatches = labelNameRegex.Matches(newInsn);
+            foreach (Match labelNameMatch in labelNameMatches)
+            {
+                string labelName = labelNameMatch.Groups[1].Value;
+                if (labels.TryGetValue(labelName, out string label3))
+                    newInsn = newInsn.Replace(labelNameMatch.Value, label3);
+                else
+                {
+                    string label = JavaGeneralParametersForm.Random.Next().ToString();
+                    labels.Add(labelName, label);
+                    newInsn = newInsn.Replace(labelNameMatch.Value, label);
+                }
+            }
+            newInsns.Append(newInsn).Append("\r\n");
+        }
+        string str = newInsns.ToString().Trim().Replace("<random>", () => JavaGeneralParametersForm.Random.NextDouble().ToString(CultureInfo.InvariantCulture));
+
+        string[] newInsnStrings = str.Split(["\r\n"], StringSplitOptions.None);
+        return newInsnStrings;
+    }
+
     public override ExpandoObject EngineSettings
     {
         get

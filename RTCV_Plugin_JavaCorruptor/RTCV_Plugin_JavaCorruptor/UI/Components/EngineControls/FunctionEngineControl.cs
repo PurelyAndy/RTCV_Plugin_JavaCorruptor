@@ -30,6 +30,11 @@ public partial class FunctionEngineControl
     public override InsnList DoCorrupt(AbstractInsnNode insn, AsmParser parser, ref int replaces)
     {
         InsnList list = new();
+        if (_limiters.Length == 0 || _values.Length == 0)
+        {
+            Logger.Warn("No limiters or no values selected");
+            return list;
+        }
         if (insn.Opcode != Opcodes.Invokestatic)
             return list;
 

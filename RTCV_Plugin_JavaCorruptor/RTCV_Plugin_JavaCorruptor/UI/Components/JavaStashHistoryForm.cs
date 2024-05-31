@@ -20,8 +20,10 @@ using RTCV.UI.Modular;
 
 public partial class JavaStashHistoryForm : ComponentForm, IBlockable
 {
-    private new void HandleMouseDown(object s, MouseEventArgs e) => typeof(ComponentForm).GetMethod("HandleMouseDown", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(this, new object[] { s, e });
-    private new void HandleFormClosing(object s, FormClosingEventArgs e) => typeof(ComponentForm).GetMethod("HandleFormClosing", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(this, new object[] { s, e });
+    private new void HandleMouseDown(object s, MouseEventArgs e) => typeof(ComponentForm).GetMethod("HandleMouseDown", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(this,
+        [s, e]);
+    private new void HandleFormClosing(object s, FormClosingEventArgs e) => typeof(ComponentForm).GetMethod("HandleFormClosing", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(this,
+        [s, e]);
 
     public bool DontLoadSelectedStash { get; set; } = false;
 
@@ -232,7 +234,7 @@ public partial class JavaStashHistoryForm : ComponentForm, IBlockable
 
         ((ToolStripMenuItem)columnsMenu.Items.Add("Merge Selected Stashkeys", null, (_, _) =>
         {
-            List<JavaStashKey> sks = new();
+            List<JavaStashKey> sks = [];
             foreach (JavaStashKey sk in lbStashHistory.SelectedItems)
             {
                 sks.Add(sk);

@@ -13,7 +13,7 @@ namespace Java_Corruptor.BlastClasses;
 [XmlInclude(typeof(SerializedInsnBlastUnit))]
 public class SerializedInsnBlastLayer : ICloneable, INote
 {
-    public List<SerializedInsnBlastUnit> Layer = new();
+    public List<SerializedInsnBlastUnit> Layer = [];
     
     public SerializedInsnBlastLayer()
     {
@@ -42,7 +42,7 @@ public class SerializedInsnBlastLayer : ICloneable, INote
 
     public SerializedInsnBlastLayer GetBackup()
     {
-        List<SerializedInsnBlastUnit> backupLayer = new();
+        List<SerializedInsnBlastUnit> backupLayer = [];
 
         backupLayer.AddRange(Layer.Select(it => it.GetBackup()).Where(it => it != null));
 
@@ -94,8 +94,8 @@ public class SerializedInsnBlastLayer : ICloneable, INote
           .ToList();
           */
 
-        List<SerializedInsnBlastUnit> bul = new(Layer.ToArray().Reverse());
-        List<ValueTuple<string, long>> usedIndexes = new();
+        List<SerializedInsnBlastUnit> bul = [..Layer.ToArray().Reverse()];
+        List<ValueTuple<string, long>> usedIndexes = [];
 
         foreach (SerializedInsnBlastUnit bu in bul)
         {

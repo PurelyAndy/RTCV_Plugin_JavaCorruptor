@@ -6,9 +6,11 @@ using RTCV.PluginHost;
 using RTCV.UI;
 using System;
 using System.ComponentModel.Composition;
+using System.IO;
 using System.Windows.Forms;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using RTCV.CorruptCore;
 
 namespace Java_Corruptor
 {
@@ -18,7 +20,7 @@ namespace Java_Corruptor
         //-------[ Plugin metadata ]-------
 
         // >>> Make sure you rename BOTH the namespace and class (Very important)
-        public string Description => "This template allows you to quickly craft plugins for RTCV";
+        public string Description => "Corrupt Java programs with ease!";
         public string Author => "NoSkillPureAndy";
         public Version Version => new(1, 0, 0);
 
@@ -39,8 +41,6 @@ namespace Java_Corruptor
         // - Assembly name
         // - Default namespace
         // - Assembly Information
-
-
 
         #region Plugin Implementation mechanics
 
@@ -79,12 +79,33 @@ namespace Java_Corruptor
                     $"{Name} v{Version} failed to start: Singleton UI_CoreForm was null.");
                 return false;
             }
-
-            //S.GET<OpenToolsForm>().RegisterTool(cname, $"Open {cname}", () => { LocalNetCoreRouter.Route(Ep.RTC_SIDE, Commands.SHOW_WINDOW, true); });
-            UICore.mtForm.cbSelectBox.Items.Add(PluginForm);
-
-
-
+            
+            if ((string)AllSpec.VanguardSpec[VSPEC.NAME] != "FileStub")
+            {
+                Logging.GlobalLogger.Info("Vanguard is not FileStub, Java Corruptor plugin will be hidden.");
+                ChangePluginVisibility(false);
+            }
+            else
+            {
+                ChangePluginVisibility(true);
+                AllSpec.VanguardSpec.SpecUpdated += (_, eas) =>
+                {
+                    MemoryDomainProxy[] memoryDomains = (MemoryDomainProxy[])eas.partialSpec[VSPEC.MEMORYDOMAINS_INTERFACES];
+                    if (memoryDomains is null)
+                        return;
+                    if (memoryDomains.Length != 1 || !memoryDomains[0].Name.EndsWith(".jar"))
+                    {
+                        if (memoryDomains.Length < 1)
+                            Logging.GlobalLogger.Info("No files were loaded, Java Corruptor plugin will be hidden.");
+                        else
+                            Logging.GlobalLogger.Info("Multiple files or a non-jar file was loaded, Java Corruptor plugin will be hidden.");
+                        ChangePluginVisibility(false);
+                    }
+                    else
+                        ChangePluginVisibility(true);
+                };
+            }
+            
             Logging.GlobalLogger.Info($"{Name} v{Version} initialized.");
             CurrentSide = side;
             return true;
@@ -125,5 +146,22 @@ namespace Java_Corruptor
 
         #endregion
 
+        private void ChangePluginVisibility(bool show)
+        {
+            string path1 = Path.Combine(RtcCore.RtcDir, "LAYOUTS", $"{(show ? "" : "_")}Java Corruptor.txt");
+            string path2 = Path.Combine(RtcCore.RtcDir, "LAYOUTS", $"{(show ? "_" : "")}Java Corruptor.txt");
+            
+            if (File.Exists(path2))
+            {
+                Logging.GlobalLogger.Info($"Java Corruptor layout is {(show ? "" : "not ")}hidden, {(show ? "un" : "")}hiding it.");
+                if (File.Exists(path1))
+                    File.Delete(path1);
+                File.Move(path2, path1);
+            }
+            if (show && !UICore.mtForm.cbSelectBox.Items.Contains(PluginForm))
+                UICore.mtForm.cbSelectBox.Items.Add(PluginForm);
+            else if (!show && UICore.mtForm.cbSelectBox.Items.Contains(PluginForm))
+                UICore.mtForm.cbSelectBox.Items.Remove(PluginForm);
+        }
     }
 }

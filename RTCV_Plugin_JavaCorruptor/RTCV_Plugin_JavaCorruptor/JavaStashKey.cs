@@ -58,15 +58,6 @@ internal class JavaStashKey : ICloneable, INote
         JavaStockpileManagerUISide.CurrentStashkey = this;
         return JavaStockpileManagerUISide.ApplyStashkey(this);
     }
-    
-    /// <summary>
-    /// Can be called from UI Side
-    /// </summary>
-    public void RunOriginal()
-    {
-        JavaStockpileManagerUISide.CurrentStashkey = this;
-        JavaStockpileManagerUISide.OriginalFromStashkey(this);
-    }
 
     public object Clone()
     {

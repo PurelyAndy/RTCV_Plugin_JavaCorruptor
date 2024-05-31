@@ -31,7 +31,6 @@ public partial class NukerEngineControl
                 continue;
             
             AsmParser parser = new();
-            parser.ClearLabels();
             parser.RegisterLabelsFrom(methodNode.Instructions);
 
             AbstractInsnNode insnNode = methodNode.Instructions.First;
@@ -522,68 +521,70 @@ public partial class NukerEngineControl
         set
         {
             dynamic settings = value;
-            if (settings.Byte)
+            IDictionary<string, object> dict = settings;
+            
+            if (dict.ContainsKey("Byte") && settings.Byte)
             {
                 _byte = true;
                 _byteRuntimeRandom = settings.ByteRuntimeRandom;
                 _byteMinimum = settings.ByteMinimum;
                 _byteMaximum = settings.ByteMaximum;
             }
-            if (settings.Short)
+            if (dict.ContainsKey("Short") && settings.Short)
             {
                 _short = true;
                 _shortRuntimeRandom = settings.ShortRuntimeRandom;
                 _shortMinimum = settings.ShortMinimum;
                 _shortMaximum = settings.ShortMaximum;
             }
-            if (settings.Int)
+            if (dict.ContainsKey("Int") && settings.Int)
             {
                 _int = true;
                 _intRuntimeRandom = settings.IntRuntimeRandom;
                 _intMinimum = settings.IntMinimum;
                 _intMaximum = settings.IntMaximum;
             }
-            if (settings.Long)
+            if (dict.ContainsKey("Long") && settings.Long)
             {
                 _long = true;
                 _longRuntimeRandom = settings.LongRuntimeRandom;
                 _longMinimum = settings.LongMinimum;
                 _longMaximum = settings.LongMaximum;
             }
-            if (settings.Float)
+            if (dict.ContainsKey("Float") && settings.Float)
             {
                 _float = true;
                 _floatRuntimeRandom = settings.FloatRuntimeRandom;
                 _floatMinimum = settings.FloatMinimum;
                 _floatMaximum = settings.FloatMaximum;
             }
-            if (settings.Double)
+            if (dict.ContainsKey("Double") && settings.Double)
             {
                 _double = true;
                 _doubleRuntimeRandom = settings.DoubleRuntimeRandom;
                 _doubleMinimum = settings.DoubleMinimum;
                 _doubleMaximum = settings.DoubleMaximum;
             }
-            if (settings.Char)
+            if (dict.ContainsKey("Char") && settings.Char)
             {
                 _char = true;
                 _charRuntimeRandom = settings.CharRuntimeRandom;
                 _characters = settings.CharCharacters;
             }
-            if (settings.Bool)
+            if (dict.ContainsKey("Bool") && settings.Bool)
             {
                 _bool = true;
                 _boolRuntimeRandom = settings.BoolRuntimeRandom;
                 _true = settings.BoolTrue;
                 _false = settings.BoolFalse;
             }
-            if (settings.Void)
+            if (dict.ContainsKey("Void") && settings.Void)
             {
                 _void = true;
                 _skipClinit = settings.SkipClinit;
                 _skipInit = settings.SkipInit;
             }
-            if (settings.String)
+            if (dict.ContainsKey("String") && settings.String)
             {
                 _string = true;
                 _stringRuntimeRandom = settings.StringRuntimeRandom;
