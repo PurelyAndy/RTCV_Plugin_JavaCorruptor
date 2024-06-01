@@ -152,92 +152,47 @@ public partial class JavaCorruptionEngineForm : ComponentForm, IBlockable
         using (FileStream fileStream = File.OpenRead(inputFilePath))
         using (ZipArchive zipArchive = new(fileStream, ZipArchiveMode.Read))
         {
-            if (!useEngine)
-                JavaBlastTools.LoadClassesFromJar(zipArchive);
-
             SelectedEngine.Prepare();
 
-            if (!useEngine)
+            stopwatch.Start();
+            foreach (ZipArchiveEntry zipArchiveEntry in zipArchive.Entries)
             {
-                stopwatch.Start();
-                int i = 0;
-                foreach (ClassNode classNode in AsmUtilities.Classes.Values)
+                using Stream stream = zipArchiveEntry.Open();
+
+                byte[] fileBytes = new byte[zipArchiveEntry.Length];
+                int bytesRead = 0;
+
+                do
+                    bytesRead += stream.Read(fileBytes, bytesRead, fileBytes.Length - bytesRead);
+                while (bytesRead < fileBytes.Length);
+
+                if (zipArchiveEntry.FullName.EndsWith(".class"))
                 {
+                    ClassReader classReader = new((sbyte[])(Array)fileBytes);
+                    ClassNode classNode = new();
+
+                    classReader.Accept(classNode, 0);
+                    if (AsmUtilities.Classes.ContainsKey(classNode.Name))
+                    {
+                        if (!JavaBlastTools.IgnoreDuplicateClasses && DialogResult.No == MessageBox.Show($"Duplicate class {classNode.Name} found in JAR. Consider deleting all files in the JAR's META-INF folder except MANIFEST.MF.\nWould you like to ignore this error and continue anyway?", "Error", MessageBoxButtons.YesNo, MessageBoxIcon.Error))
+                            return;
+                        AsmUtilities.Classes.Remove(classNode.Name);
+                        if (!JavaBlastTools.IgnoreDuplicateClasses)
+                            JavaBlastTools.IgnoreDuplicateClasses = true;
+                    }
+                    AsmUtilities.Classes.Add(classNode.Name, classNode);
+
                     SelectedEngine.Corrupt(classNode);
-
-                    ClassWriter classWriter = new(ClassWriter.Compute_Maxs);
-                    
-                    classNode.Accept(classWriter);
-                    
-                    while (!zipArchive.Entries[i].FullName.EndsWith(".class"))
-                    {
-                        i++;
-                    }
-                    modifiedClasses.Add(zipArchive.Entries[i++].FullName, classWriter.ToByteArray());
-                }
-                stopwatch.Stop();
-                Logger.Info($"Corrupted {AsmUtilities.Classes.Count} classes in {stopwatch.ElapsedMilliseconds}ms");
-                
-                stopwatch.Restart();
-                foreach (ZipArchiveEntry zipArchiveEntry in zipArchive.Entries)
-                {
-                    if (zipArchiveEntry.FullName.EndsWith(".class"))
-                        continue;
-
-                    using Stream stream = zipArchiveEntry.Open();
-
-                    byte[] fileBytes = new byte[zipArchiveEntry.Length];
-                    int bytesRead = 0;
-
-                    do
-                        bytesRead += stream.Read(fileBytes, bytesRead, fileBytes.Length - bytesRead);
-                    while (bytesRead < fileBytes.Length);
-
-                    resources.Add(zipArchiveEntry.FullName, fileBytes);
-                }
-                stopwatch.Stop();
-                Logger.Info($"Loaded {resources.Count} resources in {stopwatch.ElapsedMilliseconds}ms");
-            }
-            else
-            {
-                stopwatch.Start();
-                foreach (ZipArchiveEntry zipArchiveEntry in zipArchive.Entries)
-                {
-                    using Stream stream = zipArchiveEntry.Open();
-
-                    byte[] fileBytes = new byte[zipArchiveEntry.Length];
-                    int bytesRead = 0;
-
-                    do
-                        bytesRead += stream.Read(fileBytes, bytesRead, fileBytes.Length - bytesRead);
-                    while (bytesRead < fileBytes.Length);
-
-                    if (zipArchiveEntry.FullName.EndsWith(".class"))
-                    {
-                        ClassReader classReader = new((sbyte[])(Array)fileBytes);
-                        ClassNode classNode = new();
-
-                        classReader.Accept(classNode, 0);
-
-                        AsmUtilities.Classes.Add(classNode.Name, classNode);
-
-                        if (zipArchiveEntry.FullName.Contains("goq.class"))
-                        {
-                            Logger.Info("Corrupted goq.class");
-                        }
-
-                        SelectedEngine.Corrupt(classNode);
                         
-                        ClassWriter classWriter = new(ClassWriter.Compute_Maxs);
-                        classNode.Accept(classWriter);
-                        modifiedClasses.Add(zipArchiveEntry.FullName, classWriter.ToByteArray());
-                    }
-                    else
-                        resources.Add(zipArchiveEntry.FullName, fileBytes);
+                    ClassWriter classWriter = new(ClassWriter.Compute_Maxs);
+                    classNode.Accept(classWriter);
+                    modifiedClasses.Add(zipArchiveEntry.FullName, classWriter.ToByteArray());
                 }
-                stopwatch.Stop();
-                Logger.Info($"Corrupted {AsmUtilities.Classes.Count} classes in {stopwatch.ElapsedMilliseconds}ms");
+                else
+                    resources.Add(zipArchiveEntry.FullName, fileBytes);
             }
+            stopwatch.Stop();
+            Logger.Info($"Corrupted {AsmUtilities.Classes.Count} classes in {stopwatch.ElapsedMilliseconds}ms");
 
             stopwatch.Restart();
             using (FileStream fileStream2 = File.OpenWrite(outputFilePath))
@@ -259,14 +214,6 @@ public partial class JavaCorruptionEngineForm : ComponentForm, IBlockable
             }
             stopwatch.Stop();
             Logger.Info($"Wrote corrupted jar in {stopwatch.ElapsedMilliseconds}ms");
-
-            /* We don't need to save a blast layer separately anymore, blasts go to the stash history
-            if (!useEngine) // argument for this? we might want to save the blast layer if we're merging blast layers or something
-                return;
-
-            string json = JsonConvert.SerializeObject(BlastLayerCollection, Formatting.Indented);
-            File.WriteAllText(outputFilePath + ".jbl", json);
-            */
 
             gpForm.RunPostCorruptAction();
         }

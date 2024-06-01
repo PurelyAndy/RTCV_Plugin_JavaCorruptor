@@ -55,7 +55,7 @@ public partial class NukerEngineControl
             if (!JavaCorruptionEngineForm.BlastLayerCollection.ContainsKey(key))
                 JavaCorruptionEngineForm.BlastLayerCollection.Add(key, JsonConvert.DeserializeObject<SerializedInsnBlastLayer>(JsonConvert.SerializeObject(new JavaBlastLayer(unit))));
             else
-                JavaCorruptionEngineForm.BlastLayerCollection[key].Layer.Add(JsonConvert.DeserializeObject<SerializedInsnBlastUnit>(JsonConvert.SerializeObject(unit)));
+                JavaCorruptionEngineForm.BlastLayerCollection.Add(JsonConvert.DeserializeObject<SerializedInsnBlastUnit>(JsonConvert.SerializeObject(unit)));
             
             methodNode.Instructions.Clear();
             foreach (AbstractInsnNode i in result)

@@ -33,7 +33,7 @@ public class JavaBlastLayerCollection : IDictionary<string, JavaBlastLayer>, ILi
             foreach (var unit in value.Layer)
             {
                 if (!_mappedLayers.ContainsKey(unit.Method))
-                    _mappedLayers[unit.Method] = new JavaBlastLayer();
+                    _mappedLayers[unit.Method] = new();
                 _mappedLayers[unit.Method].Layer.Add(unit);
             }
         }
@@ -130,7 +130,10 @@ public class JavaBlastLayerCollection : IDictionary<string, JavaBlastLayer>, ILi
 
     public void Add(KeyValuePair<string, JavaBlastLayer> item)
     {
-        ((IDictionary<string, JavaBlastLayer>)_mappedLayers).Add(item);
+        if (!_mappedLayers.ContainsKey(item.Key))
+            _mappedLayers.Add(item.Key, item.Value);
+        else
+            _mappedLayers[item.Key].Layer.AddRange(item.Value.Layer);
         _layer.Layer.AddRange(item.Value.Layer);
     }
 
@@ -180,6 +183,8 @@ public class JavaBlastLayerCollection : IDictionary<string, JavaBlastLayer>, ILi
     public void RemoveAt(int index)
     {
         _mappedLayers[_layer.Layer[index].Method].Layer.Remove(_layer.Layer[index]);
+        if (_mappedLayers[_layer.Layer[index].Method].Layer.Count == 0)
+            _mappedLayers.Remove(_layer.Layer[index].Method);
         _layer.Layer.RemoveAt(index);
     }
 
@@ -204,7 +209,10 @@ public class JavaBlastLayerCollection : IDictionary<string, JavaBlastLayer>, ILi
     public bool Remove(JavaBlastUnit item)
     {
         _layer.Layer.Remove(item);
-        return _mappedLayers[item.Method].Layer.Remove(item);
+        bool b = _mappedLayers[item.Method].Layer.Remove(item);
+        if (_mappedLayers[item.Method].Layer.Count == 0)
+            _mappedLayers.Remove(item.Method);
+        return b;
     }
 
     IEnumerator<JavaBlastUnit> IEnumerable<JavaBlastUnit>.GetEnumerator()

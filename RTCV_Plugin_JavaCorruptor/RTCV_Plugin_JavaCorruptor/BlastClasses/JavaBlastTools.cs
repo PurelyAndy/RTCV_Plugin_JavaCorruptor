@@ -16,6 +16,7 @@ namespace Java_Corruptor.BlastClasses;
 public class JavaBlastTools
 {
     public static string LastBlastLayerSavePath { get; private set; }
+    internal static bool IgnoreDuplicateClasses;
     
     public static SerializedInsnBlastLayerCollection LoadBlastLayerFromFile(string path = null)
     {
@@ -130,6 +131,14 @@ public class JavaBlastTools
                 ClassNode classNode = new();
                 classReader.Accept(classNode, 0);
 
+                if (AsmUtilities.Classes.ContainsKey(classNode.Name))
+                {
+                    if (!IgnoreDuplicateClasses && DialogResult.No == MessageBox.Show($"Duplicate class {classNode.Name} found in JAR. Consider deleting all files in the JAR's META-INF folder except MANIFEST.MF.\nWould you like to ignore this error and continue anyway?", "Error", MessageBoxButtons.YesNo, MessageBoxIcon.Error))
+                        return;
+                    AsmUtilities.Classes.Remove(classNode.Name);
+                    if (!IgnoreDuplicateClasses)
+                        IgnoreDuplicateClasses = true;
+                }
                 AsmUtilities.Classes.Add(classNode.Name, classNode);
             }
         stopwatch.Stop();

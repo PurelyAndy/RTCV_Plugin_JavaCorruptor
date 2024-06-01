@@ -21,7 +21,7 @@ public class AsmParser
     {
         _logger.Info("Precalculating label names...");
         _precalculatedLabels = [];
-        for (int i = 0; i < 20000; i++) // 20000 is arbitrary, this doesn't take long anyway
+        for (int i = 0; i < 100000; i++) // 100000 is mostly arbitrary, this doesn't take long anyway. some libraries have *really* long methods.
         {
             const int divisor = 26;
             int index = i;

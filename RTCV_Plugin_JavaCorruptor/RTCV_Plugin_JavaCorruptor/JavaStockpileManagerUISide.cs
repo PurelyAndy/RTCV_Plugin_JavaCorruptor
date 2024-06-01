@@ -177,11 +177,11 @@ public static class JavaStockpileManagerUISide
             {
                 foreach (var kv in item.BlastLayer.MappedLayers)
                 {
-                    bl.MappedLayers[kv.Key] = kv.Value;
+                    bl.Add(kv);
                 }
             }
 
-            bl.MappedLayers = bl.MappedLayers.Distinct().ToDictionary(x => x.Key, x => x.Value);
+            bl.Layer = new(bl.Layer.Layer.Distinct().ToList());
 
             CurrentStashkey = new(RtcCore.GetRandomKey(), master.ParentKey, bl)
             {

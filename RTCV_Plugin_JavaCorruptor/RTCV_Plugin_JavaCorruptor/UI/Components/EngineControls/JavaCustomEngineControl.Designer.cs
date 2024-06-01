@@ -35,9 +35,9 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.label19 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.tbFind = new System.Windows.Forms.TextBox();
+            this.tbFind = new System.Windows.Forms.RichTextBox();
             this.btnSave = new System.Windows.Forms.Button();
-            this.tbReplace = new System.Windows.Forms.TextBox();
+            this.tbReplace = new System.Windows.Forms.RichTextBox();
             this.btnSaveAs = new System.Windows.Forms.Button();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.btnLoad = new System.Windows.Forms.Button();
@@ -114,7 +114,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.tbFind.Location = new System.Drawing.Point(0, 0);
             this.tbFind.Multiline = true;
             this.tbFind.Name = "tbFind";
-            this.tbFind.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.tbFind.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
             this.tbFind.Size = new System.Drawing.Size(215, 127);
             this.tbFind.TabIndex = 162;
             this.tbFind.Tag = "color:normal";
@@ -148,7 +148,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.tbReplace.Location = new System.Drawing.Point(0, 0);
             this.tbReplace.Multiline = true;
             this.tbReplace.Name = "tbReplace";
-            this.tbReplace.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.tbReplace.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
             this.tbReplace.Size = new System.Drawing.Size(212, 127);
             this.tbReplace.TabIndex = 164;
             this.tbReplace.Tag = "color:normal";
@@ -250,9 +250,9 @@ namespace Java_Corruptor.UI.Components.EngineControls
         private Label label19;
         private Label label1;
         private Label label2;
-        private TextBox tbFind;
+        private RichTextBox tbFind;
         private System.Windows.Forms.Button btnSaveAs;
-        private TextBox tbReplace;
+        private RichTextBox tbReplace;
         private System.Windows.Forms.Button btnSave;
         private SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.Button btnLoad;

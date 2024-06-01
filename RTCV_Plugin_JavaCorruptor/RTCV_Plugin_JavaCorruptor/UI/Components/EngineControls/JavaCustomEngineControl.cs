@@ -18,6 +18,7 @@ using RTCV.Common;
 using RTCV.Common.CustomExtensions;
 using RTCV.CorruptCore;
 using RTCV.UI;
+using WinFormsSyntaxHighlighter;
 using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace Java_Corruptor.UI.Components.EngineControls;
@@ -26,14 +27,34 @@ namespace Java_Corruptor.UI.Components.EngineControls;
 // This will allow for <> to be used for dynamic values in the replace instructions, like calling a method with a matched value as an argument, or doing logic.
 public partial class JavaCustomEngineControl
 {
+    private readonly SyntaxHighlighter _findHighlighter;
+    private readonly SyntaxHighlighter _replaceHighlighter;
+    private readonly Regex _blockCommentRegex = new(@"/\*(.|\n)*?\*/", RegexOptions.Compiled);
+    private readonly Regex _lineCommentRegex = new(@"//.*", RegexOptions.Compiled);
+    private readonly Regex _lineEndingFix = new(@"([^\r])\n", RegexOptions.Compiled);
+    private readonly Regex _ifElseRegex = new(@"<if \$(\d+) (==|!=) (.+?(?<!\\))>(.+?(?<!\\))<else>(.+?(?<!\\))</if>", RegexOptions.Compiled);
+    private readonly Regex _randomRegex = new(@"<random(F|D|I|L) ([1-9]\d*\.\d*|0?\.\d*[1-9]\d*|[1-9]\d*),([1-9]\d*\.\d*|0?\.\d*[1-9]\d*|[1-9]\d*)>", RegexOptions.Compiled);
+    private readonly Regex _labelNameRegex = new(@"<label (\w+)>", RegexOptions.Compiled);
     private string _path = "";
     private string[] _findInstructions, _replaceInstructions;
     private Regex[] _findRegexes;
     private string _findList, _replaceList, _findText, _replaceText;
     private Regex _findRegex;
+
     public JavaCustomEngineControl()
     {
         InitializeComponent();
+        string opcodePattern = string.Join("|", AsmUtilities.Opcodes.Values);
+        _findHighlighter = new(tbFind);
+        _findHighlighter.AddPattern(new(_blockCommentRegex), new(Color.FromArgb(106, 169, 101)));
+        _findHighlighter.AddPattern(new(_lineCommentRegex), new(Color.FromArgb(106, 169, 101)));
+        _findHighlighter.AddPattern(new(opcodePattern), new(Color.FromArgb(86, 156, 214)));
+
+        _replaceHighlighter = new(tbReplace);
+        _replaceHighlighter.AddPattern(new(_blockCommentRegex), new(Color.FromArgb(106, 169, 101)));
+        _replaceHighlighter.AddPattern(new(_lineCommentRegex), new(Color.FromArgb(106, 169, 101)));
+        _replaceHighlighter.AddPattern(new(opcodePattern), new(Color.FromArgb(86, 156, 214)));
+        _replaceHighlighter.AddPattern(new("if|else|random|label"), new(Color.FromArgb(197, 134, 192)));
     }
 
     private void btnSaveAs_Click(object sender, EventArgs e)
@@ -191,24 +212,20 @@ public partial class JavaCustomEngineControl
 
     private (string Find, string Replace) SeparateEngineText(string fileText)
     {
-        string text = Regex.Replace(fileText, "([^\r])\n", "$1\r\n");
-            
-        // WinForms textboxes use \r\n for newlines, and will ignore \n on its own, so we need to replace \n with \r\n
-        Regex blockComments = new(@"/\*(.|\n)*?\*/");
-        Regex lineComments = new(@"//.*");
-                
+        string text = _lineEndingFix.Replace(fileText, "$1\r\n");
+        
         Dictionary<int, (int, string)> comments = new();
 
-        foreach (Match match in blockComments.Matches(text))
+        foreach (Match match in _blockCommentRegex.Matches(text))
             comments.Add(match.Index, (match.Length, match.Value));
 
-        foreach (Match match in lineComments.Matches(text))
+        foreach (Match match in _lineCommentRegex.Matches(text))
             comments.Add(match.Index, (match.Length, match.Value));
 
         comments = comments.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
 
-        text = blockComments.Replace(text, "");
-        text = lineComments.Replace(text, "");
+        text = _blockCommentRegex.Replace(text, "");
+        text = _lineCommentRegex.Replace(text, "");
 
         int findIndex = text.IndexOf("[FIND]\r\n", StringComparison.Ordinal);
         int replaceIndex = text.IndexOf("\r\n[REPLACE]\r\n", StringComparison.Ordinal);
@@ -252,12 +269,12 @@ public partial class JavaCustomEngineControl
         string find = code.Substring(index + 6, code.IndexOf("[REPLACE]", StringComparison.Ordinal) - index - 6).Trim();
         find = Regex.Replace(find, @"^\s*$[\r\n]*", "", RegexOptions.Multiline);
         find = find.Trim();
-        find = Regex.Replace(find, @"([^\r])\n", "$1\r\n");
+        find = _lineEndingFix.Replace(find, "$1\r\n");
             
         string replace = code[(code.IndexOf("[REPLACE]", StringComparison.Ordinal) + 9)..].Trim();
         replace = Regex.Replace(replace, @"^\s*$[\r\n]*", "", RegexOptions.Multiline);
         replace = replace.Trim();
-        replace = Regex.Replace(replace, @"([^\r])\n", "$1\r\n");
+        replace = _lineEndingFix.Replace(find, "$1\r\n");
             
         _findInstructions = find.Split(["\r\n"], StringSplitOptions.None);
         _replaceInstructions = replace.Split(["\r\n"], StringSplitOptions.None);
@@ -343,10 +360,7 @@ public partial class JavaCustomEngineControl
     {
         MatchCollection m = _findRegex.Matches(insns.ToString());
         StringBuilder newInsns = new();
-
-        Regex ifElseRegex = new(@"<if \$(\d+) (==|!=) (.+?(?<!\\))>(.+?(?<!\\))<else>(.+?(?<!\\))</if>");
-        Regex randomRegex = new(@"<random(F|D|I|L) ([1-9]\d*\.\d*|0?\.\d*[1-9]\d*|[1-9]\d*),([1-9]\d*\.\d*|0?\.\d*[1-9]\d*|[1-9]\d*)>");
-        Regex labelNameRegex = new(@"<label (\w+)>");
+        
         foreach (Match match in m)
         {
             string newInsn = _replaceList;
@@ -355,7 +369,7 @@ public partial class JavaCustomEngineControl
                 string matchText = match.Groups[j + 1].Value;
                 newInsn = newInsn.Replace("<$" + (j + 1) + ">", matchText);
             }
-            MatchCollection ifElseMatches = ifElseRegex.Matches(newInsn);
+            MatchCollection ifElseMatches = _ifElseRegex.Matches(newInsn);
             foreach (Match ifElseMatch in ifElseMatches)
             {
                 string groupText = match.Groups[int.Parse(ifElseMatch.Groups[1].Value)].Value;
@@ -370,7 +384,7 @@ public partial class JavaCustomEngineControl
                     replacement = groupText != value ? ifTrue : ifFalse;
                 newInsn = newInsn.Replace(ifElseMatch.Value, replacement);
             }
-            MatchCollection randomMatches = randomRegex.Matches(newInsn);
+            MatchCollection randomMatches = _randomRegex.Matches(newInsn);
             foreach (Match randomMatch in randomMatches)
             {
                 string type = randomMatch.Groups[1].Value;
@@ -388,7 +402,7 @@ public partial class JavaCustomEngineControl
                 newInsn = newInsn.Replace(randomMatch.Value, result);
             }
             Dictionary<string, string> labels = new();
-            MatchCollection labelNameMatches = labelNameRegex.Matches(newInsn);
+            MatchCollection labelNameMatches = _labelNameRegex.Matches(newInsn);
             foreach (Match labelNameMatch in labelNameMatches)
             {
                 string labelName = labelNameMatch.Groups[1].Value;

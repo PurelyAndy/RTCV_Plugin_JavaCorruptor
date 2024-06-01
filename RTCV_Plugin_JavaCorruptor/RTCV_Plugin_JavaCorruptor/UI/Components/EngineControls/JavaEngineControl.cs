@@ -83,7 +83,11 @@ public partial class JavaEngineControl : UserControl
                     insnList.Add(insnNode);
                     continue;
                 }
-                
+
+                if (methodNode.Name.Contains("inv_mdct"))
+                {
+                    Console.WriteLine("inv_mdct");
+                }
                 List<AbstractInsnNode> copy = result.ToList();
                 insnList.AddRange(result);
                 result.RemoveAll(true);
@@ -96,7 +100,7 @@ public partial class JavaEngineControl : UserControl
                 if (!JavaCorruptionEngineForm.BlastLayerCollection.ContainsKey(key))
                     JavaCorruptionEngineForm.BlastLayerCollection.Add(key, JsonConvert.DeserializeObject<SerializedInsnBlastLayer>(JsonConvert.SerializeObject(new JavaBlastLayer(unit))));
                 else
-                    JavaCorruptionEngineForm.BlastLayerCollection[key].Layer.Add(JsonConvert.DeserializeObject<SerializedInsnBlastUnit>(JsonConvert.SerializeObject(unit)));
+                    JavaCorruptionEngineForm.BlastLayerCollection.Add(JsonConvert.DeserializeObject<SerializedInsnBlastUnit>(JsonConvert.SerializeObject(unit)));
                 
 
                 i += replaces - 1;
