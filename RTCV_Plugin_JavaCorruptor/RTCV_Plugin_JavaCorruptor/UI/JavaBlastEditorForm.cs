@@ -10,39 +10,21 @@ Applies in all cases & should be editable
  * bool IsEnabled
  * bool IsLocked
  *
- * string Domain
- * long Address
- * int Precision
- * BlastUnitSource Source
-
- * BigInteger TiltValue
- *
- * int ExecuteFrame
- * int Lifetime
- * bool Loop
- *
- * ActionTime LimiterTime
- * string LimiterListHash
- * bool InvertLimiter
- *
+ * string Method
+ * long Index
+ * int Replaces
+ * string Value
+ * 
  * string Note
-
-
-Applies for Store & should be editable
- * ActionTime StoreTime
- * StoreType StoreType
- * string SourceDomain
- * long SourceAddress
-
-
-Applies for Value & should be editable
- * byte[] Value */
+*/
 
 using System.Diagnostics;
-using System.Reflection;
+using System.IO.Compression;
 using Java_Corruptor.BlastClasses;
 using Java_Corruptor.UI.Components;
 using Java_Corruptor.UI.Components.EngineControls;
+using ObjectWeb.Asm;
+using ObjectWeb.Asm.Tree;
 using RTCV.UI;
 using RTCV.UI.Modular;
 
@@ -63,6 +45,7 @@ using RTCV.NetCore;
 using RTCV.Common;
 using RTCV.UI.Components;
 using global::Java_Corruptor;
+using SlimDX.XACT3;
 
 #pragma warning disable CA2213 //Component designer classes generate their own Dispose method
 public partial class JavaBlastEditorForm : ColorizedForm
@@ -102,8 +85,6 @@ public partial class JavaBlastEditorForm : ColorizedForm
             InitializeComponent();
 
             dgvBlastEditor.AutoGenerateColumns = false;
-
-            RegisterValueStringScrollEvents();
 
             //On today's episode of "why is the designer overriding these values every time I build"
             upDownReplaces.Maximum = 16348; //Textbox doesn't like more than ~20k
@@ -150,16 +131,16 @@ public partial class JavaBlastEditorForm : ColorizedForm
 
         sk ??= new();
 
-        //If the blastlayer is big, prompt them before opening it. Let's go with 5k for now.
+        //If the blastlayer is big, prompt them before opening it. Let's go with 500 for now.
 
         switch (sk.BlastLayer.Layer.Layer.Count)
         {
             //TODO
             //to-do WHAT
-            case > 5000 when (DialogResult.Yes == MessageBox.Show($"You're trying to open a BlastLayer of size {sk.BlastLayer.Layer.Layer.Count}. This could take a while. Are you sure you want to continue?", "Opening a large BlastLayer", MessageBoxButtons.YesNo)):
+            case > 500 when (DialogResult.Yes == MessageBox.Show($"You're trying to open a BlastLayer of size {sk.BlastLayer.Layer.Layer.Count}. This could take a while. Are you sure you want to continue?", "Opening a large BlastLayer", MessageBoxButtons.YesNo)):
                 bef.LoadStashKey(sk, silent);
                 return true;
-            case <= 5000:
+            case <= 500:
                 bef.LoadStashKey(sk, silent);
                 return true;
             default:
@@ -187,28 +168,7 @@ public partial class JavaBlastEditorForm : ColorizedForm
         //Force cleanup
         GC.Collect();
         GC.WaitForPendingFinalizers();
-        this.Dispose();
-    }
-
-    private void RegisterValueStringScrollEvents()
-    {
-        tbValue.MouseWheel += tbValueScroll;
-    }
-
-    private static void DgvCellValueScroll(object sender, MouseEventArgs e, int precision)
-    {
-        if (sender is not TextBox tb)
-            return;
-        
-        int scrollBy = e.Delta < 0 ? -1 : 1;
-
-        tb.Text = GetShiftedHexString(tb.Text, scrollBy, precision);
-    }
-
-    private void tbValueScroll(object sender, MouseEventArgs e)
-    {
-        if (sender is TextBox tb)
-            tb.Text = GetShiftedHexString(tb.Text, (decimal)e.Delta / SystemInformation.MouseWheelScrollDelta, Convert.ToInt32(upDownReplaces.Value));
+        Dispose();
     }
 
     private void SetDisplayOrder()
@@ -237,7 +197,7 @@ public partial class JavaBlastEditorForm : ColorizedForm
     {
         IOrderedEnumerable<DataGridViewColumn> cols = dgvBlastEditor.Columns.Cast<DataGridViewColumn>().OrderBy(x => x.DisplayIndex);
         StringBuilder sb = new();
-        foreach (var c in cols)
+        foreach (DataGridViewColumn c in cols)
         {
             sb.Append(c.Name + ",");
         }
@@ -289,13 +249,8 @@ public partial class JavaBlastEditorForm : ColorizedForm
                 return;
             
             PopulateGenericContextMenu();
-                
-            if (dgvBlastEditor.Columns[e.ColumnIndex] == dgvBlastEditor.Columns[BuProperty.Method.ToString()])
-            {
-                _cms.Items.Add(new ToolStripSeparator());
-                PopulateMethodContextMenu(dgvBlastEditor[e.ColumnIndex, e.RowIndex]);
-            } 
-            else if (dgvBlastEditor.Columns[e.ColumnIndex] == dgvBlastEditor.Columns[BuProperty.ValueString.ToString()])
+            
+            if (dgvBlastEditor.Columns[e.ColumnIndex] == dgvBlastEditor.Columns[BuProperty.ValueString.ToString()])
             {
                 _cms.Items.Add(new ToolStripSeparator());
                 PopulateValueStringContextMenu(dgvBlastEditor[e.ColumnIndex, e.RowIndex]);
@@ -328,7 +283,6 @@ public partial class JavaBlastEditorForm : ColorizedForm
     {
         ((ToolStripMenuItem)_cms.Items.Add("Re-roll Selected Row(s)", null, (_, _) =>
         {
-
             //generate temporary blastlayer for batch processing
             List<SerializedInsnBlastUnit> layer = [];
             foreach (DataGridViewRow row in dgvBlastEditor.SelectedRows)
@@ -339,12 +293,11 @@ public partial class JavaBlastEditorForm : ColorizedForm
             SerializedInsnBlastLayer tempBl = new(layer);
 
             SerializedInsnBlastLayer rerolledBl = (SerializedInsnBlastLayer)tempBl.Clone();
-            AsmUtilities.Classes.Clear();
-            JavaBlastTools.LoadClassesFromJar(new(File.OpenRead(CurrentSk.JarFilename)));
+            JavaBlastTools.LoadClassesFromJar(CurrentSk.JarFilename);
             rerolledBl.ReRoll();
 
             //update JavaBlastUnit with new data
-            for (int i =0;i< rerolledBl.Layer.Count;i++)
+            for (int i = 0; i < rerolledBl.Layer.Count; i++)
             {
                 SerializedInsnBlastUnit bu = tempBl.Layer[i];
                 SerializedInsnBlastUnit newBu = rerolledBl.Layer[i];
@@ -361,8 +314,19 @@ public partial class JavaBlastEditorForm : ColorizedForm
         {
             SerializedInsnBlastUnit bu = (SerializedInsnBlastUnit)dgvBlastEditor.SelectedRows[0].DataBoundItem;
 
+            if (bu.Engine == "JavaVectorEngineControl")
+                bu.Engine = "BasicEngineControl";
             Type engineType = Type.GetType("Java_Corruptor.UI.Components.EngineControls." + bu.Engine);
+            bool engineWasNull = false;
+            if (engineType is null)
+            {
+                engineWasNull = true;
+                bu.Engine = "ArithmeticEngineControl";
+            }
             JavaEngineControl engine = (JavaEngineControl)Activator.CreateInstance(engineType);
+            if (engineWasNull)
+                bu.EngineSettings = engine.EngineSettings;
+
             engine.DisableComboBox();
             
             ColorizedForm f = new();
@@ -409,6 +373,19 @@ public partial class JavaBlastEditorForm : ColorizedForm
             dgvBlastEditor.Refresh();
             UpdateBottom();
         })).Enabled = dgvBlastEditor.SelectedRows.Count == 1;
+        
+        ((ToolStripMenuItem)_cms.Items.Add("Disassemble this unit's method", null, (_, _) =>
+        {
+            SerializedInsnBlastUnit bu = (SerializedInsnBlastUnit)dgvBlastEditor.SelectedRows[0].DataBoundItem;
+            
+            if (S.GET<DisassemblerForm>().IsDisposed)
+            {
+                S.SET(new DisassemblerForm());
+            }
+            S.GET<DisassemblerForm>().Show();
+            S.GET<DisassemblerForm>().BringToFront();
+            S.GET<DisassemblerForm>().OpenMethod(bu.Method, bu.Index, bu.Replaces);
+        })).Enabled = true;
 
         //TODO: break down support
         /*((ToolStripMenuItem)cms.Items.Add("Break Down Selected Unit(s)", null, (_, _) =>
@@ -453,6 +430,7 @@ public partial class JavaBlastEditorForm : ColorizedForm
         }
 
         bs = new BindingSource { DataSource = new SortableBindingList<JavaBlastUnit>(currentSK.BlastLayer) };
+        _siblc = CurrentSk!.BlastLayer;
         batchOperation = false;
         dgvBlastEditor.DataSource = bs;
         updateMaximum(this, dgvBlastEditor.Rows.Cast<DataGridViewRow>().ToList());
@@ -462,25 +440,12 @@ public partial class JavaBlastEditorForm : ColorizedForm
 
     private void PopulateMethodContextMenu(DataGridViewCell cell)
     {
-        ((ToolStripMenuItem)_cms.Items.Add("Disassemble this unit's method", null, (_, _) =>
-        {
-            if (dgvBlastEditor.Rows[cell.RowIndex].DataBoundItem is not SerializedInsnBlastUnit bu)
-            {
-                return;
-            }
-            if (S.GET<DisassemblerForm>().IsDisposed)
-            {
-                S.SET(new DisassemblerForm());
-            }
-            S.GET<DisassemblerForm>().Show();
-            S.GET<DisassemblerForm>().OpenMethod(bu.Method);
-        })).Enabled = true;
     }
 
     private void OnBlastEditorCellValueChanged(object sender, DataGridViewCellEventArgs e)
     {
         DataGridViewColumn changedColumn = dgvBlastEditor.Columns[e.ColumnIndex];
-
+        
         //If the Domain or SourceDomain changed update the Maximum Value
         //TODO: this should instead update the maximum index based on the size of the method
         /*if (changedColumn.Name == BuProperty.Domain.ToString())
@@ -500,6 +465,29 @@ public partial class JavaBlastEditorForm : ColorizedForm
         }
         
         UpdateBottom();
+    }
+
+    private void OnBlastEditorCellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+    {
+        DataGridViewColumn changedColumn = dgvBlastEditor.Columns[e.ColumnIndex];
+        
+        if (changedColumn.Name == BuProperty.Method.ToString())
+        {
+            DataGridViewRow row = dgvBlastEditor.Rows[e.RowIndex];
+            SerializedInsnBlastUnit sibu = (SerializedInsnBlastUnit)row.DataBoundItem;
+            string oldValue = row.Cells[BuProperty.Method.ToString()].Value.ToString();
+            string newValue = (string)e.FormattedValue;
+            if (oldValue == newValue)
+            {
+                _siblc.RepairMap();
+            }
+            
+            int index = _siblc.IndexOf(sibu);
+            _siblc.Remove(sibu);
+            sibu.Method = newValue;
+            _siblc.Insert(index, sibu);
+            row.Cells[BuProperty.Method.ToString()].Value = newValue;
+        }
     }
 
     private void OnValueValidated(object sender, EventArgs e)
@@ -524,6 +512,22 @@ public partial class JavaBlastEditorForm : ColorizedForm
         foreach (DataGridViewRow row in dgvBlastEditor.SelectedRows.Cast<DataGridViewRow>().Where(x => (x.DataBoundItem as SerializedInsnBlastUnit)?.IsLocked == false))
         {
             row.Cells[BuProperty.Index.ToString()].Value = value;
+        }
+
+        UpdateBottom();
+    }
+
+    private void OnReplacesValidated(object sender, EventArgs e)
+    {
+        decimal value = upDownReplaces.Value;
+        if (value > int.MaxValue)
+        {
+            value = int.MaxValue;
+        }
+
+        foreach (DataGridViewRow row in dgvBlastEditor.SelectedRows.Cast<DataGridViewRow>().Where(x => (x.DataBoundItem as SerializedInsnBlastUnit)?.IsLocked == false))
+        {
+            row.Cells[BuProperty.Replaces.ToString()].Value = value;
         }
 
         UpdateBottom();
@@ -557,6 +561,11 @@ public partial class JavaBlastEditorForm : ColorizedForm
 
         foreach (DataGridViewRow row in dgvBlastEditor.SelectedRows.Cast<DataGridViewRow>().Where(x => (x.DataBoundItem as SerializedInsnBlastUnit)?.IsLocked == false))
         {
+            SerializedInsnBlastUnit sibu = (SerializedInsnBlastUnit)row.DataBoundItem;
+            int index = _siblc.IndexOf(sibu);
+            _siblc.Remove(sibu);
+            sibu.Method = value;
+            _siblc.Insert(index, sibu);
             row.Cells[BuProperty.Method.ToString()].Value = value;
         }
 
@@ -688,7 +697,11 @@ public partial class JavaBlastEditorForm : ColorizedForm
         }
 
         _bs2 = new();
-        _bs2.DataSource = CurrentSk.BlastLayer.Layer.Layer.Where(x => x?.GetType()?.GetProperty(value)?.GetValue(x) != null && (x.GetType()?.GetProperty(value)?.GetValue(x).ToString().ToUpper().Substring(0, tbFilter.Text.Length) == tbFilter.Text.ToUpper())).ToList();
+        _bs2.DataSource = CurrentSk.BlastLayer.Layer.Layer.Where(x => //RTC FIX: don't error if the filter text is longer than the property's value, also change behavior to search the whole string rather than just matching from the beginning
+        {
+            object o = x?.GetType().GetProperty(value)?.GetValue(x);
+            return o != null && o.ToString().IndexOf(tbFilter.Text, StringComparison.OrdinalIgnoreCase) >= 0;
+        }).ToList();
         
         dgvBlastEditor.DataSource = _bs2;
         RefreshAllNoteIcons();
@@ -722,9 +735,9 @@ public partial class JavaBlastEditorForm : ColorizedForm
         locked.SortMode = DataGridViewColumnSortMode.Automatic;
         dgvBlastEditor.Columns.Add(locked);
 
-        //TODO: make methods a combobox rather than a textbox
         DataGridViewTextBoxColumn method = CreateColumn(BuProperty.Method.ToString(), BuProperty.Method.ToString(), "Method", new DataGridViewTextBoxColumn()) as DataGridViewTextBoxColumn;//new DataGridViewComboBoxColumn()) as DataGridViewComboBoxColumn;
-        //domain.DataSource = _methods; 
+        //TODO: make methods a combobox rather than a textbox (maybe)
+        //method.DataSource = _methods;
         method!.SortMode = DataGridViewColumnSortMode.Automatic;
         dgvBlastEditor.Columns.Add(method);
 
@@ -736,7 +749,7 @@ public partial class JavaBlastEditorForm : ColorizedForm
         dgvBlastEditor.Columns.Add(index);
 
         DataGridViewNumericUpDownColumn replaces = (DataGridViewNumericUpDownColumn)CreateColumn(BuProperty.Replaces.ToString(), BuProperty.Replaces.ToString(), "Replaces", new DataGridViewNumericUpDownColumn());
-        replaces.Minimum = 1;
+        replaces.Minimum = 0;
         replaces.Maximum = int.MaxValue;
         replaces.SortMode = DataGridViewColumnSortMode.Automatic;
         dgvBlastEditor.Columns.Add(replaces);
@@ -876,6 +889,7 @@ public partial class JavaBlastEditorForm : ColorizedForm
 
     private BindingSource _bs;
     private BindingSource _bs2;
+    private SerializedInsnBlastLayerCollection _siblc;
 
     private void LoadStashKey(JavaStashKey sk, bool silent = false)
     {
@@ -883,6 +897,7 @@ public partial class JavaBlastEditorForm : ColorizedForm
         CurrentSk = sk.Clone() as JavaStashKey;
 
         _bs = new() { DataSource = new SortableBindingList<SerializedInsnBlastUnit>(CurrentSk!.BlastLayer) };
+        _siblc = CurrentSk!.BlastLayer;
 
         _bs.CurrentChanged += (_, e) =>
         {
@@ -994,7 +1009,7 @@ public partial class JavaBlastEditorForm : ColorizedForm
             _bs.Remove(bu!);
             //Todo replace how this works
             if (_bs2 != null && _bs2.Contains(bu))
-                _bs2.Remove(bu);
+                _bs2.Remove(bu); //RTC FIX: it originally said _bs.Remove (in the original-original, bs.Remove since they're renamed here)
         }
     }
 
@@ -1017,12 +1032,12 @@ public partial class JavaBlastEditorForm : ColorizedForm
 
     private void SendToStash(object sender, EventArgs e)
     {
-        if (CurrentSk.ParentKey == null)
+        /*if (CurrentSk.ParentKey == null)
         {
             MessageBox.Show("There's no savestate associated with this Stashkey!\nAssociate one in the menu to send this to the stash.");
             return;
-        }
-        var newSk = (JavaStashKey)CurrentSk.Clone();
+        }*/
+        JavaStashKey newSk = (JavaStashKey)CurrentSk.Clone();
 
         JavaStockpileManagerUISide.StashHistory.Add(newSk);
 
@@ -1065,6 +1080,7 @@ public partial class JavaBlastEditorForm : ColorizedForm
             bl.SanitizeDuplicates();
         
         _bs = new() { DataSource = new SortableBindingList<SerializedInsnBlastUnit>(CurrentSk.BlastLayer) };
+        _siblc = CurrentSk!.BlastLayer;
         _batchOperation = false;
         dgvBlastEditor.DataSource = _bs;
         dgvBlastEditor.Refresh();
@@ -1080,6 +1096,7 @@ public partial class JavaBlastEditorForm : ColorizedForm
         batchOperation = true;
         currentSK.BlastLayer.RasterizeVMDs();
         bs = new BindingSource { DataSource = new SortableBindingList<SerializedInsnBlastUnit>(currentSK.BlastLayer) };
+        _siblc = CurrentSk!.BlastLayer;
 
         batchOperation = false;
         dgvBlastEditor.DataSource = bs;
@@ -1151,6 +1168,8 @@ public partial class JavaBlastEditorForm : ColorizedForm
     private void ImportBlastLayer(object sender, EventArgs e)
     {
         SerializedInsnBlastLayerCollection temp = JavaBlastTools.LoadBlastLayerFromFile();
+        if (temp is null)
+            return;
         ImportBlastLayer(temp.Layer);
     }
 
@@ -1171,7 +1190,7 @@ public partial class JavaBlastEditorForm : ColorizedForm
             return;
         }
 
-        List<SerializedInsnBlastUnit> l = bl.Layer;
+        SynchronizedCollection<SerializedInsnBlastUnit> l = bl.Layer;
         if (l == null)
             return;
 
@@ -1182,6 +1201,7 @@ public partial class JavaBlastEditorForm : ColorizedForm
         {
             CurrentSk.BlastLayer = new(l);
             _bs = new() { DataSource = new SortableBindingList<SerializedInsnBlastUnit>(CurrentSk.BlastLayer) };
+            _siblc = CurrentSk!.BlastLayer;
             dgvBlastEditor.DataSource = _bs;
         }
         dgvBlastEditor.ResetBindings();
@@ -1196,13 +1216,13 @@ public partial class JavaBlastEditorForm : ColorizedForm
 
     private static string GenerateCSV(DataGridView dgv)
     {
-        var sb = new StringBuilder();
-        var headers = dgv.Columns.Cast<DataGridViewColumn>();
+        StringBuilder sb = new();
+        IEnumerable<DataGridViewColumn> headers = dgv.Columns.Cast<DataGridViewColumn>();
 
         sb.AppendLine(string.Join(CultureInfo.CurrentCulture.TextInfo.ListSeparator, headers.Select(column => "\"" + column.HeaderText + "\"").ToArray()));
         foreach (DataGridViewRow row in dgv.Rows)
         {
-            var cells = row.Cells.Cast<DataGridViewCell>();
+            IEnumerable<DataGridViewCell> cells = row.Cells.Cast<DataGridViewCell>();
             sb.AppendLine(string.Join(CultureInfo.CurrentCulture.TextInfo.ListSeparator, cells.Select(cell => "\"" + cell.Value + "\"").ToArray()));
         }
         return sb.ToString();
@@ -1218,7 +1238,7 @@ public partial class JavaBlastEditorForm : ColorizedForm
 
         if (filename == null)
         {
-            var saveCsvDialog = new SaveFileDialog
+            SaveFileDialog saveCsvDialog = new()
             {
                 DefaultExt = "csv",
                 Title = "Export to csv",
@@ -1240,11 +1260,6 @@ public partial class JavaBlastEditorForm : ColorizedForm
 
     public void LoadCorrupt(object sender, EventArgs e)
     {
-        if (CurrentSk.ParentKey == null)
-        {
-            MessageBox.Show("There's no savestate associated with this Stashkey!\nAssociate one in the menu to be able to load.");
-            return;
-        }
 
         JavaStashKey newSk = (JavaStashKey)CurrentSk.Clone();
         S.GET<JavaGlitchHarvesterBlastForm>().IsCorruptionApplied = newSk.Run();
@@ -1336,7 +1351,7 @@ public partial class JavaBlastEditorForm : ColorizedForm
             return value;
         }
 
-        valueBytes.AddValueToByteArrayUnchecked(new BigInteger(amount), true);
+        valueBytes.AddValueToByteArrayUnchecked(new(amount), true);
         return BitConverter.ToString(valueBytes).Replace("-", string.Empty);
     }
 
@@ -1374,11 +1389,15 @@ public partial class JavaBlastEditorForm : ColorizedForm
         return [CurrentSk, _originalSk];
     }
 
+    /// <summary>
+    /// Diffs two JARs and extracts the differences into a blast layer.
+    /// </summary>
+    /// <param name="filename">The filename of the corrupted JAR.</param>
     private void ImportBlastLayerFromCorruptedFile(string filename = null)
     {
-        MessageBox.Show("This is a useful feature that will be re-implemented later");
-        //TODO: diff should be re-implemented
-        /*if (filename == null)
+        MessageBox.Show("This feature might be re-implemented later");
+        return;
+        if (filename == null)
         {
             var openFileDialog = new OpenFileDialog
             {
@@ -1395,9 +1414,134 @@ public partial class JavaBlastEditorForm : ColorizedForm
             filename = openFileDialog.FileName;
         }
 
-        var bl = LocalNetCoreRouter.QueryRoute<JavaBlastLayer>(NetCore.Endpoints.CorruptCore, NetCore.Commands.Remote.BLGetDiffBlastLayer, filename);
+        string suggestion;
+        string uncorruptedFilename;
+        if (DialogResult.Yes == MessageBox.Show("Is the currently loaded JAR the uncorrupted version of the file?", "Corrupted File", MessageBoxButtons.YesNo))
+        {
+            suggestion = "You need to select the uncorrupted file manually rather than using the currently loaded one.";
+            uncorruptedFilename = (string)AllSpec.VanguardSpec[VSPEC.OPENROMFILENAME];
+            CurrentSk.JarFilename = (string)AllSpec.VanguardSpec[VSPEC.OPENROMFILENAME];
+        }
+        else
+        {
+            suggestion = "You probably selected the wrong file to act as the uncorrupted one.";
+            MessageBox.Show("Please select the uncorrupted version of the file.");
+            OpenFileDialog openRomDialog = new()
+            {
+                Title = "Open JAR File",
+                Filter = "JAR files|*.jar",
+                RestoreDirectory = true,
+            };
 
-        ImportBlastLayer(bl);*/
+            if (openRomDialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            uncorruptedFilename = openRomDialog.FileName;
+            CurrentSk.JarFilename = openRomDialog.FileName;
+        }
+
+
+        SerializedInsnBlastLayer layer = new();
+        using FileStream uncorruptedFs = new(uncorruptedFilename, FileMode.Open, FileAccess.Read);
+        using ZipArchive uncorruptedArchive = new(uncorruptedFs, ZipArchiveMode.Read);
+        using FileStream corruptFs = new(filename, FileMode.Open, FileAccess.Read);
+        using ZipArchive corruptArchive = new(corruptFs, ZipArchiveMode.Read);
+        foreach (ZipArchiveEntry entry in uncorruptedArchive.Entries)
+        {
+            if (entry.FullName.EndsWith(".class"))
+            {
+                ZipArchiveEntry corruptEntry = corruptArchive.GetEntry(entry.FullName);
+                if (corruptEntry == null)
+                {
+                    MessageBox.Show($"The corrupted JAR does not contain the file {entry.FullName}. {suggestion}");
+                    return;
+                }
+                
+                using Stream corruptStream = corruptEntry.Open();
+                using Stream uncorruptedStream = entry.Open();
+                byte[] uncorruptedBytes = new byte[entry.Length];
+                byte[] corruptBytes = new byte[corruptEntry.Length];
+                
+                int bytesRead = 0;
+                do
+                    bytesRead += uncorruptedStream.Read(uncorruptedBytes, bytesRead, uncorruptedBytes.Length - bytesRead);
+                while (bytesRead < uncorruptedBytes.Length);
+                
+                bytesRead = 0;
+                do
+                    bytesRead += corruptStream.Read(corruptBytes, bytesRead, corruptBytes.Length - bytesRead);
+                while (bytesRead < corruptBytes.Length);
+                
+                if (uncorruptedBytes.SequenceEqual(corruptBytes))
+                    continue;
+                
+                ClassReader originalReader = new((sbyte[])(Array)uncorruptedBytes);
+                ClassReader corruptedReader = new((sbyte[])(Array)corruptBytes);
+                ClassNode originalClass = new();
+                ClassNode corruptedClass = new();
+                originalReader.Accept(originalClass, 0);
+                corruptedReader.Accept(corruptedClass, 0);
+                if (originalClass.Methods.Count != corruptedClass.Methods.Count)
+                {
+                    MessageBox.Show($"The class {entry.FullName} has a different number of methods between the corrupted and uncorrupted JARs, meaning your uncorrupted file is not the right one. {suggestion}");
+                    return;
+                }
+                
+                for (int i = 0; i < originalClass.Methods.Count; i++)
+                {
+                    MethodNode originalMethod = originalClass.Methods[i];
+                    MethodNode corruptedMethod = corruptedClass.Methods[i];
+                    if (originalMethod.Name != corruptedMethod.Name || originalMethod.Desc != corruptedMethod.Desc)
+                    {
+                        MessageBox.Show($"Found a method mismatch: uncorrupted method #{i} is {originalMethod.Name}{originalMethod.Desc}, and corrupted method #{i} is {corruptedMethod.Name}{corruptedMethod.Desc}. {suggestion}");
+                        return;
+                    }
+                    
+                    AsmParser originalParser = new();
+                    AsmParser corruptedParser = new();
+                    originalParser.RegisterLabelsFrom(originalMethod.Instructions);
+                    corruptedParser.RegisterLabelsFrom(corruptedMethod.Instructions);
+                    int index = 0;
+                    int foundAtIndex = 0;
+                    int replaces = 0;
+                    List<string> corruption = [];
+                    AbstractInsnNode corruptInsn = corruptedMethod.Instructions.First;
+                    AbstractInsnNode firstCorruptInsn = originalMethod.Instructions.First;
+                    for (AbstractInsnNode origInsn = originalMethod.Instructions.First;
+                         origInsn is not null && corruptInsn is not null;
+                         origInsn = origInsn.Next, corruptInsn = corruptInsn.Next, index++)
+                    {
+                        string origInsnStr = originalParser.InsnToString(origInsn);
+                        string corruptInsnStr = corruptedParser.InsnToString(corruptInsn);
+                        
+                        if (origInsnStr == corruptInsnStr)
+                        {
+                            if (replaces == 0)
+                                continue;
+
+                            layer.Layer.Add(new(corruption, foundAtIndex, replaces,
+                                originalClass.Name + "." + originalMethod.Name + originalMethod.Desc));
+                            corruption = [];
+                            replaces = 0;
+                            foundAtIndex = 0;
+                            continue;
+                        }
+        
+                        corruption.Add(corruptInsnStr);
+                        if (replaces < 1)
+                        {
+                            firstCorruptInsn = origInsn;
+                        }
+                        replaces++;
+                        foundAtIndex = index;
+                    }
+                }
+            }
+        }
+
+        ImportBlastLayer(layer);
     }
 
     private void importBlastlayerFromCorruptedFileToolStripMenuItem_Click(object sender, EventArgs e)

@@ -1,9 +1,6 @@
 ﻿using Java_Corruptor.UI;
 using RTCV.Common;
-using RTCV.CorruptCore;
 using RTCV.NetCore;
-using System;
-using System.Windows.Forms;
 
 namespace Java_Corruptor
 {

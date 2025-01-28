@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using Ceras;
 using Java_Corruptor.BlastClasses;
-using Java_Corruptor.UI;
-using RTCV.Common;
 using RTCV.CorruptCore;
 using RTCV.NetCore;
 
@@ -42,7 +40,7 @@ internal class JavaStashKey : ICloneable, INote
 
         JarFilename = (string)AllSpec.VanguardSpec?[VSPEC.OPENROMFILENAME] ?? "ERROR";
         JarShortFilename = Path.GetFileName(JarFilename);
-        GameName = JarShortFilename[..JarShortFilename.LastIndexOf('.')];
+        GameName = Path.GetFileNameWithoutExtension(JarFilename);
     }
 
     public override string ToString()

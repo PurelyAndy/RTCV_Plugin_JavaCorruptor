@@ -39,7 +39,7 @@ public class BidirectionalDictionary <TKey, TValue> : IDictionary<TKey, TValue>
         Delegate = new(capacity);
         Inverse = new(capacity);
     }
-        
+    
     public BidirectionalDictionary(IDictionary<TKey, TValue> dictionary)
     {
         Delegate = new(dictionary);

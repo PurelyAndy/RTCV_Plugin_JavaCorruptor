@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Dynamic;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Linq;
-using NLog;
 using ObjectWeb.Asm.Tree;
 
 namespace Java_Corruptor.UI.Components.EngineControls;
 
-public partial class JavaVectorEngineControl
+public partial class BasicEngineControl
 {
     private byte[] _limiters, _values;
+    private bool _noneSelectedWarningShown, _sameSelectedWarningShown;
 
-    public JavaVectorEngineControl()
+    public BasicEngineControl()
     {
         InitializeComponent();
 
@@ -33,29 +30,51 @@ public partial class JavaVectorEngineControl
         
         _limiters = lbLimiters.SelectedItems.Cast<OpcodesWithNoOperands>().Select(i => (byte) i).ToArray();
         _values = lbValues.SelectedItems.Cast<OpcodesWithNoOperands>().Select(i => (byte) i).ToArray();
+        _noneSelectedWarningShown = false;
+        _sameSelectedWarningShown = false;
     }
     public override void UpdateUI()
     {
         foreach (byte limiter in _limiters)
-            
             lbLimiters.SetSelected(Array.IndexOf(lbLimiters.Items.Cast<OpcodesWithNoOperands>().ToArray(), (OpcodesWithNoOperands)limiter), true);
         foreach (byte value in _values)
             lbValues.SetSelected(Array.IndexOf(lbValues.Items.Cast<OpcodesWithNoOperands>().ToArray(), (OpcodesWithNoOperands)value), true);
     }
 
-    public override InsnList DoCorrupt(AbstractInsnNode insn, AsmParser parser, ref int replaces)
+    public override List<AbstractInsnNode> DoCorrupt(AbstractInsnNode insn, AsmParser parser, ref int replaces)
     {
-        InsnList list = new();
+        List<AbstractInsnNode> list = [];
 
-        if (_values.Length == 0 || _limiters.Length == 0)
+        if (_limiters.Length == 0 || _values.Length == 0)
         {
+            if (_noneSelectedWarningShown) return list;
             Logger.Warn("No limiters or no operations selected.");
+            _noneSelectedWarningShown = true;
             return list;
         }
-        
-        if (Array.IndexOf(_limiters, (byte)insn.Opcode) != -1)
+        if (_limiters.Length == 1 && _values.Length == 1 && _limiters[0] == _values[0])
         {
-            list.Add(new InsnNode(_values[JavaGeneralParametersForm.Random.Next(_values.Length)]));
+            if (_sameSelectedWarningShown) return list;
+            Logger.Warn("Limiter and operation are the same");
+            _sameSelectedWarningShown = true;
+            return list;
+        }
+
+        int index = Array.IndexOf(_limiters, (byte)insn.Opcode);
+        int idx = Array.IndexOf(_values, (byte)insn.Opcode);
+        if (index != -1)
+        {
+            int op;
+            if (_values.Length > 1)
+            {
+                int rand = JavaGeneralParametersForm.Random.Next(_values.Length - 1);
+                op = rand >= idx ? _values[rand + 1] : _values[rand];
+            }
+            else
+                op = _values[0];
+            if (insn.Opcode == op)
+                return list;
+            list.Add(new InsnNode(op));
         }
         else
             return list;

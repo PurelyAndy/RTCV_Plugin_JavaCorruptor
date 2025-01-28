@@ -1,29 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
-using System.Text;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Java_Corruptor;
 using Java_Corruptor.BlastClasses;
 using NLog;
+using ObjectWeb.Asm;
 using ObjectWeb.Asm.Tree;
+using RTCV.Common;
+using RTCV.CorruptCore;
+using RTCV.UI;
+using SlimDX.DXGI;
 using WinFormsSyntaxHighlighter;
 
 namespace Java_Corruptor.UI;
 
-public partial class DisassemblerForm : RTCV.UI.Modular.ColorizedForm
+public partial class DisassemblerForm : Form, IColorize
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     private readonly SyntaxHighlighter _highlighter;
     private readonly Regex _stringRegex = new("\"[^\"]+\"", RegexOptions.Multiline | RegexOptions.Compiled);
     private readonly Regex _className = new(@"(?<=\/){0,1}(?<!;|\()(?!L|\d)\w+(?=\.|;|\$|(?:\r?$))", RegexOptions.Multiline | RegexOptions.Compiled);
-    private readonly Regex _numbers = new(@"(?<=\$| )(?:\d+\.)?\d+[ILFD]?", RegexOptions.Multiline | RegexOptions.Compiled);
+    private readonly Regex _numbers = new(@"(?<=\$| )-?(?:\d+\.)?\d+[ILFD]?", RegexOptions.Multiline | RegexOptions.Compiled);
     private readonly Regex _package = new(@"(?<!;|\()(?!L)(?:\w+\/)+", RegexOptions.Multiline | RegexOptions.Compiled);
     private readonly Regex _field = new(@"(?<=\.)<{0,1}\w+>{0,1}(?!\()", RegexOptions.Multiline | RegexOptions.Compiled);
     private readonly Regex _methodR = new(@"(?<=\.)<{0,1}\w+>{0,1}(?=\()", RegexOptions.Multiline | RegexOptions.Compiled);
@@ -33,32 +36,73 @@ public partial class DisassemblerForm : RTCV.UI.Modular.ColorizedForm
     private readonly Regex _firstWord = new(@"^(?:\w)+(?= |(?:\r?$))", RegexOptions.Multiline | RegexOptions.Compiled);
     private readonly Regex _handleOpcodes = new(@"(?<=\[)H_\w+(?= )", RegexOptions.Multiline | RegexOptions.Compiled);
     private readonly Regex _frame = new(@"^FRAME\r?$", RegexOptions.Multiline | RegexOptions.Compiled);
+    
     public DisassemblerForm()
     {
         InitializeComponent();
+        tbDisassembly.WordWrap = false;
         _highlighter = new(tbDisassembly);
+        tbDisassembly.AutoWordSelection = true;
+        tbDisassembly.AutoWordSelection = false;
+        RTCV.Common.S.RegisterColorizable(this);
+        Load += Colorize;
+        FormClosed += DeregisterColorizable;
     }
-        
+
+    private void DeregisterColorizable(object sender, FormClosedEventArgs e)
+    {
+        RTCV.Common.S.DeregisterColorizable(this);
+    }
+
     public void DisassemblerForm_FormClosing(object sender, FormClosingEventArgs e)
     {
         e.Cancel = true;
         Hide();
     }
-        
-    public void OpenMethod(string method)
+
+    class Commands
+    {
+    }
+
+    public void OpenMethod(string method, int lineNumber, int selectedLines)
     {
         tbMethod.Text = method;
-        AsmUtilities.Classes.Clear();
-        JavaBlastTools.LoadClassesFromCurrentJar();
-        MethodNode m = AsmUtilities.FindMethod(method);
+        JavaBlastTools.ReloadClasses();
+        int indexOf = method.LastIndexOf('.');
+        if (indexOf < 0)
+            indexOf = method.IndexOf('<') - 1;
+        ClassNode classNode = AsmUtilities.FindClass(method[..indexOf]);
+        MethodNode m = classNode.FindMethod(method[(indexOf + 1)..]);
         if (m == null)
         {
-            Logger.Error($"Method {method} not found.");
+            MessageBox.Show($"Method {method} not found.", @"¯\_(ツ)_/¯", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Logger.Error($"Method {method} was meant to be disassembled, but it could not be found.");
             return;
         }
+
+        if (m.Instructions.Size > 1500)
+        {
+            if (DialogResult.No == MessageBox.Show($"This method is very large ({m.Instructions.Size} instructions) and may take a while to disassemble. Are you sure you want to continue?", "Large Method", MessageBoxButtons.YesNo, MessageBoxIcon.Warning))
+                return;
+        }
+        Stopwatch sw = Stopwatch.StartNew();
         AsmParser parser = new();
         parser.RegisterLabelsFrom(m.Instructions);
+        sw.Stop();
+        Logger.Info($"Registered labels for {method} in {sw.ElapsedMilliseconds}ms.");
+        sw.Restart();
         AbstractInsnNode[] insns = m.Instructions.ToArray();
+        if (insns.Length == 0)
+        {
+            tbDisassembly.Text = $"Method {method} has no instructions";
+            if ((classNode.Access & Opcodes.Acc_Interface) != 0)
+                tbDisassembly.Text += " because its class is an interface.";
+            else if ((m.Access & Opcodes.Acc_Abstract) != 0)
+                tbDisassembly.Text += " because it is abstract.";
+            else
+                tbDisassembly.Text += " because it is empty.";
+            return;
+        }
         string text = "";
         for (int i = 0; i < insns.Length; i++)
         {
@@ -69,6 +113,11 @@ public partial class DisassemblerForm : RTCV.UI.Modular.ColorizedForm
                 stringed = "FRAME";
             text += stringed + "\r\n";
         }
+        text = text.Remove(text.Length - 2); // remove the last line break
+        sw.Stop();
+        Logger.Info($"Disassembled {method} in {sw.ElapsedMilliseconds}ms.");
+        sw.Restart();
+        
         string labels = "(?<=^| )(?:";
         foreach (KeyValuePair<LabelNode, string> pair in parser.LabelNames)
             labels += "(?:" + pair.Value + ")|";
@@ -91,6 +140,24 @@ public partial class DisassemblerForm : RTCV.UI.Modular.ColorizedForm
         _highlighter.AddPattern(new(_package), new(Color.FromArgb(0xFF, 0xFF, 0xFF)));
             
         tbDisassembly.Text = text;
+        sw.Stop();
+        Logger.Info($"Highlighted {method} in {sw.ElapsedMilliseconds}ms.");
+        // stupid hack because ScrollToCaret wasn't doing anything
+        Task.Run(() =>
+        {
+            Task.Delay(5).Wait();
+            tbDisassembly.Invoke(new Action(() =>
+            {
+                if (lineNumber + selectedLines > tbDisassembly.Lines.Length)
+                    return;
+                int firstLineIndex = tbDisassembly.GetFirstCharIndexFromLine(lineNumber);
+                int lastLineIndex = tbDisassembly.GetFirstCharIndexFromLine(lineNumber + selectedLines);
+                tbDisassembly.Focus();
+                tbDisassembly.Select(firstLineIndex, lastLineIndex - firstLineIndex);
+                tbDisassembly.ScrollToCaret();
+                tbDisassembly.SetVScrollPos(tbDisassembly.GetVScrollPos() - 150);
+            }));
+        });
     }
 
     private Regex label = new(@"^[A-Z]+:(?:\r?$)", RegexOptions.Multiline);
@@ -102,25 +169,47 @@ public partial class DisassemblerForm : RTCV.UI.Modular.ColorizedForm
             return;
         _lastLineCount = tbDisassembly.Lines.Length;
         tbLineNumbers.Text = "";
-        tbLineNumbers.Font = tbDisassembly.Font;
-        tbLineNumbers.Width =
-            TextRenderer.MeasureText(_lastLineCount.ToString(), tbLineNumbers.Font).Width -
-            (TextRenderer.MeasureText("1", tbLineNumbers.Font).Width / 2);
-        //disable scrollbar on line numbers
-        tbLineNumbers.ScrollBars = RichTextBoxScrollBars.None;
+        int baseWidth = TextRenderer.MeasureText(_lastLineCount.ToString(), tbLineNumbers.Font).Width;
+        int unPadding = TextRenderer.MeasureText("1", tbLineNumbers.Font).Width / 2;
+        tbLineNumbers.Width = baseWidth - unPadding;
         tbDisassembly.Location = tbDisassembly.Location with { X = tbLineNumbers.Location.X + tbLineNumbers.Width };
         tbDisassembly.Width = Width - tbLineNumbers.Width - 43;
-        for (int i = 0; i <= _lastLineCount; i++)
+        for (int i = 0; i < _lastLineCount; i++)
             tbLineNumbers.Text += i + "\r\n";
     }
 
     private void btnDisassemble_Click(object sender, EventArgs e)
     {
-        OpenMethod(tbMethod.Text);
+        OpenMethod(tbMethod.Text, 0, 0);
     }
 
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    private static extern int GetScrollInfo(int hWnd, int nBar, ref ScrollInfo lpsi);
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct ScrollInfo
+    {
+        public uint cbSize;
+        public uint fMask;
+        public int nMin;
+        public int nMax;
+        public uint nPage;
+        public int nPos;
+        public int nTrackPos;
+    };
     private void tbDisassembly_VScroll(object sender, EventArgs e)
     {
-        tbLineNumbers.SetVScrollPos(tbDisassembly.GetVScrollPos());
+        ScrollInfo si = new();
+        si.cbSize = (uint)Marshal.SizeOf(si);
+        si.fMask = 0x10;
+        GetScrollInfo((int)tbDisassembly.Handle, 1, ref si);
+        tbLineNumbers.SetVScrollPos(si.nTrackPos);
+    }
+
+    private void Colorize(object sender, EventArgs e) => Recolor();
+    public void Recolor()
+    {
+        Colors.SetRTCColor(Colors.GeneralColor.ChangeColorBrightness(-0.3f), this);
     }
 }

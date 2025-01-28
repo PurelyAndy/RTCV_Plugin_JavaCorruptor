@@ -169,11 +169,12 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.cbOnlySpaces.AutoSize = true;
             this.cbOnlySpaces.Checked = true;
             this.cbOnlySpaces.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbOnlySpaces.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.cbOnlySpaces.ForeColor = System.Drawing.Color.White;
             this.cbOnlySpaces.Location = new System.Drawing.Point(261, 74);
             this.cbOnlySpaces.Name = "cbOnlySpaces";
             this.cbOnlySpaces.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.cbOnlySpaces.Size = new System.Drawing.Size(139, 17);
+            this.cbOnlySpaces.Size = new System.Drawing.Size(151, 17);
             this.cbOnlySpaces.TabIndex = 168;
             this.cbOnlySpaces.Text = "Only strings with spaces";
             this.cbOnlySpaces.UseVisualStyleBackColor = true;
@@ -182,11 +183,12 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             this.cbRuntimeRandom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbRuntimeRandom.AutoSize = true;
+            this.cbRuntimeRandom.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.cbRuntimeRandom.ForeColor = System.Drawing.Color.White;
-            this.cbRuntimeRandom.Location = new System.Drawing.Point(261, 91);
+            this.cbRuntimeRandom.Location = new System.Drawing.Point(261, 92);
             this.cbRuntimeRandom.Name = "cbRuntimeRandom";
             this.cbRuntimeRandom.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.cbRuntimeRandom.Size = new System.Drawing.Size(133, 17);
+            this.cbRuntimeRandom.Size = new System.Drawing.Size(147, 17);
             this.cbRuntimeRandom.TabIndex = 169;
             this.cbRuntimeRandom.Text = "Runtime randomization";
             this.cbRuntimeRandom.UseVisualStyleBackColor = true;

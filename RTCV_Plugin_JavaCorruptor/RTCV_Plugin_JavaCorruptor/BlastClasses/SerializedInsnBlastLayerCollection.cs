@@ -1,23 +1,18 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Web.Script.Serialization;
-using System.Xml.Serialization;
-using Ceras;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using RTCV.CorruptCore;
-using SlimDX.Direct2D;
 
 namespace Java_Corruptor.BlastClasses;
 
 // this name is far too long for how often it's used
 public class SerializedInsnBlastLayerCollection : IDictionary<string, SerializedInsnBlastLayer>, IList<SerializedInsnBlastUnit>, ICloneable, INote
 {
-    private Dictionary<string, SerializedInsnBlastLayer> _mappedLayers = new();
-    public Dictionary<string, SerializedInsnBlastLayer> MappedLayers {
+    private ConcurrentDictionary<string, SerializedInsnBlastLayer> _mappedLayers = new();
+    public ConcurrentDictionary<string, SerializedInsnBlastLayer> MappedLayers {
         get => _mappedLayers;
         set
         {
@@ -32,7 +27,7 @@ public class SerializedInsnBlastLayerCollection : IDictionary<string, Serialized
         {
             _layer = value;
             _mappedLayers = new();
-            foreach (var unit in value.Layer)
+            foreach (SerializedInsnBlastUnit unit in value.Layer)
             {
                 if (!_mappedLayers.ContainsKey(unit.Method))
                     _mappedLayers[unit.Method] = new();
@@ -55,9 +50,11 @@ public class SerializedInsnBlastLayerCollection : IDictionary<string, Serialized
         set
         {
             if (_mappedLayers.TryGetValue(key, out SerializedInsnBlastLayer layer))
-                _layer.Layer.RemoveAll(unit => layer.Layer.Contains(unit));
+                foreach (SerializedInsnBlastUnit unit in layer.Layer)
+                    _layer.Layer.Remove(unit);
 
-            _layer.Layer.AddRange(value.Layer);
+            foreach (SerializedInsnBlastUnit unit in value.Layer)
+                _layer.Layer.Add(unit);
 
             _mappedLayers[key] = value;
         }
@@ -95,12 +92,36 @@ public class SerializedInsnBlastLayerCollection : IDictionary<string, Serialized
         else
             Layer = new(layer);
     }
+
+    public SerializedInsnBlastLayerCollection(SynchronizedCollection<SerializedInsnBlastUnit> layer, bool allCertainlyHaveSameMethod = false)
+    {
+        if (allCertainlyHaveSameMethod)
+            Add(layer.First().Method, new(layer));
+        else
+            Layer = new(layer);
+    }
+    
+    /// <summary>
+    /// Used to repair the map between methods and blast layers if it is suspected to be in an invalid state.
+    /// Specifically, sometimes a blast unit's method will be changed after it is added to the map, but it will not be moved to a new layer and key.
+    /// </summary>
+    public void RepairMap()
+    {
+        Dictionary<string, SerializedInsnBlastLayer> newMap = new();
+        foreach (SerializedInsnBlastUnit unit in Layer.Layer)
+        {
+            if (!newMap.ContainsKey(unit.Method))
+                newMap[unit.Method] = new();
+            newMap[unit.Method].Layer.Add(unit);
+        }
+        _mappedLayers = new(newMap);
+    }
     
     private SerializedInsnBlastLayer SplitToLayer()
     {
-        List<SerializedInsnBlastUnit> units = new();
+        List<SerializedInsnBlastUnit> units = [];
         
-        foreach (var layer in MappedLayers)
+        foreach (KeyValuePair<string, SerializedInsnBlastLayer> layer in MappedLayers)
             units.AddRange(layer.Value.Layer);
         
         return new(units);
@@ -125,14 +146,17 @@ public class SerializedInsnBlastLayerCollection : IDictionary<string, Serialized
 
     public void Add(string key, SerializedInsnBlastLayer value)
     {
-        _mappedLayers.Add(key, value);
-        _layer.Layer.AddRange(value.Layer);
+        _mappedLayers.TryAdd(key, value);
+        foreach (SerializedInsnBlastUnit unit in value.Layer)
+            _layer.Layer.Add(unit);
     }
 
     public bool Remove(string key)
     {
-        _layer.Layer.RemoveAll(unit => _mappedLayers[key].Layer.Contains(unit));
-        return _mappedLayers.Remove(key);
+        //_layer.Layer.RemoveAll(unit => _mappedLayers[key].Layer.Contains(unit));
+        foreach (SerializedInsnBlastUnit unit in _mappedLayers[key].Layer)
+            _layer.Layer.Remove(unit);
+        return _mappedLayers.TryRemove(key, out _);
     }
 
     public bool TryGetValue(string key, out SerializedInsnBlastLayer value)
@@ -143,10 +167,12 @@ public class SerializedInsnBlastLayerCollection : IDictionary<string, Serialized
     public void Add(KeyValuePair<string, SerializedInsnBlastLayer> item)
     {
         if (!_mappedLayers.ContainsKey(item.Key))
-            _mappedLayers.Add(item.Key, item.Value);
+            _mappedLayers.TryAdd(item.Key, item.Value);
         else
-            _mappedLayers[item.Key].Layer.AddRange(item.Value.Layer);
-        _layer.Layer.AddRange(item.Value.Layer);
+            foreach (SerializedInsnBlastUnit unit in item.Value.Layer)
+                _mappedLayers[item.Key].Layer.Add(unit);
+        foreach (SerializedInsnBlastUnit unit in item.Value.Layer)
+            _layer.Layer.Add(unit);
     }
 
     public void Clear()
@@ -167,7 +193,9 @@ public class SerializedInsnBlastLayerCollection : IDictionary<string, Serialized
 
     public bool Remove(KeyValuePair<string, SerializedInsnBlastLayer> item)
     {
-        _layer.Layer.RemoveAll(item.Value.Layer.Contains);
+        //_layer.Layer.RemoveAll(item.Value.Layer.Contains);
+        foreach (SerializedInsnBlastUnit unit in item.Value.Layer)
+            _layer.Layer.Remove(unit);
         return ((IDictionary<string, SerializedInsnBlastLayer>)_mappedLayers).Remove(item);
     }
 
@@ -198,7 +226,7 @@ public class SerializedInsnBlastLayerCollection : IDictionary<string, Serialized
     {
         _mappedLayers[_layer.Layer[index].Method].Layer.Remove(_layer.Layer[index]);
         if (_mappedLayers[_layer.Layer[index].Method].Layer.Count == 0)
-            _mappedLayers.Remove(_layer.Layer[index].Method);
+            _mappedLayers.TryRemove(_layer.Layer[index].Method, out _);
         _layer.Layer.RemoveAt(index);
     }
 
@@ -225,7 +253,7 @@ public class SerializedInsnBlastLayerCollection : IDictionary<string, Serialized
         _layer.Layer.Remove(item);
         bool b = _mappedLayers[item.Method].Layer.Remove(item);
         if (_mappedLayers[item.Method].Layer.Count == 0)
-            _mappedLayers.Remove(item.Method);
+            _mappedLayers.TryRemove(item.Method, out _);
         return b;
     }
 
@@ -239,7 +267,7 @@ public class SerializedInsnBlastLayerCollection : IDictionary<string, Serialized
         //return ObjectCopierCeras.Clone(this);
         SerializedInsnBlastLayerCollection clone = new();
         
-        foreach (var layer in MappedLayers)
+        foreach (KeyValuePair<string, SerializedInsnBlastLayer> layer in MappedLayers)
             clone.Add(layer.Key, (SerializedInsnBlastLayer)layer.Value.Clone());
         clone.Note = Note;
         

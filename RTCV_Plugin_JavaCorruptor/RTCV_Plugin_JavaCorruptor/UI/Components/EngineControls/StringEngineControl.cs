@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
@@ -80,9 +81,9 @@ public partial class StringEngineControl
         cbRuntimeRandom.Checked = _runtimeRandom;
     }
 
-    public override InsnList DoCorrupt(AbstractInsnNode insn, AsmParser parser, ref int replaces)
+    public override List<AbstractInsnNode> DoCorrupt(AbstractInsnNode insn, AsmParser parser, ref int replaces)
     {
-        InsnList list = new();
+        List<AbstractInsnNode> list = [];
 
         if (insn is not LdcInsnNode ldcInsn)
             return list;
@@ -191,13 +192,13 @@ public partial class StringEngineControl
                         if (j < 0)
                             continue;
 
-                        (sb[i], sb[j]) = (sb[j], sb[i]); //this is such a cool feature
+                        (sb[i], sb[j]) = (sb[j], sb[i]);
                     }
 
                 ldcInsn.Cst = sb.ToString();
                 list.Add(ldcInsn.Clone());
             }
-            else// if (_mode == 3)
+            else if (_mode == 3)
             {
                 // One per line mode: Pick a random string from each line of the given text
 
@@ -233,7 +234,8 @@ public partial class StringEngineControl
             _characters = settings.Characters;
             _onlySpaces = settings.OnlySpaces;
             _mode = (int)settings.Mode;
-            _runtimeRandom = settings.RuntimeRandom;
+            if (((IDictionary<string, object>)settings).ContainsKey("RuntimeRandom"))
+                _runtimeRandom = settings.RuntimeRandom;
         }
     }
 }

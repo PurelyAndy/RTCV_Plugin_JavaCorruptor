@@ -74,6 +74,7 @@
             this.tbLineNumbers.Location = new System.Drawing.Point(12, 40);
             this.tbLineNumbers.Margin = new System.Windows.Forms.Padding(0);
             this.tbLineNumbers.Name = "tbLineNumbers";
+            this.tbLineNumbers.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
             this.tbLineNumbers.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.tbLineNumbers.Size = new System.Drawing.Size(25, 353);
             this.tbLineNumbers.TabIndex = 146;

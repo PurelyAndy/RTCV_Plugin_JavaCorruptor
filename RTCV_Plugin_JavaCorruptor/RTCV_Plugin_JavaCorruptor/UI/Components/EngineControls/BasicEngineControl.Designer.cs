@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace Java_Corruptor.UI.Components.EngineControls
 {
-    partial class JavaVectorEngineControl : JavaEngineControl
+    partial class BasicEngineControl : JavaEngineControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -114,9 +114,9 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.lbVectorEngineValueText1.ForeColor = System.Drawing.Color.White;
             this.lbVectorEngineValueText1.Location = new System.Drawing.Point(3, 7);
             this.lbVectorEngineValueText1.Name = "lbVectorEngineValueText1";
-            this.lbVectorEngineValueText1.Size = new System.Drawing.Size(40, 13);
+            this.lbVectorEngineValueText1.Size = new System.Drawing.Size(82, 13);
             this.lbVectorEngineValueText1.TabIndex = 138;
-            this.lbVectorEngineValueText1.Text = "Values";
+            this.lbVectorEngineValueText1.Text = "Replace with...";
             // 
             // pnLimiterList
             // 
@@ -155,18 +155,18 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.lbVectorEngineLimiterText1.ForeColor = System.Drawing.Color.White;
             this.lbVectorEngineLimiterText1.Location = new System.Drawing.Point(2, 7);
             this.lbVectorEngineLimiterText1.Name = "lbVectorEngineLimiterText1";
-            this.lbVectorEngineLimiterText1.Size = new System.Drawing.Size(46, 13);
+            this.lbVectorEngineLimiterText1.Size = new System.Drawing.Size(39, 13);
             this.lbVectorEngineLimiterText1.TabIndex = 141;
-            this.lbVectorEngineLimiterText1.Text = "Limiters";
+            this.lbVectorEngineLimiterText1.Text = "Find...";
             // 
-            // JavaVectorEngineControl
+            // BasicEngineControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.Controls.Add(this.label19);
             this.Location = new System.Drawing.Point(15, 15);
-            this.Name = "JavaVectorEngineControl";
+            this.Name = "BasicEngineControl";
             this.Controls.SetChildIndex(this.label19, 0);
             this.Controls.SetChildIndex(this.engineGroupBox, 0);
             this.engineGroupBox.ResumeLayout(false);

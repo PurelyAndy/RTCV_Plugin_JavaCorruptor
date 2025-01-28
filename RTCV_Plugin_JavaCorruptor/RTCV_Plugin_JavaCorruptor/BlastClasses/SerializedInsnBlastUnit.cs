@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Dynamic;
-using System.IO;
-using System.IO.Compression;
-using System.Reflection;
 using System.Linq;
 using System.Windows;
-using System.Windows.Forms.Layout;
 using Ceras;
 using Java_Corruptor.UI.Components.EngineControls;
 using Newtonsoft.Json;
@@ -134,6 +130,25 @@ public class SerializedInsnBlastUnit : INote
         EngineSettings = engineSettings ?? new();
     }
     
+    public SerializedInsnBlastUnit(JavaBlastUnit unit)
+    {
+        List<string> instructions = [];
+        AsmParser parser = new();
+        MethodNode method = AsmUtilities.FindMethod(unit.Method);
+        parser.RegisterLabelsFrom(method.Instructions);
+        foreach (AbstractInsnNode insn in unit.Instructions)
+            instructions.Add(parser.InsnToString(insn));
+        Instructions = instructions;
+        Index = unit.Index;
+        Replaces = unit.Replaces;
+        Method = unit.Method;
+        Note = unit.Note;
+        IsEnabled = unit.IsEnabled;
+        IsLocked = unit.IsLocked;
+        Engine = unit.Engine;
+        EngineSettings = unit.EngineSettings;
+    }
+    
     public SerializedInsnBlastUnit()
     {
         Instructions = [];
@@ -148,7 +163,19 @@ public class SerializedInsnBlastUnit : INote
         if (IsLocked)
             return;
 
-        JavaEngineControl ourEngine = (JavaEngineControl)Activator.CreateInstance(Type.GetType("Java_Corruptor.UI.Components.EngineControls." + Engine)!);
+        if (Engine == "JavaVectorEngineControl")
+            Engine = "BasicEngineControl";
+        Type engineType = Type.GetType("Java_Corruptor.UI.Components.EngineControls." + Engine);
+        bool engineWasNull = false;
+        if (engineType is null)
+        {
+            engineWasNull = true;
+            Engine = "ArithmeticEngineControl";
+        }
+        JavaEngineControl ourEngine = (JavaEngineControl)Activator.CreateInstance(engineType);
+        if (engineWasNull)
+            EngineSettings = ourEngine.EngineSettings;
+
         ourEngine.Prepare();
         ourEngine.EngineSettings = EngineSettings;
         MethodNode methodNode = AsmUtilities.FindMethod(Method);
@@ -176,8 +203,8 @@ public class SerializedInsnBlastUnit : INote
         }
         
         int replaces = -1;
-        InsnList result = ourEngine.DoCorrupt(insnNode, parser, ref replaces);
-        if (replaces == -1 || result is null || result.Size == 0 || (result.Size == 1 && result.First == insnNode))
+        List<AbstractInsnNode> result = ourEngine.DoCorrupt(insnNode, parser, ref replaces);
+        if (replaces == -1 || result is null || result.Count == 0 || (result.Count == 1 && result.First() == insnNode))
         {
             MessageBox.Show("Tried to re-roll, but nothing was corrupted. Do the unit's re-roll settings still match the target instruction?");
             return;
@@ -194,5 +221,10 @@ public class SerializedInsnBlastUnit : INote
         //There's a todo here but I didn't leave a note please help someone tell me why there's a todo here oh god I'm the only one working on this code
         // Unrelated TODO: might want to clone the reference types here
         return new(Instructions, Index, Replaces, Method, Note, IsEnabled, IsLocked, Engine, EngineSettings);
+    }
+    
+    public static implicit operator JavaBlastUnit(SerializedInsnBlastUnit bu)
+    {
+        return new(bu);
     }
 }

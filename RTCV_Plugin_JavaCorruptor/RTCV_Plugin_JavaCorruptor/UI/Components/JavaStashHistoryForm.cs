@@ -1,10 +1,6 @@
 using System.IO;
-using System.IO.Compression;
 using System.Reflection;
-using Java_Corruptor;
 using Java_Corruptor.BlastClasses;
-using Java_Corruptor.UI;
-using Java_Corruptor.UI.Components;
 using RTCV.UI;
 
 namespace Java_Corruptor.UI.Components;
@@ -13,19 +9,17 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using RTCV.CorruptCore;
-using RTCV.NetCore;
 using RTCV.Common;
 using RTCV.UI.Modular;
 
 public partial class JavaStashHistoryForm : ComponentForm, IBlockable
 {
-    private new void HandleMouseDown(object s, MouseEventArgs e) => typeof(ComponentForm).GetMethod("HandleMouseDown", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(this,
+    private void HandleMouseDown(object s, MouseEventArgs e) => typeof(ComponentForm).GetMethod("HandleMouseDown", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(this,
         [s, e]);
-    private new void HandleFormClosing(object s, FormClosingEventArgs e) => typeof(ComponentForm).GetMethod("HandleFormClosing", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(this,
+    private void HandleFormClosing(object s, FormClosingEventArgs e) => typeof(ComponentForm).GetMethod("HandleFormClosing", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(this,
         [s, e]);
 
-    public bool DontLoadSelectedStash { get; set; } = false;
+    public bool DontLoadSelectedStash { get; set; }
 
     public JavaStashHistoryForm()
     {
@@ -37,14 +31,13 @@ public partial class JavaStashHistoryForm : ComponentForm, IBlockable
     private void OnDragDrop(object sender, DragEventArgs e)
     {
         string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-        foreach (var f in files)
+        foreach (string f in files)
         {
             if (f.Contains(".jbl"))
             {
                 //JavaBlastLayer temp = BlastTools.LoadBlastLayerFromFile(f);
-                SerializedInsnBlastLayerCollection bl;
 
-                bl = JavaBlastTools.LoadBlastLayerFromFile(f);
+                SerializedInsnBlastLayerCollection bl = JavaBlastTools.LoadBlastLayerFromFile(f);
                 JavaStockpileManagerUISide.Import(bl);
                 S.GET<JavaStashHistoryForm>().RefreshStashHistory();
             }
@@ -104,8 +97,8 @@ public partial class JavaStashHistoryForm : ComponentForm, IBlockable
                 if(itemName.Contains("\\"))
                 {
                     //assume it's a full path
-                    var fi = new System.IO.FileInfo(itemName);
-                    Name = System.IO.Path.GetFileNameWithoutExtension(fi.Name);
+                    FileInfo fi = new(itemName);
+                    Name = Path.GetFileNameWithoutExtension(fi.Name);
                 }
                 else
                     Name = itemName;
@@ -153,7 +146,7 @@ public partial class JavaStashHistoryForm : ComponentForm, IBlockable
     public void RefreshStashHistory(object sender = null, EventArgs e = null)
     {
         DontLoadSelectedStash = true;
-        var lastSelect = lbStashHistory.SelectedIndex;
+        int lastSelect = lbStashHistory.SelectedIndex;
 
         DontLoadSelectedStash = true;
         lbStashHistory.DataSource = null;
@@ -203,14 +196,14 @@ public partial class JavaStashHistoryForm : ComponentForm, IBlockable
         if(bl != null)
             columnsMenu.Items.Add($"Layer Size: {bl.Layer?.Layer.Count ?? 0}", null).Enabled = false;
 
-        ((ToolStripMenuItem)columnsMenu.Items.Add("Open Selected Item in Blast Editor", null, new((ob, ev) =>
+        ((ToolStripMenuItem)columnsMenu.Items.Add("Open Selected Item in Blast Editor", null, (_, _) =>
         {
             if (S.GET<BlastEditorForm>() != null)
             {
                 JavaStashKey sk = JavaStockpileManagerUISide.StashHistory[lbStashHistory.SelectedIndex];
                 JavaBlastEditorForm.OpenBlastEditor((JavaStashKey)sk.Clone());
             }
-        }))).Enabled = lbStashHistory.SelectedIndex != -1;
+        })).Enabled = lbStashHistory.SelectedIndex != -1;
 
         ((ToolStripMenuItem)columnsMenu.Items.Add("Sanitize", null, (_, _) =>
         {
@@ -275,7 +268,7 @@ public partial class JavaStashHistoryForm : ComponentForm, IBlockable
             S.GET<JavaStockpileManagerForm>().dgvStockpile.ClearSelection();
             S.GET<StockpilePlayerForm>().dgvStockpile.ClearSelection();
 
-            var blastForm = S.GET<JavaGlitchHarvesterBlastForm>();
+            JavaGlitchHarvesterBlastForm blastForm = S.GET<JavaGlitchHarvesterBlastForm>();
 
             if (S.GET<JavaGlitchHarvesterBlastForm>().MergeMode)
             {
@@ -344,12 +337,14 @@ public partial class JavaStashHistoryForm : ComponentForm, IBlockable
         if (lbStashHistory.SelectedIndex == 0)
         {
             lbStashHistory.ClearSelected();
+            DontLoadSelectedStash = true; //RTC FIX: match the behavior of the up/down buttons in the stockpile
             lbStashHistory.SelectedIndex = lbStashHistory.Items.Count - 1;
         }
         else
         {
             int newPos = lbStashHistory.SelectedIndex - 1;
             lbStashHistory.ClearSelected();
+            DontLoadSelectedStash = true; //^
             lbStashHistory.SelectedIndex = newPos;
         }
     }
@@ -364,12 +359,14 @@ public partial class JavaStashHistoryForm : ComponentForm, IBlockable
         if (lbStashHistory.SelectedIndex == lbStashHistory.Items.Count - 1)
         {
             lbStashHistory.ClearSelected();
+            DontLoadSelectedStash = true; //^
             lbStashHistory.SelectedIndex = 0;
         }
         else
         {
             int newPos = lbStashHistory.SelectedIndex + 1;
             lbStashHistory.ClearSelected();
+            DontLoadSelectedStash = true; //^
             lbStashHistory.SelectedIndex = newPos;
         }
     }

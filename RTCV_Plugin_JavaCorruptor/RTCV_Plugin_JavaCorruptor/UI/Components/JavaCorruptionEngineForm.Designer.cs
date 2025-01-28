@@ -31,10 +31,10 @@
             this.functionEngineControl1 = new global::Java_Corruptor.UI.Components.EngineControls.FunctionEngineControl();
             this.javaCustomEngineControl1 = new global::Java_Corruptor.UI.Components.EngineControls.JavaCustomEngineControl();
             this.stringEngineControl1 = new global::Java_Corruptor.UI.Components.EngineControls.StringEngineControl();
-            this.roundingEngineControl1 = new global::Java_Corruptor.UI.Components.EngineControls.RoundingEngineControl();
+            this.logicEngineControl1 = new global::Java_Corruptor.UI.Components.EngineControls.LogicEngineControl();
             this.arithmeticEngineControl1 = new global::Java_Corruptor.UI.Components.EngineControls.ArithmeticEngineControl();
             this.nukerEngineControl1 = new global::Java_Corruptor.UI.Components.EngineControls.NukerEngineControl();
-            this.javaVectorEngineControl1 = new global::Java_Corruptor.UI.Components.EngineControls.JavaVectorEngineControl();
+            this.basicEngineControl1 = new global::Java_Corruptor.UI.Components.EngineControls.BasicEngineControl();
             this.SuspendLayout();
             // 
             // functionEngineControl1
@@ -78,16 +78,16 @@
             // 
             // roundingEngineControl1
             // 
-            this.roundingEngineControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.logicEngineControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
                     | System.Windows.Forms.AnchorStyles.Left) 
                 | System.Windows.Forms.AnchorStyles.Right)));
-            this.roundingEngineControl1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.roundingEngineControl1.Location = new System.Drawing.Point(11, 3);
-            this.roundingEngineControl1.Name = "roundingEngineControl1";
-            this.roundingEngineControl1.Size = new System.Drawing.Size(442, 187);
-            this.roundingEngineControl1.TabIndex = 0;
-            this.roundingEngineControl1.Tag = "color:dark1";
-            this.roundingEngineControl1.Visible = false;
+            this.logicEngineControl1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.logicEngineControl1.Location = new System.Drawing.Point(11, 3);
+            this.logicEngineControl1.Name = "roundingEngineControl1";
+            this.logicEngineControl1.Size = new System.Drawing.Size(442, 187);
+            this.logicEngineControl1.TabIndex = 0;
+            this.logicEngineControl1.Tag = "color:dark1";
+            this.logicEngineControl1.Visible = false;
             // 
             // arithmeticEngineControl1
             // 
@@ -117,16 +117,16 @@
             // 
             // javaVectorEngineControl1
             // 
-            this.javaVectorEngineControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.basicEngineControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
                 | System.Windows.Forms.AnchorStyles.Left) 
                 | System.Windows.Forms.AnchorStyles.Right)));
-            this.javaVectorEngineControl1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.javaVectorEngineControl1.Location = new System.Drawing.Point(11, 3);
-            this.javaVectorEngineControl1.Name = "javaVectorEngineControl1";
-            this.javaVectorEngineControl1.Size = new System.Drawing.Size(442, 187);
-            this.javaVectorEngineControl1.TabIndex = 0;
-            this.javaVectorEngineControl1.Tag = "color:dark1";
-            this.javaVectorEngineControl1.Visible = false;
+            this.basicEngineControl1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.basicEngineControl1.Location = new System.Drawing.Point(11, 3);
+            this.basicEngineControl1.Name = "javaVectorEngineControl1";
+            this.basicEngineControl1.Size = new System.Drawing.Size(442, 187);
+            this.basicEngineControl1.TabIndex = 0;
+            this.basicEngineControl1.Tag = "color:dark1";
+            this.basicEngineControl1.Visible = false;
             // 
             // JavaCorruptionEngineForm
             // 
@@ -134,9 +134,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ClientSize = new System.Drawing.Size(464, 200);
-            this.Controls.Add(this.javaVectorEngineControl1);
+            this.Controls.Add(this.basicEngineControl1);
             this.Controls.Add(this.nukerEngineControl1);
-            this.Controls.Add(this.roundingEngineControl1);
+            this.Controls.Add(this.logicEngineControl1);
             this.Controls.Add(this.arithmeticEngineControl1);
             this.Controls.Add(this.stringEngineControl1);
             this.Controls.Add(this.javaCustomEngineControl1);
@@ -155,9 +155,9 @@
         private global::Java_Corruptor.UI.Components.EngineControls.FunctionEngineControl functionEngineControl1;
         private global::Java_Corruptor.UI.Components.EngineControls.JavaCustomEngineControl javaCustomEngineControl1;
         private global::Java_Corruptor.UI.Components.EngineControls.StringEngineControl stringEngineControl1;
-        private global::Java_Corruptor.UI.Components.EngineControls.RoundingEngineControl roundingEngineControl1;
+        private global::Java_Corruptor.UI.Components.EngineControls.LogicEngineControl logicEngineControl1;
         private global::Java_Corruptor.UI.Components.EngineControls.ArithmeticEngineControl arithmeticEngineControl1;
         private global::Java_Corruptor.UI.Components.EngineControls.NukerEngineControl nukerEngineControl1;
-        private global::Java_Corruptor.UI.Components.EngineControls.JavaVectorEngineControl javaVectorEngineControl1;
+        private global::Java_Corruptor.UI.Components.EngineControls.BasicEngineControl basicEngineControl1;
     }
 }

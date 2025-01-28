@@ -98,7 +98,27 @@ public class JavaBlastUnit : INote
         EngineSettings = engineSettings ?? new();
     }
     
-    //TODO: reroll support maybe
+    public JavaBlastUnit(SerializedInsnBlastUnit unit) : this(unit, new())
+    {
+    }
+    
+    public JavaBlastUnit(SerializedInsnBlastUnit unit, AsmParser parser)
+    {
+        List<AbstractInsnNode> instructions = [];
+        MethodNode method = AsmUtilities.FindMethod(unit.Method);
+        parser.RegisterLabelsFrom(method.Instructions);
+        foreach (string insn in unit.Instructions)
+            instructions.Add(parser.ParseInsn(insn));
+        Instructions = instructions;
+        Index = unit.Index;
+        Replaces = unit.Replaces;
+        Method = unit.Method;
+        Note = unit.Note;
+        IsEnabled = unit.IsEnabled;
+        IsLocked = unit.IsLocked;
+        Engine = unit.Engine;
+        EngineSettings = unit.EngineSettings;
+    }
     
     public JavaBlastUnit GetBackup()
     {
@@ -106,5 +126,10 @@ public class JavaBlastUnit : INote
         //There's a todo here but I didn't leave a note please help someone tell me why there's a todo here oh god I'm the only one working on this code
         // Unrelated TODO: might want to clone the reference types here
         return new(Instructions, Index, Replaces, Method, Note, IsEnabled, IsLocked, Engine, EngineSettings);
+    }
+    
+    public static implicit operator SerializedInsnBlastUnit(JavaBlastUnit bu)
+    {
+        return new(bu);
     }
 }

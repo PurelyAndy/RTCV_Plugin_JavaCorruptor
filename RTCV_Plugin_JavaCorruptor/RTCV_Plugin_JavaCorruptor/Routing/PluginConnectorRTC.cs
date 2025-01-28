@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Java_Corruptor;
-using RTCV.CorruptCore;
-using RTCV.NetCore;
-using System.Windows.Forms;
+﻿using RTCV.NetCore;
 using Java_Corruptor.UI;
 using RTCV.Common;
 
@@ -27,8 +19,8 @@ namespace Java_Corruptor
 
         public object OnMessageReceived(object sender, NetCoreEventArgs e)
         {
-            var message = e.message;
-            var advancedMessage = message as NetCoreAdvancedMessage;
+            NetCoreMessage message = e.message;
+            NetCoreAdvancedMessage advancedMessage = message as NetCoreAdvancedMessage;
 
             switch (e.message.Type)
             {

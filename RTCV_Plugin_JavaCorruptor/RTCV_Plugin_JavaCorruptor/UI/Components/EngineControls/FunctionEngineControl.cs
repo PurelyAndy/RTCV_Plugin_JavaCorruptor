@@ -10,6 +10,7 @@ namespace Java_Corruptor.UI.Components.EngineControls;
 public partial class FunctionEngineControl
 {
     private string[] _limiters, _values;
+    private bool _noneSelectedWarningShown, _sameSelectedWarningShown;
     public FunctionEngineControl() => InitializeComponent();
 
     public override void Prepare()
@@ -17,6 +18,8 @@ public partial class FunctionEngineControl
         base.Prepare();
         _limiters = lbLimiterFunctions.SelectedItems.Cast<string>().ToArray();
         _values = lbValueFunctions.SelectedItems.Cast<string>().ToArray();
+        _noneSelectedWarningShown = false;
+        _sameSelectedWarningShown = false;
     }
 
     public override void UpdateUI()
@@ -27,12 +30,25 @@ public partial class FunctionEngineControl
             lbValueFunctions.SetSelected(Array.IndexOf(lbValueFunctions.Items.Cast<string>().ToArray(), value), true);
     }
 
-    public override InsnList DoCorrupt(AbstractInsnNode insn, AsmParser parser, ref int replaces)
+    public override List<AbstractInsnNode> DoCorrupt(AbstractInsnNode insn, AsmParser parser, ref int replaces)
     {
-        InsnList list = new();
+        List<AbstractInsnNode> list = [];
         if (_limiters.Length == 0 || _values.Length == 0)
         {
-            Logger.Warn("No limiters or no values selected");
+            if (!_noneSelectedWarningShown)
+            {
+                Logger.Warn("No limiters or no values selected");
+                _noneSelectedWarningShown = true;
+            }
+            return list;
+        }
+        if (_limiters.Length == 1 && _values.Length == 1 && _limiters[0] == _values[0])
+        {
+            if (!_sameSelectedWarningShown)
+            {
+                Logger.Warn("Limiter and value are the same");
+                _sameSelectedWarningShown = true;
+            }
             return list;
         }
         if (insn.Opcode != Opcodes.Invokestatic)
@@ -42,21 +58,17 @@ public partial class FunctionEngineControl
         if (methodInsnNode.Owner != "java/lang/Math" || methodInsnNode.Desc != "(D)D")
             return list;
 
-        if (Array.IndexOf(_limiters, methodInsnNode.Name) != -1)
+        int index = Array.IndexOf(_limiters, methodInsnNode.Name);
+        if (index != -1)
         {
-            //TODO: leaving this unfinished code here. it's impossible to implement this without being able to store the value in a variable.
+            //TODO: leaving this unfinished code here. it's impossible to implement this without being able to store the value in a variable because the SWAP instruction doesn't work with 8-byte types
             /*if (_runtimeRandom)
             {
-                // we can't use branching code in the corruptor, so:
-                // we'll make an array of the selected functions
-                // call java/lang/Math.random()D and multiply it by the length of the array
-                // cast the result to an int and use it as an index to select a function
-                // then call that function
-                
-                // String[] functions = new String[] { "func1(D)D", "func2(D)D", "func3(D)D" };
-                list.Add(new LdcInsnNode(JType.GetObjectType("java/lang/Math")));
-                list.Add(new LdcInsnNode(_values.Length));
-                list.Add(new TypeInsnNode(Opcodes.Anewarray, "java/lang/String"));
+                // Method method = Math.TYPE.getMethod((new String[]{"func1(D)D", "func2(D)D", "func3(D)D"})[(int)(Math.random() * 3)], Double.TYPE);
+                // method.invoke(null, new Object[]{value});
+                list.Add(new LdcInsnNode(JType.GetObjectType("java/lang/Math")));                   // java/lang/Math value
+                list.Add(new LdcInsnNode(_values.Length));                                          // _values.Length java/lang/Math va;ue
+                list.Add(new TypeInsnNode(Opcodes.Anewarray, "java/lang/String"));  //
                 for (int i = 0; i < _values.Length; i++)
                 {
                     list.Add(new InsnNode(Opcodes.Dup));
@@ -88,7 +100,16 @@ public partial class FunctionEngineControl
             }
             else
             {*/
-                string newMethod = _values[JavaGeneralParametersForm.Random.Next(_values.Length)];
+                string newMethod;
+                if (_values.Length > 1)
+                {
+                    int rand = JavaGeneralParametersForm.Random.Next(_values.Length - 1);
+                    newMethod = rand >= index ? _values[rand + 1] : _values[rand];
+                }
+                else
+                    newMethod = _values[0];
+                if (newMethod == methodInsnNode.Name)
+                    return list;
                 if (newMethod == "POP,random()")
                 {
                     list.Add(new InsnNode(Opcodes.Pop));

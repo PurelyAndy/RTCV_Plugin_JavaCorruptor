@@ -13,7 +13,7 @@ namespace Java_Corruptor.BlastClasses;
 [XmlInclude(typeof(SerializedInsnBlastUnit))]
 public class SerializedInsnBlastLayer : ICloneable, INote
 {
-    public List<SerializedInsnBlastUnit> Layer = [];
+    public SynchronizedCollection<SerializedInsnBlastUnit> Layer = [];
     
     public SerializedInsnBlastLayer()
     {
@@ -25,6 +25,10 @@ public class SerializedInsnBlastLayer : ICloneable, INote
     }
 
     public SerializedInsnBlastLayer(List<SerializedInsnBlastUnit> layer)
+    {
+        Layer = new(new(), layer);
+    }
+    public SerializedInsnBlastLayer(SynchronizedCollection<SerializedInsnBlastUnit> layer)
     {
         Layer = layer;
     }
@@ -108,5 +112,13 @@ public class SerializedInsnBlastLayer : ICloneable, INote
                 Layer.Remove(bu);
             }
         }
+    }
+    
+    public static implicit operator JavaBlastLayer(SerializedInsnBlastLayer bl)
+    {
+        List<JavaBlastUnit> units = [];
+        AsmParser parser = new();
+        foreach (SerializedInsnBlastUnit bu in bl.Layer) units.Add(new(bu, parser));
+        return new(units);
     }
 }

@@ -9,22 +9,15 @@ using System.Linq;
 using System.Media;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows;
 using System.Windows.Forms;
 using Java_Corruptor.BlastClasses;
-using ObjectWeb.Asm;
 using ObjectWeb.Asm.Tree;
-using RTCV.Common;
 using RTCV.Common.CustomExtensions;
-using RTCV.CorruptCore;
-using RTCV.UI;
 using WinFormsSyntaxHighlighter;
 using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace Java_Corruptor.UI.Components.EngineControls;
 
-// TODO: regex shouldn't have to be put into <>, just interpret the instructions as regex and let the user escape characters as needed.
-// This will allow for <> to be used for dynamic values in the replace instructions, like calling a method with a matched value as an argument, or doing logic.
 public partial class JavaCustomEngineControl
 {
     private readonly SyntaxHighlighter _findHighlighter;
@@ -49,12 +42,19 @@ public partial class JavaCustomEngineControl
         _findHighlighter.AddPattern(new(_blockCommentRegex), new(Color.FromArgb(106, 169, 101)));
         _findHighlighter.AddPattern(new(_lineCommentRegex), new(Color.FromArgb(106, 169, 101)));
         _findHighlighter.AddPattern(new(opcodePattern), new(Color.FromArgb(86, 156, 214)));
+        _findHighlighter.ReHighlight();
 
         _replaceHighlighter = new(tbReplace);
         _replaceHighlighter.AddPattern(new(_blockCommentRegex), new(Color.FromArgb(106, 169, 101)));
         _replaceHighlighter.AddPattern(new(_lineCommentRegex), new(Color.FromArgb(106, 169, 101)));
         _replaceHighlighter.AddPattern(new(opcodePattern), new(Color.FromArgb(86, 156, 214)));
-        _replaceHighlighter.AddPattern(new("if|else|random|label"), new(Color.FromArgb(197, 134, 192)));
+        _replaceHighlighter.AddPattern(new("(?<=<)(if|else|random|label)"), new(Color.FromArgb(197, 134, 192)));
+        _replaceHighlighter.ReHighlight();
+
+        tbFind.AutoWordSelection = true;
+        tbFind.AutoWordSelection = false;
+        tbReplace.AutoWordSelection = true;
+        tbReplace.AutoWordSelection = false;
     }
 
     private void btnSaveAs_Click(object sender, EventArgs e)
@@ -92,7 +92,7 @@ public partial class JavaCustomEngineControl
             _path = openFileDialog1.FileName;
             string fileText = File.ReadAllText(_path);
             
-            var texts = SeparateEngineText(fileText);
+            (string Find, string Replace) texts = SeparateEngineText(fileText);
             tbFind.Text = texts.Find;
             tbReplace.Text = texts.Replace;
         }
@@ -107,11 +107,11 @@ public partial class JavaCustomEngineControl
     private void CheckForErrors(object sender, EventArgs e)
     {
         Prepare();
-        AsmUtilities.Classes.Clear();
-        JavaBlastTools.LoadClassesFromCurrentJar();
+        JavaBlastTools.ReloadClasses();
         List<string> errors = [];
-        foreach (ClassNode clazz in AsmUtilities.Classes.Values)
+        foreach (var v in AsmUtilities.Classes.Values)
         {
+            ClassNode clazz = v.node;
             foreach (MethodNode method in clazz.Methods)
             {
                 AsmParser parser = new();
@@ -134,6 +134,10 @@ public partial class JavaCustomEngineControl
 
                         if (i == _findInstructions.Length - 1)
                         {
+                            if (insns.ToString().Contains("--BEGIN PRIVATE KEY"))
+                            {
+                                
+                            }
                             string[] newInsnStrings = ProcessEngineCode(insns, parser);
                             
                             for (int j = 0; j < newInsnStrings.Length; j++)
@@ -173,7 +177,7 @@ public partial class JavaCustomEngineControl
                     text += $"\n\n{errors.Count - 1 - i} more errors found, do you want to see more?";
                     if (errors.Count > 125 && times.Count > 1)
                     {
-                        long average = (long)times.GetRange(Math.Max(times.Count - 5, 0), Math.Min(5, times.Count)).Average();
+                        long average = (long)times.GetRange(Math.Max(times.Count - 10, 0), Math.Min(10, times.Count)).Average();
                         text += $" Keep going! At this rate, it'll take you just {average * (errors.Count - i - 1) / 1000} seconds to finish reading all of these errors!";
                     }
                     errorText = "";
@@ -234,7 +238,7 @@ public partial class JavaCustomEngineControl
         string replace = text[(replaceIndex + 13)..]; // 13 is the length of \r\n[REPLACE]\r\n
 
         int offset = 0;
-        foreach (var comment in comments) // Adds the comments back in at the correct positions
+        foreach (KeyValuePair<int, (int, string)> comment in comments) // Adds the comments back in at the correct positions
         {
             int position = comment.Key;
             int length = comment.Value.Item1;
@@ -274,7 +278,7 @@ public partial class JavaCustomEngineControl
         string replace = code[(code.IndexOf("[REPLACE]", StringComparison.Ordinal) + 9)..].Trim();
         replace = Regex.Replace(replace, @"^\s*$[\r\n]*", "", RegexOptions.Multiline);
         replace = replace.Trim();
-        replace = _lineEndingFix.Replace(find, "$1\r\n");
+        replace = _lineEndingFix.Replace(replace, "$1\r\n");
             
         _findInstructions = find.Split(["\r\n"], StringSplitOptions.None);
         _replaceInstructions = replace.Split(["\r\n"], StringSplitOptions.None);
@@ -322,9 +326,9 @@ public partial class JavaCustomEngineControl
         tbReplace.Text = _findText;
     }
 
-    public override InsnList DoCorrupt(AbstractInsnNode insn, AsmParser parser, ref int replaces)
+    public override List<AbstractInsnNode> DoCorrupt(AbstractInsnNode insn, AsmParser parser, ref int replaces)
     {
-        InsnList list = new();
+        List<AbstractInsnNode> list = new();
         AbstractInsnNode currentInsn = insn;
         StringBuilder insns = new();
 

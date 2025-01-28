@@ -44,10 +44,10 @@ namespace System
         }
 
         /// <summary>Create an Index pointing at first element.</summary>
-        public static Index Start => new Index(0);
+        public static Index Start => new(0);
 
         /// <summary>Create an Index pointing at beyond last element.</summary>
-        public static Index End => new Index(~0);
+        public static Index End => new(~0);
 
         /// <summary>Create an Index from the start at the position indicated by the value.</summary>
         /// <param name="value">The index value from the start.</param>
@@ -59,7 +59,7 @@ namespace System
                 throw new ArgumentOutOfRangeException(nameof(value), "value must be non-negative");
             }
 
-            return new Index(value);
+            return new(value);
         }
 
         /// <summary>Create an Index from the end at the position indicated by the value.</summary>
@@ -72,7 +72,7 @@ namespace System
                 throw new ArgumentOutOfRangeException(nameof(value), "value must be non-negative");
             }
 
-            return new Index(~value);
+            return new(~value);
         }
 
         /// <summary>Returns the index value.</summary>
@@ -103,7 +103,7 @@ namespace System
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int GetOffset(int length)
         {
-            var offset = _value;
+            int offset = _value;
             if (IsFromEnd)
             {
                 // offset = length - (~value)
@@ -189,13 +189,13 @@ namespace System
         }
 
         /// <summary>Create a Range object starting from start index to the end of the collection.</summary>
-        public static Range StartAt(Index start) => new Range(start, Index.End);
+        public static Range StartAt(Index start) => new(start, Index.End);
 
         /// <summary>Create a Range object starting from first element in the collection to the end Index.</summary>
-        public static Range EndAt(Index end) => new Range(Index.Start, end);
+        public static Range EndAt(Index end) => new(Index.Start, end);
 
         /// <summary>Create a Range object starting from first element to the end.</summary>
-        public static Range All => new Range(Index.Start, Index.End);
+        public static Range All => new(Index.Start, Index.End);
 
         /// <summary>Calculate the start offset and length of range object using a collection length.</summary>
         /// <param name="length">The length of the collection that the range will be used with. length has to be a positive value.</param>
@@ -208,14 +208,14 @@ namespace System
         public (int Offset, int Length) GetOffsetAndLength(int length)
         {
             int start;
-            var startIndex = Start;
+            Index startIndex = Start;
             if (startIndex.IsFromEnd)
                 start = length - startIndex.Value;
             else
                 start = startIndex.Value;
 
             int end;
-            var endIndex = End;
+            Index endIndex = End;
             if (endIndex.IsFromEnd)
                 end = length - endIndex.Value;
             else
@@ -256,14 +256,14 @@ namespace System.Runtime.CompilerServices
                     return Array.Empty<T>();
                 }
 
-                var dest = new T[length];
+                T[] dest = new T[length];
                 Array.Copy(array, offset, dest, 0, length);
                 return dest;
             }
             else
             {
                 // The array is actually a U[] where U:T.
-                var dest = (T[])Array.CreateInstance(array.GetType().GetElementType(), length);
+                T[] dest = (T[])Array.CreateInstance(array.GetType().GetElementType(), length);
                 Array.Copy(array, offset, dest, 0, length);
                 return dest;
             }

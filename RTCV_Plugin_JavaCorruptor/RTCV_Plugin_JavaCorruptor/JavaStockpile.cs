@@ -4,9 +4,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Windows.Forms;
 using Java_Corruptor.BlastClasses;
-using Java_Corruptor.UI;
-using Newtonsoft.Json;
-using RTCV.Common;
 using RTCV.Common.Objects;
 using RTCV.CorruptCore;
 using RTCV.CorruptCore.Exceptions;
@@ -177,11 +174,9 @@ internal class JavaStockpile
         using FileStream fs = File.Open(Path.Combine(RtcCore.workingDir, "TEMP", "stockpile.json"), FileMode.OpenOrCreate);
         RtcCore.OnProgressBarUpdate(sks, new("Creating stockpile.json", saveProgress += 2));
 
-        AsmUtilities.Classes.Clear();
-        JavaBlastTools.LoadClassesFromCurrentJar();
+        JavaBlastTools.ReloadClasses();
                         
-        JsonHelper.Serialize(sks, fs, Formatting.Indented);
-        AsmUtilities.Classes.Clear();
+        JsonHelper.Serialize(sks, fs);
     }
 
     private static void CreateAndReplaceStockpileZip(ref JavaStockpile sks, bool compress, ref decimal saveProgress)
@@ -233,7 +228,7 @@ internal class JavaStockpile
         catch (Exception e)
         {
             Console.Write(e);
-            MessageBox.Show("Unable to empty the stockpile folder. There's probably something locking a file inside it (iso based game loaded?)\n. Your stockpile is saved, but your current session is bunk.\nRe-load the file");
+            MessageBox.Show("Unable to empty the stockpile folder. There's probably something locking a file inside it. Your stockpile is saved, but your current session is bunk.\nRe-load the file");
         }
     }
 

@@ -64,80 +64,24 @@ public class JavaBlastUnitConverter : JsonConverter
 
     public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
     {
-        string method = "";
-        List<AbstractInsnNode> instructions = new();
-        int index = -1;
-        int replaces = -1;
-        bool isEnabled = true;
-        bool isLocked = false;
-        string note = null;
-        string engine = null;
-        ExpandoObject engineSettings = new();
-
-        /*
-        reader.Read();
-        while (reader.TokenType != JsonToken.EndObject)
-        {
-            if (reader.TokenType == JsonToken.PropertyName)
-            {
-                string propName = (string)reader.Value;
-                reader.Read();
-                switch (propName)
-                {
-                    case "Method":
-                        method = (string)reader.Value;
-                        break;
-                    case "Instructions":
-                        reader.Read();
-                        AsmParser.ClearLabels();
-                        MethodNode methodNode = AsmUtilities.FindMethod(method);
-                        AsmParser.RegisterLabelsFrom(methodNode.Instructions);
-                        while (reader.TokenType != JsonToken.EndArray)
-                        {
-                            instructions.Add(AsmParser.ParseInsn(reader.Value.ToString()));
-                            reader.Read();
-                        }
-
-                        break;
-                    case "Index":
-                        index = (int)reader.Value!;
-                        break;
-                    case "Replaces":
-                        replaces = (int)reader.Value!;
-                        break;
-                    case "IsEnabled":
-                        isEnabled = (bool)reader.Value!;
-                        break;
-                    case "IsLocked":
-                        isLocked = (bool)reader.Value!;
-                        break;
-                    case "Note":
-                        note = (string)reader.Value;
-                        break;
-                } 
-            }
-        }*/
-
-        // i don't know if i can trust the order of the properties to be consistent. specifically, Method needs to come before Instructions
-        // TODO: profile this, if it's too slow, use the above code instead if it's faster
         JObject jObject = JObject.Load(reader);
-        
-        method = jObject["Method"]!.Value<string>();
-        
         JArray jArray = (JArray)jObject["Instructions"]!;
         AsmParser parser = new();
+
+
+        string method = jObject["Method"]!.Value<string>();
         MethodNode methodNode = AsmUtilities.FindMethod(method);
         parser.RegisterLabelsFrom(methodNode.Instructions);
+        List<AbstractInsnNode> instructions = new();
         foreach (JToken token in jArray)
             instructions.Add(parser.ParseInsn(token.Value<string>()));
-        
-        index = jObject["Index"]!.Value<int>();
-        replaces = jObject["Replaces"]!.Value<int>();
-        isEnabled = jObject["IsEnabled"]!.Value<bool>();
-        isLocked = jObject["IsLocked"]!.Value<bool>();
-        note = jObject["Note"]!.Value<string>();
-        engine = jObject["Engine"]!.Value<string>();
-        engineSettings = jObject["EngineSettings"]!.ToObject<ExpandoObject>();
+        int index = jObject["Index"]!.Value<int>(); ;
+        int replaces = jObject["Replaces"]!.Value<int>(); ;
+        bool isEnabled = jObject["IsEnabled"]!.Value<bool>(); ;
+        bool isLocked = jObject["IsLocked"]!.Value<bool>(); ;
+        string note = jObject["Note"]!.Value<string>(); ;
+        string engine = jObject["Engine"]!.Value<string>(); ;
+        ExpandoObject engineSettings = jObject["EngineSettings"]!.ToObject<ExpandoObject>(); ;
         
         return new JavaBlastUnit(instructions, index, replaces, method, note, isEnabled, isLocked, engine, engineSettings);
     }

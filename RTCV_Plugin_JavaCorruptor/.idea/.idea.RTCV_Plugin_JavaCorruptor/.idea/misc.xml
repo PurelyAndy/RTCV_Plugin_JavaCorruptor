@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="KubernetesApiProvider">{}</component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id>Code Coverage</id>
+          </State>
+          <State>
+            <id>Dockerfile</id>
+          </State>
+          <State>
+            <id>General</id>
+          </State>
+          <State>
+            <id>Imports and dependenciesJavaScript and TypeScript</id>
+          </State>
+          <State>
+            <id>JSONPath</id>
+          </State>
+          <State>
+            <id>JavaScript and TypeScript</id>
+          </State>
+          <State>
+            <id>MongoJS</id>
+          </State>
+          <State>
+            <id>SQL</id>
+          </State>
+          <State>
+            <id>Security</id>
+          </State>
+        </expanded-state>
+      </profile-state>
+    </entry>
+  </component>
+</project>

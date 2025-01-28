@@ -2,56 +2,75 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 using RTCV.NetCore;
 using RTCV.UI.Modular;
 using RTCV.UI;
-using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using RTCV.Common;
 
 namespace Java_Corruptor.UI.Components;
 
 public partial class JavaGeneralParametersForm : ComponentForm, IBlockable
 {
-    private new void HandleMouseDown(object s, MouseEventArgs e) => typeof(ComponentForm).GetMethod("HandleMouseDown", BindingFlags.NonPublic | BindingFlags.Instance)!.Invoke(this,
-        [s, e]);
-    private new void HandleFormClosing(object s, FormClosingEventArgs e) => typeof(ComponentForm).GetMethod("HandleFormClosing", BindingFlags.NonPublic | BindingFlags.Instance)!.Invoke(this,
-        [s, e]);
+    private void HandleMouseDown(object s, MouseEventArgs e) => this.HandleMouseDownP(s, e);
+    private void HandleFormClosing(object s, FormClosingEventArgs e) => this.HandleFormClosingP(s, e);
     public double Intensity
     {
-        get => tbIntensity.Value / 100000d;
-        private set => tbIntensity.Value = (int)(value * 100000);
+        get => (tbIntensity.Value / 100000d) * (tbIntensity.Value / 100000d);
+        private set => tbIntensity.Value = (int)(Math.Sqrt(value) * 100000);
     }
 
-    private int _seed;
-    internal static Random Random;
-        
+    private static int _seed;
+    private static ThreadLocal<Random> _random = new(() => new(_seed));
+    internal static Random Random => _random.Value;
+
     public void ResetRandom()
     {
         if (!cbUseLastSeed.Checked)
             _seed = Environment.TickCount;
-        Random = new(_seed);
+        _random = new(() => new(_seed));
         cbUseLastSeed.Text = $"Use last seed ({_seed})";
+        cbUseLastSeed.Refresh();
     }
 
     public JavaGeneralParametersForm()
     {
         InitializeComponent();
+        //DEPLORABLE hack to set negative padding. this could be used as an argument for the death sentence.
+        try
+        {
+            Padding pad = new(-5, -5, -5, -5);
+            Type iArrangedElement = Type.GetType("System.Windows.Forms.Layout.IArrangedElement, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+            Type propertyStore = Type.GetType("System.Windows.Forms.PropertyStore, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+            Type commonProperties = Type.GetType("System.Windows.Forms.Layout.CommonProperties, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+            PropertyInfo properties = iArrangedElement.GetProperties()[3];
+            MethodInfo setPadding = propertyStore.GetMethod("SetPadding");
+            FieldInfo paddingProperty = commonProperties.GetField("_paddingProperty", BindingFlags.NonPublic | BindingFlags.Static);
+            int paddingPropertyVal = (int)paddingProperty.GetValue(null);
+            object o = properties.GetValue(btnSelectProgram);
+            setPadding.Invoke(o, [paddingPropertyVal, pad]);
+        }
+        catch
+        {
+            //cry
+            btnSelectProgram.Padding = Padding.Empty;
+        }
         ResetRandom();
+        tbOutput.AutoWordSelection = true;
+        tbOutput.AutoWordSelection = false;
     }
 
     private void tbIntensity_Scroll(object sender, EventArgs e)
     {
-        lbIntensity.Text = $"Intensity: {tbIntensity.Value / 1000d}%";
+        lbIntensity.Text = $"Intensity: {Intensity * 100:F3}%";
     }
 
     private void btnGeneralParamsInfo_Click(object sender, EventArgs e)
     {
-        MessageBox.Show("""
-            The intensity slider determines the chance of an instruction being corrupted. At 0%, no corruptions will be applied. At 100%, every instruction that matches the criteria of the corruption engine will be corrupted.
-            The "Use last seed" checkbox will use the same seed for the random number generator every time the program is run. This is useful for debugging, but pretty much useless for normal use.
-            The "Launch a program after corrupting" checkbox will run a program after the corruption process is complete. You could write a batch script to overwrite the old jar file and then automatically launch your game, for example. The large box below will show the output of the program.
-            The "Create a new JAR for each corruption" checkbox will create a JAR file with a different name for each corruption. Otherwise, the original JAR will be overwritten.
-        """, "General Parameters Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        Process.Start("https://corrupt.wiki/rtcv/other-rtc-guides/java-corruptor-plugin#general-parameters");
     }
 
     private void btnSelectProgram_Click(object sender, EventArgs e)
@@ -62,7 +81,7 @@ public partial class JavaGeneralParametersForm : ComponentForm, IBlockable
     }
 
     private string _oldProgramPath = "";
-    private void tbProgram_TextChanged(object sender, EventArgs e)
+    private void tbProgram_LostFocus(object sender, EventArgs e)
     {
         if (File.Exists(tbProgram.Text))
         {
@@ -125,5 +144,20 @@ public partial class JavaGeneralParametersForm : ComponentForm, IBlockable
     {
         if (cbPostCorruptAction.Checked && tbProgram.Text == string.Empty)
             btnSelectProgram_Click(sender, e);
+    }
+    
+    private void btnOpenDisassembler_Click(object sender, EventArgs e)
+    {
+        DisassemblerForm disassemblerForm = S.GET<DisassemblerForm>();
+        disassemblerForm.Show();
+        disassemblerForm.BringToFront();
+    }
+    
+    private void btnMoreSettings_Click(object sender, EventArgs e)
+    {
+        if (S.GET<MoreSettingsForm>().IsDisposed)
+            S.SET(new MoreSettingsForm());
+        S.GET<MoreSettingsForm>().Show();
+        S.GET<MoreSettingsForm>().BringToFront();
     }
 }

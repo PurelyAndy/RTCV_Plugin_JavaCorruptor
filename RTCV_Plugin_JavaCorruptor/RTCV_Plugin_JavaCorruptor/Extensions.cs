@@ -1,5 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
+using System.Windows.Forms;
+using ObjectWeb.Asm.Tree;
+using RTCV.UI;
+using RTCV.UI.Modular;
 
 namespace Java_Corruptor;
 
@@ -14,14 +20,23 @@ public static class Extensions
     public static string Replace(this string text, string findText, Func<string> generateReplacement)
     {
         StringBuilder newText = new();
-        int pos = text.IndexOf(findText, StringComparison.Ordinal);
-        while (pos >= 0)
+        int position = text.IndexOf(findText, StringComparison.Ordinal);
+        while (position >= 0)
         {
             string replacement = generateReplacement();
-            newText.Append(text[..pos] + replacement);
-            text = text[(pos + findText.Length)..];
-            pos = text.IndexOf(findText, StringComparison.Ordinal);
+            newText.Append(text[..position] + replacement);
+            text = text[(position + findText.Length)..];
+            position = text.IndexOf(findText, StringComparison.Ordinal);
         }
         return newText + text;
     }
+
+    public static void Deconstruct(this KeyValuePair<string, (ClassNode, byte[])> kvp, out string a, out (ClassNode, byte[]) b)
+    {
+        (a, b) = (kvp.Key, kvp.Value);
+    }
+    
+    public static void HandleMouseDownP(this ComponentForm form, object s, MouseEventArgs e) => typeof(ComponentForm).GetMethod("HandleMouseDown", BindingFlags.NonPublic | BindingFlags.Instance)!.Invoke(form, [s, e]);
+    public static void HandleFormClosingP(this ComponentForm form, object s, FormClosingEventArgs e) => typeof(ComponentForm).GetMethod("HandleFormClosing", BindingFlags.NonPublic | BindingFlags.Instance)!.Invoke(form, [s, e]);
+    public static void LoadToMainP(this CanvasGrid cg) => typeof(CanvasGrid).GetMethod("LoadToMain", BindingFlags.NonPublic | BindingFlags.Instance)!.Invoke(cg, null);
 }

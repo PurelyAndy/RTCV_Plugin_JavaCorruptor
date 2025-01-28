@@ -5,7 +5,7 @@
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0CC3144A-8379-4E69-A8DB-DF5F50FE5749}</ProjectGuid>
+    <ProjectGuid>{238D1D61-58A6-4DDF-8E26-7ACF046336BC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Java_Corruptor</RootNamespace>
@@ -80,6 +80,10 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Memory">
+      <HintPath>..\..\..\FileStub-Vanguard\FileStub\bin\Debug\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
@@ -97,17 +101,21 @@
   <ItemGroup>
     <Compile Include="AsmParser.cs" />
     <Compile Include="AsmUtilities.cs" />
+    <Compile Include="BetterCloudDebug.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="BidirectionalDictionary.cs" />
     <Compile Include="BlastClasses\JavaBlastLayer.cs" />
-    <Compile Include="BlastClasses\JavaBlastLayerCollection.cs" />
     <Compile Include="BlastClasses\JavaBlastTools.cs" />
     <Compile Include="BlastClasses\JavaBlastUnit.cs" />
     <Compile Include="BlastClasses\SerializedInsnBlastLayer.cs" />
     <Compile Include="BlastClasses\SerializedInsnBlastLayerCollection.cs" />
     <Compile Include="BlastClasses\SerializedInsnBlastUnit.cs" />
-    <Compile Include="Constants.cs" />
+    <Compile Include="CorruptionOptions.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="InvalidInstructionException.cs" />
+    <Compile Include="Javanguard\JavaConnector.cs" />
+    <Compile Include="Javanguard\CorruptModeInfo.cs" />
     <Compile Include="JavaStashKey.cs" />
     <Compile Include="JavaStockpile.cs" />
     <Compile Include="JavaStockpileManagerUISide.cs" />
@@ -160,11 +168,11 @@
     <Compile Include="UI\Components\EngineControls\BlastLayerApplierEngineControl.Designer.cs">
       <DependentUpon>BlastLayerApplierEngineControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Components\EngineControls\RoundingEngineControl.cs">
+    <Compile Include="UI\Components\EngineControls\LogicEngineControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UI\Components\EngineControls\RoundingEngineControl.Designer.cs">
-      <DependentUpon>RoundingEngineControl.cs</DependentUpon>
+    <Compile Include="UI\Components\EngineControls\LogicEngineControl.Designer.cs">
+      <DependentUpon>LogicEngineControl.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Components\EngineControls\JavaCustomEngineControl.cs">
       <SubType>UserControl</SubType>
@@ -214,17 +222,23 @@
     <Compile Include="UI\Components\JavaStashHistoryForm.designer.cs">
       <DependentUpon>JavaStashHistoryForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\MoreSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\MoreSettingsForm.Designer.cs">
+      <DependentUpon>MoreSettingsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\PluginForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\PluginForm.Designer.cs">
       <DependentUpon>PluginForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Components\EngineControls\JavaVectorEngineControl.cs">
+    <Compile Include="UI\Components\EngineControls\BasicEngineControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UI\Components\EngineControls\JavaVectorEngineControl.Designer.cs">
-      <DependentUpon>JavaVectorEngineControl.cs</DependentUpon>
+    <Compile Include="UI\Components\EngineControls\BasicEngineControl.Designer.cs">
+      <DependentUpon>BasicEngineControl.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\JavaSanitizeToolForm.cs">
       <SubType>Form</SubType>
@@ -242,7 +256,7 @@
       <Version>1.1.5</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.1</Version>
+      <Version>13.0.2</Version>
     </PackageReference>
     <PackageReference Include="NLog">
       <Version>5.1.1</Version>
@@ -276,8 +290,8 @@
     <EmbeddedResource Include="UI\Components\EngineControls\BlastLayerApplierEngineControl.resx">
       <DependentUpon>BlastLayerApplierEngineControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Components\EngineControls\RoundingEngineControl.resx">
-      <DependentUpon>RoundingEngineControl.cs</DependentUpon>
+    <EmbeddedResource Include="UI\Components\EngineControls\LogicEngineControl.resx">
+      <DependentUpon>LogicEngineControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Components\EngineControls\JavaCustomEngineControl.resx">
@@ -299,8 +313,8 @@
     <EmbeddedResource Include="UI\Components\EngineControls\FunctionEngineControl.resx">
       <DependentUpon>FunctionEngineControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Components\EngineControls\JavaVectorEngineControl.resx">
-      <DependentUpon>JavaVectorEngineControl.cs</DependentUpon>
+    <EmbeddedResource Include="UI\Components\EngineControls\BasicEngineControl.resx">
+      <DependentUpon>BasicEngineControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Components\JavaStockpileManagerForm.resx">
@@ -308,6 +322,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Components\JavaStashHistoryForm.resx">
       <DependentUpon>JavaStashHistoryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\MoreSettingsForm.resx">
+      <DependentUpon>MoreSettingsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\PluginForm.resx">
       <DependentUpon>PluginForm.cs</DependentUpon>

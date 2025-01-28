@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using NLog;
 using ObjectWeb.Asm;
@@ -15,12 +15,14 @@ public class AsmParser
 {
     public readonly BidirectionalDictionary<LabelNode, string> LabelNames = new();
 
-    private static readonly List<string> _precalculatedLabels;
-    private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+    private static readonly List<string> PrecalculatedLabels;
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+    private static Regex LF = new(@"(?<!\\)\\n", RegexOptions.Compiled);
+    private static Regex CR = new(@"(?<!\\)\\r", RegexOptions.Compiled);
     static AsmParser()
     {
-        _logger.Info("Precalculating label names...");
-        _precalculatedLabels = [];
+        Logger.Info("Precalculating label names...");
+        PrecalculatedLabels = [];
         for (int i = 0; i < 100000; i++) // 100000 is mostly arbitrary, this doesn't take long anyway. some libraries have *really* long methods.
         {
             const int divisor = 26;
@@ -37,9 +39,9 @@ public class AsmParser
                 index = index / divisor - 1;
             }
 
-            _precalculatedLabels.Add(new(arr));
+            PrecalculatedLabels.Add(new(arr));
         }
-        _logger.Info("Precalculated label names.");
+        Logger.Info("Precalculated label names.");
     }
 
     /// <summary>
@@ -49,10 +51,10 @@ public class AsmParser
     /// <returns>The name of the label.</returns>
     private static string GetNameForLabel(int index)
     {
-        if (index < _precalculatedLabels.Count)
-            return _precalculatedLabels[index];
+        if (index < PrecalculatedLabels.Count)
+            return PrecalculatedLabels[index];
         
-        _logger.Debug($"Label index {index} is out of range for precalculated labels, calculating manually.");
+        Logger.Debug($"Label index {index} is out of range for precalculated labels, calculating manually.");
         const int divisor = 26;
 
         int length = 0;
@@ -83,7 +85,9 @@ public class AsmParser
         {
             if (insn.Type == Label_Insn)
             {
-                LabelNames.Add((LabelNode)insn, GetNameForLabel(i)); // insns.IndexOf() exists, but has an issue with cache invalidation i think
+                if (!LabelNames.ContainsKey((LabelNode)insn))
+                    LabelNames.Add((LabelNode)insn, GetNameForLabel(i)); // insns.IndexOf() exists, but has an issue with cache invalidation i think
+                //LabelNames[(LabelNode)insn] = GetNameForLabel(i); // insns.IndexOf() exists, but has an issue with cache invalidation i think
             }
         }
     }
@@ -179,8 +183,8 @@ public class AsmParser
     {
         if (!AsmUtilities.Opcodes.TryGetValue(insn.Opcode, out string op)) // Shouldn't happen, but did once
         {
-            _logger.Error($"Unknown opcode encountered: {insn.Opcode}, insn.Type: {insn.Type}");
-            MessageBox.Show($"UNKNOWN OPCODE ENCOUNTERED: {insn.Opcode}\nINSN TYPE: {insn.Type}\nPlease report this to @purely_andy.");
+            Logger.Error($"Unknown opcode encountered: {insn.Opcode}, insn.Type: {insn.Type}");
+            // MessageBox.Show($"UNKNOWN OPCODE ENCOUNTERED: {insn.Opcode}\nINSN TYPE: {insn.Type}\nPlease report this to @purely_andy.");
             return "UNKNOWN OPCODE " + insn.Opcode;
         }
         string opcode = insn.Opcode != -1 ? op : "";
@@ -217,8 +221,8 @@ public class AsmParser
 
                 switch (ldcInsn.Cst)
                 {
-                    case string:
-                        args = "\"" + ldcInsn.Cst + "\"";
+                    case string s:
+                        args = "\"" + s.Replace(@"\n",@"\\n").Replace(@"\r",@"\\r").Replace("\n","\\n").Replace("\r","\\r") + "\"";
                         break;
                     case long:
                         args = ldcInsn.Cst + "L";
@@ -372,33 +376,29 @@ public class AsmParser
         switch (type)
         {
             case Line_Insn:
-                if (split.Length < 3)
+                switch (split.Length)
                 {
-                    message = $"Line instruction {insn} is missing a line number.";
-                    return false;
+                    case 2:
+                        message = $"Line instruction {insn} is missing a line number.";
+                        return false;
+                    case < 2:
+                        message = $"Line instruction {insn} is missing a label and a line number.";
+                        return false;
+                    case > 3:
+                        message = $"Line instruction {insn} has too many arguments.";
+                        return false;
                 }
-                if (split.Length < 2)
-                {
-                    message = $"Line instruction {insn} is missing a label and a line number.";
-                    return false;
-                }
-                if (split.Length > 3)
-                {
-                    message = $"Line instruction {insn} has too many arguments.";
-                    return false;
-                }
+
                 if (int.TryParse(split[2], out _))
                     return true;
 
                 message = $"Line instruction {insn} has an invalid line number: {split[2]}";
                 return false;
             case Insn:
-                if (split.Length > 1)
-                {
-                    message = $"Instruction {insn} has too many arguments.";
-                    return false;
-                }
-                return true;
+                if (split.Length <= 1)
+                    return true;
+                message = $"Instruction {insn} has too many arguments.";
+                return false;
             case Int_Insn:
                 if (split.Length < 2)
                 {
@@ -468,20 +468,20 @@ public class AsmParser
                 message = $"Multianewarray instruction {insn} has an invalid dimension count: {split[2]}";
                 return false;
             case Field_Insn:
-                if (split.Length < 2)
+                if (split.Length < 3)
                 {
                     message = $"Field instruction {insn} requires an identifier in the format owner.name desc";
                     return false;
                 }
-                if (split.Length > 2)
+                if (split.Length > 3)
                 {
                     message = $"Field instruction {insn} has too many arguments.";
                     return false;
                 }
                 string[] fieldSplit = split[1].Split('.');
-                if (fieldSplit.Length == 3)
+                if (fieldSplit.Length == 2)
                     return true;
-                message = $"Field instruction {insn} has a malformed identifier {split[1]} - expected: owner.name desc";
+                message = $"Field instruction {insn} has a malformed identifier {split[1]} - expected: owner.name";
                 return false;
             case Method_Insn:
                 if (split.Length < 2)
@@ -526,9 +526,26 @@ public class AsmParser
                 }
                 if (split[1].StartsWith("\""))
                 {
-                    if (split[1].EndsWith("\"")) return true;
+                    string combined = split[1..].Aggregate((a, b) => a + " " + b);
+                    if (combined.EndsWith("\"")) return true;
                     message = $"Ldc instruction {insn} has an unterminated string constant.";
                     return false;
+                }
+                if (split[1].StartsWith("["))
+                {
+                    if (split[1].StartsWith("[L"))
+                    {
+                        if (split[1].EndsWith(";"))
+                            return true;
+                        message = $"Array type ldc instruction {insn} has no terminator.";
+                        return false;
+                    }
+                    if (split[1].Length > 2)
+                    {
+                        message = $"Array type ldc instruction {insn} is wrong.";
+                        return false;
+                    }
+                    return true;
                 }
                 if (split[1].EndsWith("L"))
                 {
@@ -563,6 +580,8 @@ public class AsmParser
                     }
                     if (double.TryParse(split[1][..^1], out _))
                         return true;
+                    if (split[1] == "1.79769313486232E+308D")
+                        return true;
                     message = $"Ldc instruction {insn} has an invalid double constant: {split[1][..^1]}";
                     return false;
                 }
@@ -578,14 +597,8 @@ public class AsmParser
                     message = $"Ldc instruction {insn} has an invalid integer constant: {split[1][..^1]}";
                     return false;
                 }
-
                 if (split[1].StartsWith("handle"))
                 {
-                    if (split.Length < 2)
-                    {
-                        message = $"Handle ldc instruction {insn} requires a handle tag and an identifier.";
-                        return false;
-                    }
                     if (!AsmUtilities.Tags.TryGetValue(split[1][7..], out int tag))
                     {
                         message = $"Handle ldc instruction {insn} has an invalid handle tag: {split[1][7..]}";
@@ -593,27 +606,23 @@ public class AsmParser
                     }
                     if (split.Length < 3)
                     {
-                        if (tag > Opcodes.H_Putstatic)
-                            message = $"Handle ldc instruction {insn} requires an identifier.";
-                        else
-                            message = $"Handle ldc instruction {insn} requires an owner/name and a descriptor.";
+                        message = $"Handle ldc instruction {insn} requires an {(tag > Opcodes.H_Putstatic ? "identifier" : "owner/name and a descriptor")}.";
                         return false;
                     }
 
                     if (tag is >= Opcodes.H_Getfield and <= Opcodes.H_Putstatic)
                     {
-                        if (split.Length < 4)
+                        switch (split.Length)
                         {
-                            message = $"Handle ldc instruction {insn} requires a descriptor.";
-                            return false;
+                            case < 4:
+                                message = $"Handle ldc instruction {insn} requires a descriptor.";
+                                return false;
+                            case > 4:
+                                message = $"Handle ldc instruction {insn} has too many arguments.";
+                                return false;
+                            default:
+                                return true;
                         }
-                        if (split.Length > 4)
-                        {
-                            message = $"Handle ldc instruction {insn} has too many arguments.";
-                            return false;
-                        }
-
-                        return true;
                     }
                     
                     if (split.Length > 3)
@@ -624,6 +633,16 @@ public class AsmParser
                     if (split[2].LastIndexOf('.') == -1 || split[2].IndexOf('(') == -1)
                     {
                         message = $"Handle ldc instruction {insn} has an invalid identifier: {split[2]}";
+                        return false;
+                    }
+
+                    return true;
+                }
+                if (split[1].StartsWith("L"))
+                {
+                    if (!split[1].EndsWith(";"))
+                    {
+                        message = $"Type ldc instruction {insn} has no terminator.";
                         return false;
                     }
 
@@ -652,48 +671,72 @@ public class AsmParser
                 message = $"Jump instruction {insn} requires a label.";
                 return false;
             case Tableswitch_Insn: //BUG this needs to be implemented
-                switch (split.Length)
-                {
-                    case < 2:
-                        message = $"Tableswitch instruction {insn} requires a range.";
-                        return false;
-                    case < 3:
-                        message = $"Tableswitch instruction {insn} requires a max.";
-                        return false;
-                    case > 3:
-                        message = $"Tableswitch instruction {insn} has too many arguments.";
-                        return false;
-                    default:
-                        return true;
-                }
-            case Lookupswitch_Insn:
-                string[] splitting = insn.Split('=');
-                if (splitting.Length < 2)
-                {
-                    message = $"Lookupswitch instruction {insn} is malformed. It should look something like: LOOKUPSWITCH mapping[val=LBL1, val2=LBL2] default[LBL3]";
+                if (split.Length < 4) {
+                    message = $"Tableswitch instruction {insn} has too few arguments.";
                     return false;
                 }
-                if (splitting[0].LastIndexOf('[') == -1)
+                if (!split[1].StartsWith("range["))
                 {
-                    message = $"Lookupswitch instruction {insn} is malformed. It should look something like: LOOKUPSWITCH mapping[val=LBL1, val2=LBL2] default[LBL3]";
+                    message = $"Tableswitch instruction {insn} is missing a range.";
                     return false;
                 }
-                for (int i = 1; i < splitting.Length; i++)
+                if (!split[2].StartsWith("labels["))
                 {
-                    if (splitting[i].LastIndexOf(' ') == -1 || splitting[i].IndexOf(',') == -1)
-                    {
-                        message = $"Lookupswitch instruction {insn} is malformed. It should look something like: LOOKUPSWITCH mapping[val=LBL1, val2=LBL2] default[LBL3]";
-                        return false;
-                    }
+                    message = $"Tableswitch instruction {insn} is missing labels.";
+                    return false;
                 }
-
-                string lastElement = splitting[^1];
-                if (lastElement.LastIndexOf('[') == -1 || lastElement.LastIndexOf(']') == -1)
+                if (!split[^1].StartsWith("default["))
                 {
-                    message = $"Lookupswitch instruction {insn} is malformed. It should look something like: LOOKUPSWITCH mapping[val=LBL1, val2=LBL2] default[LBL3]";
+                    message = $"Tableswitch instruction {insn} is missing a default.";
+                    return false;
+                }
+                if (split[2..^2].Any(x => !x.EndsWith(",")))
+                {
+                    message = $"Tableswitch instruction {insn} is missing a comma in its label list.";
                     return false;
                 }
                 
+                return true;
+            case Lookupswitch_Insn:
+                if (split.Length < 3)
+                {
+                    message = $"Lookupswitch instruction {insn} has too few arguments.";
+                    return false;
+                }
+                if (!split[1].StartsWith("mapping["))
+                {
+                    message = $"Lookupswitch instruction {insn} is missing a map.";
+                    return false;
+                }
+                if (!split[^1].StartsWith("default["))
+                {
+                    message = $"Lookupswitch instruction {insn} is missing a default.";
+                    return false;
+                }
+                if (!split[^1].EndsWith("]"))
+                {
+                    message = $"Lookupswitch instruction {insn} has an unterminated default.";
+                    return false;
+                }
+                if (!split[^2].EndsWith("]"))
+                {
+                    message = $"Lookupswitch instruction {insn} has an unterminated map.";
+                    return false;
+                }
+                if (split[1..^1].Any(x => !x.Contains('=')))
+                {
+                    message = $"Lookupswitch instruction {insn} has one or more malformed map entries.";
+                    return false;
+                }
+                if (split[1..^2].Any(x => !x.EndsWith(",")))
+                {
+                    message = $"Lookupswitch instruction {insn} is missing a comma in its map.";
+                    return false;
+                }
+                
+                return true;
+            case Invoke_Dynamic_Insn:
+                // too complicated. too useless. brain hurt. :(
                 return true;
             case Label_Insn:
                 if (split.Length > 1)
@@ -703,7 +746,6 @@ public class AsmParser
                 }
                 return true; // If it got detected as a label, it's valid
             case Frame_Insn:
-            //return new FrameNode(opcode, 0, new Object[0], 0, new Object[0]);
             default:
                 message = "Unknown instruction type " + type + " from opcode " + opcode;
                 return false;
@@ -759,21 +801,35 @@ public class AsmParser
                     int index = methodSplit[1].IndexOf('>');
                     string desc = methodSplit[1][(index + 1)..];
                     methodSplit[1] = methodSplit[1][..(index + 1)];
-                    return new MethodInsnNode(opcode, methodSplit[0], methodSplit[1], desc, opcode == Opcodes.Invokespecial);
+                    return new MethodInsnNode(opcode, methodSplit[0], methodSplit[1], desc, opcode == Opcodes.Invokeinterface);
+                    //Assuming that it will not be an interface is wrong. Too bad!
                 }
                 return new MethodInsnNode(opcode, methodSplit[0], methodSplit[1][..methodSplit[1].IndexOf('(')], methodSplit[1][methodSplit[1].IndexOf('(')..], opcode == Opcodes.Invokeinterface);
             case Ldc_Insn:
                 if (split[1].StartsWith("\""))
                 {
                     string combined = split[1..].Aggregate((a, b) => a + " " + b);
-                    return new LdcInsnNode(combined[1..^1]); // BUG: is this supposed to be [1..^1] or [..^1]?
+                    combined = CR.Replace(LF.Replace(combined, "\n"), "\r").Replace(@"\\n", @"\n").Replace(@"\\r", @"\r");
+                    return new LdcInsnNode(combined[1..^1]);
+                }
+                if (split[1].StartsWith("L"))
+                {
+                    return new LdcInsnNode(JType.GetObjectType(split[1][1..^1]));
+                }
+                if (split[1].StartsWith("["))
+                {
+                    return new LdcInsnNode(JType.GetObjectType("[" + split[1][2..^1]));
                 }
                 if (split[1].EndsWith("L"))
                     return new LdcInsnNode(long.Parse(split[1][..^1]));
                 if (split[1].EndsWith("F"))
                     return new LdcInsnNode(float.Parse(split[1][..^1]));
                 if (split[1].EndsWith("D"))
-                    return new LdcInsnNode(double.Parse(split[1][..^1]));
+                {
+                    return split[1] == "1.79769313486232E+308D"
+                        ? new LdcInsnNode(double.MaxValue)
+                        : new(double.Parse(split[1][..^1]));
+                }
                 if (split[1].EndsWith("I"))
                     return new LdcInsnNode(int.Parse(split[1][..^1]));
 
@@ -802,10 +858,21 @@ public class AsmParser
             case Jump_Insn:
                 return new JumpInsnNode(opcode, GetLabelWithName(split[1]));
             case Tableswitch_Insn:
-                return new TableSwitchInsnNode(int.Parse(split[1]), // BUG: implement this
-                    int.Parse(split[2]),
-                    new(),
-                    new LabelNode[int.Parse(split[2]) - int.Parse(split[1]) + 1]
+                string[] minAndMax = split[1][6..^1].Split(':');
+                int min = int.Parse(minAndMax[0]);
+                int max = int.Parse(minAndMax[1]);
+                string dflt = split[^1][split[^1].IndexOf('[')..^1];
+                LabelNode[] labelArray = new LabelNode[max - min];
+                
+                labelArray[0] = GetLabelWithName(split[2][7..^1]);
+                for (int i = 1; i < labelArray.Length; i++)
+                {
+                    labelArray[i] = GetLabelWithName(split[i + 2][..^1]);
+                }
+                return new TableSwitchInsnNode(int.Parse(minAndMax[0]),
+                    int.Parse(minAndMax[1]),
+                    GetLabelWithName(dflt),
+                    labelArray
                 );
             case Lookupswitch_Insn:
                 string[] splitting = insn.Split('=');
@@ -827,6 +894,48 @@ public class AsmParser
                 return new LookupSwitchInsnNode(defaultLabel, keys, labels);
             case Label_Insn:
                 return GetLabelWithName(split[0][..^1]);
+            case Invoke_Dynamic_Insn:
+                int handleTag = AsmUtilities.Tags[split[3][7..]];
+                string handleOwner = split[4][..split[4].IndexOf('.')];
+                string handleName = split[4][(split[4].IndexOf('.') + 1)..split[4].IndexOf('(')];
+                string handleDesc = split[4][(split[4].IndexOf('('))..^1];
+                List<object> bsmArgs = [];
+                int idx = 5;
+                if (split[5][5..^1].StartsWith("handle"))
+                {
+                    int thisTag = AsmUtilities.Tags[split[5][12..]];
+                    string thisOwner = split[6][..split[6].IndexOf('.')];
+                    string thisName = split[6][(split[6].IndexOf('.') + 1)..split[6].IndexOf('(')];
+                    string thisDesc = split[6][(split[6].IndexOf('('))..^2];
+                    bsmArgs.Add(new Handle(thisTag, thisOwner, thisName, thisDesc, thisTag == Opcodes.H_Invokeinterface));
+                    idx += 2;
+                }
+                else
+                {
+                    bsmArgs.Add(JType.GetType(split[5][5..^1]));
+                    idx++;
+                }
+                for (; idx < split.Length; idx++)
+                {
+                    if (split[idx][..^1].StartsWith("handle"))
+                    {
+                        int thisTag = AsmUtilities.Tags[split[idx][7..]];
+                        idx ++;
+                        string thisOwner = split[idx][..split[idx].IndexOf('.')];
+                        string thisName = split[idx][(split[idx].IndexOf('.') + 1)..split[idx].IndexOf('(')];
+                        string thisDesc = split[idx][(split[idx].IndexOf('('))..^2];
+                        bsmArgs.Add(new Handle(thisTag, thisOwner, thisName, thisDesc, thisTag == Opcodes.H_Invokeinterface));
+                    }
+                    else
+                    {
+                        bsmArgs.Add(JType.GetType(split[idx][..^1]));
+                        idx++;
+                    }
+                }
+                return new InvokeDynamicInsnNode(split[1],
+                    split[2],
+                    new(handleTag, handleOwner, handleName, handleDesc, handleTag == Opcodes.H_Invokeinterface),
+                    bsmArgs.ToArray());
             case Frame_Insn:
             //return new FrameNode(opcode, 0, new Object[0], 0, new Object[0]);
             default:

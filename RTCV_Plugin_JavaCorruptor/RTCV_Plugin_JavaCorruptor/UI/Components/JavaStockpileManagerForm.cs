@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Forms;
 using Java_Corruptor.BlastClasses;
+using ObjectWeb.Asm.Tree;
 using RTCV.Common;
 using RTCV.Common.Objects;
 using RTCV.CorruptCore;
@@ -20,10 +18,8 @@ namespace Java_Corruptor.UI.Components;
 
 public partial class JavaStockpileManagerForm : ComponentForm, IBlockable
 {
-    private new void HandleMouseDown(object s, MouseEventArgs e) => typeof(ComponentForm).GetMethod("HandleMouseDown", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(this,
-        [s, e]);
-    private new void HandleFormClosing(object s, FormClosingEventArgs e) => typeof(ComponentForm).GetMethod("HandleFormClosing", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(this,
-        [s, e]);
+    private void HandleMouseDown(object s, MouseEventArgs e) => this.HandleMouseDownP(s, e);
+    private void HandleFormClosing(object s, FormClosingEventArgs e) => this.HandleFormClosingP(s, e);
 
     private Color? _originalSaveButtonColor;
     private bool _unsavedEdits;
@@ -88,6 +84,11 @@ public partial class JavaStockpileManagerForm : ComponentForm, IBlockable
                 return;
             }
 
+            S.GET<JavaStashHistoryForm>().lbStashHistory.ClearSelected();
+            //S.GET<JavaStockpilePlayerForm>().dgvStockpile.ClearSelection();
+
+            S.GET<JavaGlitchHarvesterBlastForm>().RedrawActionUI();
+
             if (dgvStockpile.SelectedRows.Count == 0)
             {
                 return;
@@ -100,7 +101,17 @@ public partial class JavaStockpileManagerForm : ComponentForm, IBlockable
             {
                 return;
             }
-
+            
+            string newFileName = JavaStockpileManagerUISide.CurrentStashkey.JarFilename;
+            foreach (DataGridViewRow row in senderGrid.Rows) // GameName can change if the reference is replaced with a different file name
+            {
+                JavaStashKey key = (JavaStashKey)row.Cells[0].Value;
+                if (key.JarFilename == newFileName)
+                {
+                    row.Cells["GameName"].Value = JavaStockpileManagerUISide.CurrentStashkey.GameName;
+                }
+            }
+            
             if (!S.GET<JavaGlitchHarvesterBlastForm>().LoadOnSelect)
             {
                 return;
@@ -140,7 +151,6 @@ public partial class JavaStockpileManagerForm : ComponentForm, IBlockable
             }
 
             S.GET<JavaGlitchHarvesterBlastForm>().OneTimeExecute(); // Calls ApplyStashkey
-            //JavaStockpileManagerUISide.ApplyStashkey(JavaStockpileManagerUISide.CurrentStashkey); //TODO: see 2nd todo in JavaStockpileManagerUISide.LoadState();
         }
         finally
         {
@@ -162,7 +172,7 @@ public partial class JavaStockpileManagerForm : ComponentForm, IBlockable
         if (e.Button != MouseButtons.Right)
             return;
         
-        Point locate = new((sender as System.Windows.Forms.Control).Location.X + e.Location.X, (sender as System.Windows.Forms.Control).Location.Y + e.Location.Y);
+        Point locate = new((sender as Control).Location.X + e.Location.X, (sender as Control).Location.Y + e.Location.Y);
 
         ContextMenuStrip columnsMenu = new();
 
@@ -175,27 +185,28 @@ public partial class JavaStockpileManagerForm : ComponentForm, IBlockable
             columnsMenu.Items.Add($"Layer Size: {bl.Layer?.Layer.Count ?? 0}", null).Enabled = false;
 
 
-        ((ToolStripMenuItem)columnsMenu.Items.Add("Open Selected Item in Blast Editor", null, (ob, ev) =>
+        ((ToolStripMenuItem)columnsMenu.Items.Add("Open Selected Item in Blast Editor", null, (_, _) =>
         {
             if (S.GET<JavaBlastEditorForm>() != null)
             {
                 JavaStashKey sk = GetSelectedStashKey();
                 JavaBlastEditorForm.OpenBlastEditor((JavaStashKey)sk.Clone());
             }
-        })).Enabled = (dgvStockpile.SelectedRows.Count == 1);
+        })).Enabled = dgvStockpile.SelectedRows.Count == 1;
 
-        ((ToolStripMenuItem)columnsMenu.Items.Add("Sanitize", null, (ob, ev) =>
+        ((ToolStripMenuItem)columnsMenu.Items.Add("Sanitize", null, (_, _) =>
         {
             if (S.GET<BlastEditorForm>() != null)
             {
                 JavaStashKey sk = GetSelectedStashKey();
                 JavaSanitizeToolForm.OpenSanitizeTool((JavaStashKey)sk.Clone(),false);
             }
-        })).Enabled = (dgvStockpile.SelectedRows.Count == 1);
+        })).Enabled = dgvStockpile.SelectedRows.Count == 1;
 
         columnsMenu.Items.Add(new ToolStripSeparator());
 
         /*((ToolStripMenuItem)columnsMenu.Items.Add("Manual Inject", null, (ob, ev) => TODO: manual inject would be nice, but it's probably not entirely possible
+                                                                                        //...what did I mean by this?
             {
                 JavaStashKey sk = GetSelectedStashKey();
                 JavaStashKey newSk = (JavaStashKey)sk.Clone();
@@ -204,11 +215,11 @@ public partial class JavaStockpileManagerForm : ComponentForm, IBlockable
 
                 if (JavaStockpileManagerUISide.CurrentStashkey != null)
                     S.GET<JavaGlitchHarvesterBlastForm>().IsCorruptionApplied = IsCorrupted;
-            })).Enabled = (dgvStockpile.SelectedRows.Count == 1);*/
+            })).Enabled = (dgvStockpile.SelectedRows.Count == 1);
 
-        columnsMenu.Items.Add(new ToolStripSeparator());
+        columnsMenu.Items.Add(new ToolStripSeparator());*/
 
-        ((ToolStripMenuItem)columnsMenu.Items.Add("Rename selected item", null, (ob, ev) =>
+        ((ToolStripMenuItem)columnsMenu.Items.Add("Rename selected item", null, (_, _) =>
         {
             if (dgvStockpile.SelectedRows.Count != 0)
             {
@@ -221,24 +232,21 @@ public partial class JavaStockpileManagerForm : ComponentForm, IBlockable
 
                 //lbStockpile.RefreshItemsReal();   
             }
-        })).Enabled = (dgvStockpile.SelectedRows.Count == 1);
+        })).Enabled = dgvStockpile.SelectedRows.Count == 1;
 
-        /*((ToolStripMenuItem)columnsMenu.Items.Add("Merge Selected Stashkeys", null, (ob, ev) => TODO: merge stashkeys
+        ((ToolStripMenuItem)columnsMenu.Items.Add("Merge Selected Stashkeys", null, (_, _) =>
+        {
+            List<JavaStashKey> sks = [];
+            foreach (DataGridViewRow row in dgvStockpile.SelectedRows)
             {
-                List<JavaStashKey> sks = new List<JavaStashKey>();
-                foreach (DataGridViewRow row in dgvStockpile.SelectedRows)
-                {
-                    sks.Add((JavaStashKey)row.Cells[0].Value);
-                }
+                sks.Add((JavaStashKey)row.Cells[0].Value);
+            }
+               
+            JavaStockpileManagerUISide.MergeStashkeys(sks);
+            S.GET<JavaStashHistoryForm>().RefreshStashHistory();
+        })).Enabled = dgvStockpile.SelectedRows.Count > 1;
 
-                JavaStockpileManagerUISide.MergeStashkeys(sks);
-                S.GET<JavaStashHistoryForm>().RefreshStashHistory();
-            })).Enabled = (dgvStockpile.SelectedRows.Count > 1);*/
-
-
-
-
-        ((ToolStripMenuItem)columnsMenu.Items.Add("Replace associated JAR", null, (ob, ev) =>
+        ((ToolStripMenuItem)columnsMenu.Items.Add("Replace associated JAR", null, (_, _) =>
         {
             List<JavaStashKey> sks = [];
             foreach (DataGridViewRow row in dgvStockpile.SelectedRows)
@@ -261,18 +269,28 @@ public partial class JavaStockpileManagerForm : ComponentForm, IBlockable
                 {
                     sk.JarFilename = filename;
                     sk.JarShortFilename = Path.GetFileName(sk.JarFilename);
+                    sk.GameName = Path.GetFileNameWithoutExtension(sk.JarFilename);
+                }
+                foreach (DataGridViewRow row in dgvStockpile.Rows)
+                {
+                    JavaStashKey key = (JavaStashKey)row.Cells[0].Value;
+                    if (key.JarFilename == filename)
+                    {
+                        row.Cells["GameName"].Value = Path.GetFileNameWithoutExtension(filename);
+                    }
                 }
             }
-        })).Enabled = (dgvStockpile.SelectedRows.Count >= 1);
+            
+        })).Enabled = dgvStockpile.SelectedRows.Count >= 1;
 
         columnsMenu.Items.Add(new ToolStripSeparator());
 
-        ((ToolStripMenuItem)columnsMenu.Items.Add($"Duplicate selected item{(dgvStockpile.SelectedRows.Count > 1 ? "s" : "")}", null, (ob, ev) =>
+        ((ToolStripMenuItem)columnsMenu.Items.Add($"Duplicate selected item{(dgvStockpile.SelectedRows.Count > 1 ? "s" : "")}", null, (_, _) =>
         {
             DuplicateSelected();
-        })).Enabled = (dgvStockpile.SelectedRows.Count > 0);
+        })).Enabled = dgvStockpile.SelectedRows.Count > 0;
 
-        ((ToolStripMenuItem)columnsMenu.Items.Add($"Remove selected item{(dgvStockpile.SelectedRows.Count > 1 ? "s" : "")}", null, (ob, ev) =>
+        ((ToolStripMenuItem)columnsMenu.Items.Add($"Remove selected item{(dgvStockpile.SelectedRows.Count > 1 ? "s" : "")}", null, (_, _) =>
         {
             RemoveSelected();
                     
@@ -356,8 +374,16 @@ public partial class JavaStockpileManagerForm : ComponentForm, IBlockable
         foreach (JavaStashKey sk in sks)
         {
             JavaStockpileManagerUISide.StashHistory.Add(sk);
-            dgvStockpile.ClearSelection();
+
+            S.GET<JavaStashHistoryForm>().RefreshStashHistory();
+            S.GET<JavaStockpileManagerForm>().dgvStockpile.ClearSelection();
+            S.GET<JavaStashHistoryForm>().lbStashHistory.ClearSelected();
+
+            S.GET<JavaStashHistoryForm>().DontLoadSelectedStash = true;
+            S.GET<JavaStashHistoryForm>().lbStashHistory.SelectedIndex = S.GET<JavaStashHistoryForm>().lbStashHistory.Items.Count - 1;
             JavaStockpileManagerUISide.CurrentStashkey = JavaStockpileManagerUISide.StashHistory[S.GET<JavaStashHistoryForm>().lbStashHistory.SelectedIndex];
+
+            S.GET<JavaStashHistoryForm>().AddStashToStockpile(false, sk.Alias);
         }
         JavaStockpileManagerUISide.StockpileChanged();
         UnsavedEdits = true;
@@ -452,14 +478,14 @@ public partial class JavaStockpileManagerForm : ComponentForm, IBlockable
             if (!r.Failed)
         {
             JavaStockpile sks = r.Result;
-                RtcCore.OnProgressBarUpdate(sks, new ProgressBarEventArgs("Populating UI", 95));
+                RtcCore.OnProgressBarUpdate(sks, new("Populating UI", 95));
             foreach (JavaStashKey key in sks.StashKeys)
             {
                 dgvStockpile?.Rows.Add(key, key.GameName, key.Note);
             }
 
             UnsavedEdits = true;
-                RtcCore.OnProgressBarUpdate(sks, new ProgressBarEventArgs("Done", 100));
+                RtcCore.OnProgressBarUpdate(sks, new("Done", 100));
         }
         RefreshNoteIcons();
         } finally {
@@ -484,13 +510,13 @@ public partial class JavaStockpileManagerForm : ComponentForm, IBlockable
 
             bool r = await Task.Run(() => JavaStockpile.Save(sks, path, _shouldIncludeReferencedFiles, _shouldCompressStockpile));
             
-        if (r)
-        {
-            JavaStockpileManagerUISide.SetCurrentStockpile(sks);
-            sendCurrentStockpileToSKS();
-            UnsavedEdits = false;
-            btnSaveStockpile.Enabled = true;
-        }
+            if (r)
+            {
+                JavaStockpileManagerUISide.SetCurrentStockpile(sks);
+                sendCurrentStockpileToSKS();
+                UnsavedEdits = false;
+                btnSaveStockpile.Enabled = true;
+            }
         } finally {
             cgForm?.CloseSubForm();
             UICore.UnlockInterface();
@@ -649,13 +675,11 @@ public partial class JavaStockpileManagerForm : ComponentForm, IBlockable
         {
             if (f.Contains(".jbl"))
             {
-                SerializedInsnBlastLayerCollection bl;
-                
-                bl = JavaBlastTools.LoadBlastLayerFromFile(f);
+                SerializedInsnBlastLayerCollection bl = JavaBlastTools.LoadBlastLayerFromFile(f);
                 JavaStockpileManagerUISide.Import(bl);
                 AddStashToStockpile(false,f);
             }
-            else if (f.Contains(".sks"))
+            else if (f.Contains(".jsks"))
             {
                 if (!alreadyLoadedAStockpile)
                 {
@@ -751,16 +775,13 @@ public partial class JavaStockpileManagerForm : ComponentForm, IBlockable
 
         int currentSelectedIndex = dgvStockpile.SelectedRows[0].Index;
 
+        if ((ModifierKeys & Keys.Shift) != Keys.Shift)
+            dgvStockpile.ClearSelection();
+        
         if (currentSelectedIndex == 0)
-        {
-            dgvStockpile.ClearSelection();
-            dgvStockpile.Rows[dgvStockpile.Rows.Count - 1].Selected = true;
-        }
+            dgvStockpile.Rows[^1].Selected = true;
         else
-        {
-            dgvStockpile.ClearSelection();
             dgvStockpile.Rows[currentSelectedIndex - 1].Selected = true;
-        }
 
         HandleCellClick(dgvStockpile, null);
     }
@@ -774,16 +795,13 @@ public partial class JavaStockpileManagerForm : ComponentForm, IBlockable
 
         int currentSelectedIndex = dgvStockpile.SelectedRows[0].Index;
 
+        if ((ModifierKeys & Keys.Shift) != Keys.Shift)
+            dgvStockpile.ClearSelection();
+        
         if (currentSelectedIndex == dgvStockpile.Rows.Count - 1)
-        {
-            dgvStockpile.ClearSelection();
             dgvStockpile.Rows[0].Selected = true;
-        }
         else
-        {
-            dgvStockpile.ClearSelection();
             dgvStockpile.Rows[currentSelectedIndex + 1].Selected = true;
-        }
 
         HandleCellClick(dgvStockpile, null);
     }
@@ -805,17 +823,40 @@ public partial class JavaStockpileManagerForm : ComponentForm, IBlockable
             Font = new("Segoe UI", 12),
         });
 
-        ((ToolStripMenuItem)ghSettingsMenu.Items.Add("Stockpile items: " + dgvStockpile.Rows.Cast<DataGridViewRow>().Count() , null, (ob, ev) =>
+        ((ToolStripMenuItem)ghSettingsMenu.Items.Add("Stockpile items: " + dgvStockpile.Rows.Cast<DataGridViewRow>().Count() , null, (_, _) =>
         {
 
         })).Enabled = false;
 
-        ((ToolStripMenuItem)ghSettingsMenu.Items.Add("Compress Stockpiles", null, (ob, ev) =>
+        ((ToolStripMenuItem)ghSettingsMenu.Items.Add("Set Selected Units Up", null, (_, _) =>
+        {
+            JavaBlastTools.ReloadClasses();
+            foreach (DataGridViewRow row in dgvStockpile.SelectedRows)
+            {
+                foreach (var unit in ((JavaStashKey)row.Cells[0].Value).BlastLayer.Layer.Layer)
+                {
+                    MethodNode m = AsmUtilities.FindMethod(unit.Method);
+                    AsmParser parser = new();
+                    AbstractInsnNode[] insns = m.Instructions.ToArray();
+                    parser.RegisterLabelsFrom(m.Instructions);
+                    int nopIndex = unit.Instructions.LastIndexOf("NOP") - 2;
+                    if (nopIndex < 0)
+                        continue;
+                    unit.Instructions.RemoveRange(nopIndex, 3);
+                    for (int i = unit.Index + unit.Replaces - 1; i >= unit.Index; i--)
+                    {
+                        unit.Instructions.Insert(nopIndex, parser.InsnToString(insns[i]));
+                    }
+                }
+            }
+        })).Enabled = true;
+
+        ((ToolStripMenuItem)ghSettingsMenu.Items.Add("Compress Stockpiles", null, (_, _) =>
         {
             _shouldCompressStockpile = !_shouldCompressStockpile;
         })).Checked = _shouldCompressStockpile;
 
-        ((ToolStripMenuItem)ghSettingsMenu.Items.Add("Include referenced files", null, (ob, ev) =>
+        ((ToolStripMenuItem)ghSettingsMenu.Items.Add("Include referenced files", null, (_, _) =>
         {
             _shouldIncludeReferencedFiles = !_shouldIncludeReferencedFiles;
         })).Checked = _shouldIncludeReferencedFiles;
@@ -823,13 +864,13 @@ public partial class JavaStockpileManagerForm : ComponentForm, IBlockable
         ghSettingsMenu.Items.Add(new ToolStripSeparator());
 
         (ghSettingsMenu.Items.Add("Show Item Name", null,
-                (ob, ev) => { dgvStockpile.Columns["Item"].Visible ^= true; }) as ToolStripMenuItem).Checked =
+                (_, _) => { dgvStockpile.Columns["Item"].Visible ^= true; }) as ToolStripMenuItem).Checked =
             dgvStockpile.Columns["Item"].Visible;
         (ghSettingsMenu.Items.Add("Show Game Name", null,
-                (ob, ev) => { dgvStockpile.Columns["GameName"].Visible ^= true; }) as ToolStripMenuItem)
+                (_, _) => { dgvStockpile.Columns["GameName"].Visible ^= true; }) as ToolStripMenuItem)
             .Checked =
             dgvStockpile.Columns["GameName"].Visible;
-        (ghSettingsMenu.Items.Add("Show Note", null, (ob, ev) => { dgvStockpile.Columns["Note"].Visible ^= true; })
+        (ghSettingsMenu.Items.Add("Show Note", null, (_, _) => { dgvStockpile.Columns["Note"].Visible ^= true; })
             as ToolStripMenuItem).Checked = dgvStockpile.Columns["Note"].Visible;
 
         ghSettingsMenu.Show(this, locate);

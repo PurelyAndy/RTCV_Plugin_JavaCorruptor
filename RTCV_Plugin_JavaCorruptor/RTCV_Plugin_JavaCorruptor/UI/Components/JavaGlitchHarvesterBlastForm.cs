@@ -1,12 +1,5 @@
-using System.IO.Compression;
-using System.Reflection;
-using Java_Corruptor;
-using Java_Corruptor.UI;
-using Java_Corruptor.UI.Components;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -22,12 +15,10 @@ namespace Java_Corruptor.UI.Components;
 
 public partial class JavaGlitchHarvesterBlastForm : ComponentForm, IBlockable
 {
-    private new void HandleMouseDown(object s, MouseEventArgs e) => typeof(ComponentForm).GetMethod("HandleMouseDown", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(this,
-        [s, e]);
-    private new void HandleFormClosing(object s, FormClosingEventArgs e) => typeof(ComponentForm).GetMethod("HandleFormClosing", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(this,
-        [s, e]);
+    private void HandleMouseDown(object s, MouseEventArgs e) => this.HandleMouseDownP(s, e);
+    private void HandleFormClosing(object s, FormClosingEventArgs e) => this.HandleFormClosingP(s, e);
 
-    public bool MergeMode { get; private set; } = false;
+    public bool MergeMode { get; private set; }
     public GlitchHarvesterMode ghMode { get; set; } = GlitchHarvesterMode.CORRUPT; //Current Glitch Harvester mode
     public GlitchHarvesterMode ghModeStore { get; set; } = GlitchHarvesterMode.CORRUPT; //Temporary Variable used for borrowing different corruption methods
     public bool LoadOnSelect { get; set; } = true;
@@ -82,20 +73,18 @@ public partial class JavaGlitchHarvesterBlastForm : ComponentForm, IBlockable
 
         //Registers the drag and drop with the blast edirot form
         AllowDrop = true;
-        this.DragEnter += OnDragEnter;
-        this.DragDrop += OnDragDrop;
+        DragEnter += OnDragEnter;
+        DragDrop += OnDragDrop;
     }
 
     private void OnDragDrop(object sender, DragEventArgs e)
     {
         string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-        foreach (var f in files)
+        foreach (string f in files)
         {
             if (f.Contains(".jbl"))
             {
-                SerializedInsnBlastLayerCollection bl;
-                
-                bl = JavaBlastTools.LoadBlastLayerFromFile(f);
+                SerializedInsnBlastLayerCollection bl = JavaBlastTools.LoadBlastLayerFromFile(f);
                 JavaStashKey newStashKey = new(RtcCore.GetRandomKey(), null, bl);
                 S.GET<JavaGlitchHarvesterBlastForm>().IsCorruptionApplied = JavaStockpileManagerUISide.ApplyStashkey(newStashKey, false);
             }
@@ -136,7 +125,7 @@ public partial class JavaGlitchHarvesterBlastForm : ComponentForm, IBlockable
 
             if (ghMode == GlitchHarvesterMode.CORRUPT)
             {
-                btnCorrupt.Text = "Corrupt";
+                btnCorrupt.Text = "   Corrupt";
             }
         }
     }
@@ -169,7 +158,7 @@ public partial class JavaGlitchHarvesterBlastForm : ComponentForm, IBlockable
                 List<JavaStashKey> sks = [];
 
                 //Reverse before merging because DataGridView selectedrows is backwards for some odd reason
-                var reversed = S.GET<JavaStockpileManagerForm>().dgvStockpile.SelectedRows.Cast<DataGridViewRow>().Reverse();
+                IEnumerable<DataGridViewRow> reversed = S.GET<JavaStockpileManagerForm>().dgvStockpile.SelectedRows.Cast<DataGridViewRow>().Reverse();
                 foreach (DataGridViewRow row in reversed)
                 {
                     sks.Add((JavaStashKey)row.Cells[0].Value);
@@ -208,7 +197,7 @@ public partial class JavaGlitchHarvesterBlastForm : ComponentForm, IBlockable
         {
             Point locate = e.GetMouseLocation(sender);
 
-            ContextMenuStrip columnsMenu = new ContextMenuStrip();
+            ContextMenuStrip columnsMenu = new();
             columnsMenu.Items.Add("Blast + Send RAW To Stash", null, (_, _) =>
             {
                 BlastRawStash();
@@ -320,11 +309,11 @@ public partial class JavaGlitchHarvesterBlastForm : ComponentForm, IBlockable
 
             if (JavaStockpileManagerUISide.CurrentStashkey != null)
             {
-                var currentBl = JavaStockpileManagerUISide.CurrentStashkey.BlastLayer;
+                SerializedInsnBlastLayerCollection currentBl = JavaStockpileManagerUISide.CurrentStashkey.BlastLayer;
                 //reroll on Emu Side always
-                var newBl = (SerializedInsnBlastLayerCollection)currentBl.Clone();
-                AsmUtilities.Classes.Clear();
-                JavaBlastTools.LoadClassesFromJar(new(File.OpenRead(JavaStockpileManagerUISide.CurrentStashkey.JarFilename)));
+                SerializedInsnBlastLayerCollection newBl = (SerializedInsnBlastLayerCollection)currentBl.Clone();
+                
+                JavaBlastTools.LoadClassesFromJar(JavaStockpileManagerUISide.CurrentStashkey.JarFilename);
                 newBl.ReRoll();
                 JavaStockpileManagerUISide.CurrentStashkey.BlastLayer = newBl;
 
@@ -368,41 +357,41 @@ public partial class JavaGlitchHarvesterBlastForm : ComponentForm, IBlockable
     private void OpenGlitchHarvesterSettings(object sender, MouseEventArgs e)
     {
         Point locate = e.GetMouseLocation(sender);
-        ContextMenuStrip ghSettingsMenu = new ContextMenuStrip();
+        ContextMenuStrip ghSettingsMenu = new();
 
         ghSettingsMenu.Items.Add(new ToolStripLabel("Glitch Harvester Mode")
         {
-            Font = new Font("Segoe UI", 12),
+            Font = new("Segoe UI", 12),
         });
 
-        ((ToolStripMenuItem)ghSettingsMenu.Items.Add("Corrupt", null, new EventHandler((ob, ev) =>
+        ((ToolStripMenuItem)ghSettingsMenu.Items.Add("Corrupt", null, (_, _) =>
         {
             ghMode = GlitchHarvesterMode.CORRUPT;
             RedrawActionUI();
-        }))).Checked = (ghMode == GlitchHarvesterMode.CORRUPT);
+        })).Checked = ghMode == GlitchHarvesterMode.CORRUPT;
 
         ghSettingsMenu.Items.Add(new ToolStripSeparator());
 
         ghSettingsMenu.Items.Add(new ToolStripLabel("Behaviors")
         {
-            Font = new Font("Segoe UI", 12)
+            Font = new("Segoe UI", 12)
         });
 
-        ((ToolStripMenuItem)ghSettingsMenu.Items.Add("Auto-Load State", null, new EventHandler((ob, ev) =>
+        ((ToolStripMenuItem)ghSettingsMenu.Items.Add("Auto-Load State", null, (_, _) =>
         {
             loadBeforeOperation = loadBeforeOperation ^= true;
             RedrawActionUI();
-        }))).Checked = loadBeforeOperation;
-        ((ToolStripMenuItem)ghSettingsMenu.Items.Add("Load on select", null, new EventHandler((ob, ev) =>
+        })).Checked = loadBeforeOperation;
+        ((ToolStripMenuItem)ghSettingsMenu.Items.Add("Load on select", null, (_, _) =>
         {
             LoadOnSelect = LoadOnSelect ^= true;
             RedrawActionUI();
-        }))).Checked = LoadOnSelect;
-        ((ToolStripMenuItem)ghSettingsMenu.Items.Add("Stash results", null, new EventHandler((ob, ev) =>
+        })).Checked = LoadOnSelect;
+        ((ToolStripMenuItem)ghSettingsMenu.Items.Add("Stash results", null, (_, _) =>
         {
             JavaStockpileManagerUISide.StashAfterOperation = JavaStockpileManagerUISide.StashAfterOperation ^= true;
             RedrawActionUI();
-        }))).Checked = JavaStockpileManagerUISide.StashAfterOperation;
+        })).Checked = JavaStockpileManagerUISide.StashAfterOperation;
 
         ghSettingsMenu.Show(this, locate);
     }

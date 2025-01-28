@@ -13,7 +13,7 @@ namespace Java_Corruptor.BlastClasses;
 [XmlInclude(typeof(JavaBlastUnit))]
 public class JavaBlastLayer : ICloneable, INote
 {
-    public List<JavaBlastUnit> Layer = new();
+    public List<JavaBlastUnit> Layer = [];
     
     public JavaBlastLayer()
     {
@@ -42,8 +42,6 @@ public class JavaBlastLayer : ICloneable, INote
 
         return new(backupLayer);
     }
-
-    //TODO: reroll support maybe
     
     private const string Shared = "[DIFFERENT]";
 
@@ -67,5 +65,12 @@ public class JavaBlastLayer : ICloneable, INote
                 bu.Note = value;
             }
         }
+    }
+    
+    public static implicit operator SerializedInsnBlastLayer(JavaBlastLayer bl)
+    {
+        List<SerializedInsnBlastUnit> units = [];
+        foreach (JavaBlastUnit bu in bl.Layer) units.Add(bu);
+        return new(units);
     }
 }

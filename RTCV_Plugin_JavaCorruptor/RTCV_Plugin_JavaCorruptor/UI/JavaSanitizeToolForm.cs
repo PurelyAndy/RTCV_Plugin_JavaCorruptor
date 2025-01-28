@@ -44,10 +44,10 @@ public partial class JavaSanitizeToolForm : RTCV.UI.Modular.ColorizedForm
         {
             S.GET<JavaSanitizeToolForm>()?.Close();
         }
-        var stf = new JavaSanitizeToolForm();
+        JavaSanitizeToolForm stf = new();
         S.SET(stf);
 
-        var bl = sk?.BlastLayer;
+        SerializedInsnBlastLayerCollection bl = sk?.BlastLayer;
 
         //if no blastlayer or stockpile was provided, get out
         if (sk == null || bl == null)
@@ -92,7 +92,7 @@ public partial class JavaSanitizeToolForm : RTCV.UI.Modular.ColorizedForm
     public async void Reroll(object sender, EventArgs e)
     {
         pnBlastLayerSanitization.Visible = false;
-        this.Refresh();
+        Refresh();
 
         await _sanitizer.Disable50();
         await _sanitizer.LoadCorrupt();
@@ -105,7 +105,7 @@ public partial class JavaSanitizeToolForm : RTCV.UI.Modular.ColorizedForm
     public async void YesEffect(object sender, EventArgs e)
     {
         pnBlastLayerSanitization.Visible = false;
-        this.Refresh();
+        Refresh();
 
         _sanitizer.Yes();
         await _sanitizer.Disable50();
@@ -128,7 +128,7 @@ public partial class JavaSanitizeToolForm : RTCV.UI.Modular.ColorizedForm
     public async void NoEffect(object sender, EventArgs e)
     {
         pnBlastLayerSanitization.Visible = false;
-        this.Refresh();
+        Refresh();
 
         _sanitizer.No();
 
@@ -152,7 +152,7 @@ public partial class JavaSanitizeToolForm : RTCV.UI.Modular.ColorizedForm
     private async void ReplayCorruption(object sender, EventArgs e)
     {
         pnBlastLayerSanitization.Visible = false;
-        this.Refresh();
+        Refresh();
         await _sanitizer.Replay();
         pnBlastLayerSanitization.Visible = true;
     }
@@ -162,16 +162,16 @@ public partial class JavaSanitizeToolForm : RTCV.UI.Modular.ColorizedForm
         bool success = JavaBlastEditorForm.OpenBlastEditor(_sanitizer.GetFinalStashKey());
 
         if (success)
-            this.Close();
+            Close();
     }
 
     public void LeaveAndSubtractChanges(object sender, EventArgs e)
     {
-        var sk = _sanitizer.GetStashKeyMinusChanges();
+        JavaStashKey sk = _sanitizer.GetStashKeyMinusChanges();
 
         bool success = JavaBlastEditorForm.OpenBlastEditor(sk);
         if (success)
-            this.Close();
+            Close();
     }
 
     private void LeaveWithoutChanges(object sender, EventArgs e)
@@ -180,7 +180,7 @@ public partial class JavaSanitizeToolForm : RTCV.UI.Modular.ColorizedForm
         bool success = JavaBlastEditorForm.OpenBlastEditor(_sanitizer.GetOriginalStashKey());
 
         if (success)
-            this.Close();
+            Close();
     }
 
     private async void GoBackToPreviousState(object sender, EventArgs e)
@@ -188,7 +188,7 @@ public partial class JavaSanitizeToolForm : RTCV.UI.Modular.ColorizedForm
         if (_sanitizer.stateStack.Count < 1 || _sanitizer.shownStack.Count < 1) return;
 
         pnBlastLayerSanitization.Visible = false;
-        this.Refresh();
+        Refresh();
 
         _sanitizer.Undo();
         UpdateSanitizeProgress();
@@ -219,7 +219,7 @@ public partial class JavaSanitizeToolForm : RTCV.UI.Modular.ColorizedForm
         int originalMaxsteps = 0;
         while (originalRemainder > 1)
         {
-            originalRemainder = originalRemainder / 2;
+            originalRemainder /= 2;
             originalMaxsteps++;
         }
 
@@ -229,7 +229,7 @@ public partial class JavaSanitizeToolForm : RTCV.UI.Modular.ColorizedForm
         int currentMaxsteps = 0;
         while (currentRemainder > 1)
         {
-            currentRemainder = currentRemainder / 2;
+            currentRemainder /= 2;
             currentMaxsteps++;
         }
 
@@ -309,7 +309,7 @@ public partial class JavaSanitizeToolForm : RTCV.UI.Modular.ColorizedForm
         //}
         if (cbCloseOnSend.Checked)
         {
-            this.Close();
+            Close();
         }
     }
     private void AddToStash(object sender, EventArgs e)
@@ -337,19 +337,19 @@ public partial class JavaSanitizeToolForm : RTCV.UI.Modular.ColorizedForm
         //this.Close();
         if (cbCloseOnSend.Checked)
         {
-            this.Close();
+            Close();
         }
 
     }
     private void LeaveWithNoChanges(object sender, EventArgs e)
     {
-        this.Close();
+        Close();
     }
 
     private void cbCloseOnSend_CheckedChanged(object sender, EventArgs e)
     {
         if (cbCloseOnSend.Checked)
-            RTCV.NetCore.Params.SetParam("SANITIZETOOL_AUTOCLOSE");
+            Params.SetParam("SANITIZETOOL_AUTOCLOSE");
         else
             Params.RemoveParam("SANITIZETOOL_AUTOCLOSE");
     }
@@ -384,27 +384,27 @@ internal class JavaFastSanitizer
         {
             JarFilename = originalStashkey.JarFilename,
             GameName = originalStashkey.GameName,
+            BlastLayer = new(blClone),
         };
-        internalSK.BlastLayer = new(blClone);
         OriginalLayer = blClone;
-        shownHalf = OriginalLayer.Layer;
-        otherHalf = OriginalLayer.Layer;
-        stateStack.Push(OriginalLayer.Layer);
+        shownHalf = [..OriginalLayer.Layer];
+        otherHalf = [..OriginalLayer.Layer];
+        stateStack.Push([..OriginalLayer.Layer]);
     }
 
     internal JavaStashKey GetFinalStashKey()
     {
-        var allUnits = new List<SerializedInsnBlastUnit>();
+        List<SerializedInsnBlastUnit> allUnits = new();
         allUnits.AddRange(shownHalf);
 
-        var disabledUnits = new List<SerializedInsnBlastUnit>();
+        List<SerializedInsnBlastUnit> disabledUnits = new();
 
         //extra check because of how otherHalf is instanciated. Maybe it should be empty at first?
         disabledUnits.AddRange(otherHalf.Where(x => !shownHalf.Contains(x)));
         //disabledUnits.AddRange(otherHalf);
 
 
-        foreach (var unit in disabledUnits)
+        foreach (SerializedInsnBlastUnit unit in disabledUnits)
             unit.IsEnabled = false;
 
         allUnits.AddRange(disabledUnits);
@@ -456,7 +456,7 @@ internal class JavaFastSanitizer
     internal async Task Disable50()
     {
         //get the latest winning layer
-        var lastState = stateStack.Peek();
+        List<SerializedInsnBlastUnit> lastState = stateStack.Peek();
         shownHalf = new();
         otherHalf = new();
 
@@ -467,7 +467,7 @@ internal class JavaFastSanitizer
             return;
         }
 
-        var randomizedUnits = lastState.OrderBy(it => rand.Next()).ToList();
+        List<SerializedInsnBlastUnit> randomizedUnits = lastState.OrderBy(_ => rand.Next()).ToList();
 
         int totalCount = randomizedUnits.Count();
         int shownCount = (totalCount / 2);

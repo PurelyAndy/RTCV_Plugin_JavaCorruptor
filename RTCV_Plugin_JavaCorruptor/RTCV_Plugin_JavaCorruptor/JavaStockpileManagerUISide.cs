@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Windows.Forms;
 using Java_Corruptor.UI.Components;
 using Java_Corruptor.BlastClasses;
-using Java_Corruptor.UI;
-using Newtonsoft.Json;
 using RTCV.Common;
 using RTCV.CorruptCore;
 using RTCV.NetCore;
@@ -32,7 +29,7 @@ public static class JavaStockpileManagerUISide
     }
     internal static JavaStashKey CurrentSavestateStashKey { get; set; }
     public static bool StashAfterOperation { get; set; } = true;
-    internal static readonly List<JavaStashKey> StashHistory = new();
+    internal static readonly List<JavaStashKey> StashHistory = [];
 
     internal static bool ApplyStashkey(JavaStashKey sk, bool clearUnitsBeforeApply = true)
     {
@@ -43,15 +40,13 @@ public static class JavaStockpileManagerUISide
         JavaCorruptionEngineForm ceForm = S.GET<JavaCorruptionEngineForm>();
         string oldJarName = (string)AllSpec.VanguardSpec[VSPEC.OPENROMFILENAME];
 
-        AsmUtilities.Classes.Clear();
-
         AllSpec.VanguardSpec.Update(VSPEC.OPENROMFILENAME, sk.JarFilename);
 
         SerializedInsnBlastLayerCollection bl = sk.BlastLayer;
 
         if (mergeWithCurrent)
         {
-            foreach (var kv in bl)
+            foreach (KeyValuePair<string, SerializedInsnBlastLayer> kv in bl)
             {
                 JavaCorruptionEngineForm.BlastLayerCollection.Add(kv);
             }
@@ -175,7 +170,7 @@ public static class JavaStockpileManagerUISide
 
             foreach (JavaStashKey item in sks)
             {
-                foreach (var kv in item.BlastLayer.MappedLayers)
+                foreach (KeyValuePair<string, SerializedInsnBlastLayer> kv in item.BlastLayer.MappedLayers)
                 {
                     bl.Add(kv);
                 }
@@ -312,6 +307,7 @@ public static class JavaStockpileManagerUISide
                 {
                     sk.JarFilename = filename;
                     sk.JarShortFilename = Path.GetFileName(sk.JarFilename);
+                    sk.GameName = Path.GetFileNameWithoutExtension(sk.JarFilename);
                 }
             }
             else

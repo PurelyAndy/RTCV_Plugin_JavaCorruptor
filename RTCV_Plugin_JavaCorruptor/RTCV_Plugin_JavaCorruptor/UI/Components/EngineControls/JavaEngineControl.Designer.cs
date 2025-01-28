@@ -59,12 +59,12 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.placeholderComboBox.ForeColor = System.Drawing.Color.White;
             this.placeholderComboBox.FormattingEnabled = true;
             this.placeholderComboBox.Items.AddRange(new object[] {
-            "Vector Engine",
+            "Basic Engine",
             "Arithmetic Engine",
             "Function Engine",
             "Custom Engine",
             "String Engine",
-            "Rounding Engine",
+            "Logic Engine",
             "Nuker Engine"});
             this.placeholderComboBox.Location = new System.Drawing.Point(0, 6);
             this.placeholderComboBox.Name = "placeholderComboBox";

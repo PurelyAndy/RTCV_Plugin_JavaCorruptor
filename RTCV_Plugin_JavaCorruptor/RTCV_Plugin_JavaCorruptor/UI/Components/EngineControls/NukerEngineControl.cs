@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Dynamic;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Java_Corruptor.BlastClasses;
-using Newtonsoft.Json;
 using ObjectWeb.Asm;
 using ObjectWeb.Asm.Tree;
 
@@ -23,11 +19,14 @@ public partial class NukerEngineControl
         InitializeComponent();
     }
 
-    public override void Corrupt(ClassNode classNode)
+    public override bool Corrupt(ClassNode classNode)
     {
+        bool modified = false;
         foreach (MethodNode methodNode in classNode.Methods)
         {
             if (JavaCorruptionEngineForm.Intensity < JavaGeneralParametersForm.Random.NextDouble())
+                continue;
+            if (CorruptionOptions.UseDomains && CorruptionOptions.FilterMethods.Count > 0 && CorruptionOptions.FilterMethods.All(m => m != methodNode.Name + methodNode.Desc))
                 continue;
             
             AsmParser parser = new();
@@ -53,9 +52,9 @@ public partial class NukerEngineControl
             string key = classNode.Name + "." + methodNode.Name + methodNode.Desc;
             JavaBlastUnit unit = new(copy, 0, replaces, key, engine: GetType().Name, engineSettings: EngineSettings);
             if (!JavaCorruptionEngineForm.BlastLayerCollection.ContainsKey(key))
-                JavaCorruptionEngineForm.BlastLayerCollection.Add(key, JsonConvert.DeserializeObject<SerializedInsnBlastLayer>(JsonConvert.SerializeObject(new JavaBlastLayer(unit))));
+                JavaCorruptionEngineForm.BlastLayerCollection.Add(key, new JavaBlastLayer(unit));
             else
-                JavaCorruptionEngineForm.BlastLayerCollection.Add(JsonConvert.DeserializeObject<SerializedInsnBlastUnit>(JsonConvert.SerializeObject(unit)));
+                JavaCorruptionEngineForm.BlastLayerCollection.Add(unit);
             
             methodNode.Instructions.Clear();
             foreach (AbstractInsnNode i in result)
@@ -72,7 +71,10 @@ public partial class NukerEngineControl
                 i--;
             }
             methodNode.LocalVariables.Clear();
+            modified = true;
         }
+
+        return modified;
     }
 
     private bool _byte, _short, _int, _long, _float, _double, _char, _bool, _void, _string;
@@ -425,7 +427,7 @@ public partial class NukerEngineControl
                     list.Add(new LdcInsnNode(JavaGeneralParametersForm.Random.NextDouble() * (max - min) + min));
                     list.Add(new InsnNode(Opcodes.Dreturn));
                     break;
-                case 5: //TODO: i think these 2 can be included with case 0, but not 100% sure
+                case 5:
                     list.Add(new LdcInsnNode((byte)(JavaGeneralParametersForm.Random.NextDouble() * (max - min) + min)));
                     list.Add(new InsnNode(Opcodes.Ireturn));
                     break;
