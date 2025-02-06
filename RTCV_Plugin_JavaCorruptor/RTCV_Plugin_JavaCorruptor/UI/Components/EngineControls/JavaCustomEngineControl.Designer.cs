@@ -107,7 +107,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbFind
             // 
-            this.tbFind.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(96)))), ((int)(((byte)(96)))));
+            this.tbFind.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.tbFind.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tbFind.Font = new System.Drawing.Font("Consolas", 8F);
             this.tbFind.ForeColor = System.Drawing.Color.White;
@@ -117,7 +117,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.tbFind.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
             this.tbFind.Size = new System.Drawing.Size(215, 127);
             this.tbFind.TabIndex = 162;
-            this.tbFind.Tag = "color:normal";
+            this.tbFind.Tag = "color:dark2";
             this.tbFind.Text = "// Find any add instruction\r\n<(I|L|F|D)>ADD";
             this.tbFind.TextChanged += new System.EventHandler(this.EngineTextChanged);
             // 
@@ -141,7 +141,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // tbReplace
             // 
-            this.tbReplace.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(96)))), ((int)(((byte)(96)))));
+            this.tbReplace.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.tbReplace.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tbReplace.Font = new System.Drawing.Font("Consolas", 8F);
             this.tbReplace.ForeColor = System.Drawing.Color.White;
@@ -151,7 +151,7 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.tbReplace.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
             this.tbReplace.Size = new System.Drawing.Size(212, 127);
             this.tbReplace.TabIndex = 164;
-            this.tbReplace.Tag = "color:normal";
+            this.tbReplace.Tag = "color:dark2";
             this.tbReplace.Text = resources.GetString("tbReplace.Text");
             this.tbReplace.TextChanged += new System.EventHandler(this.EngineTextChanged);
             // 

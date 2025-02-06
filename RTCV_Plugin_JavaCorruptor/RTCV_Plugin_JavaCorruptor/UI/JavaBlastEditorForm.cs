@@ -1397,6 +1397,8 @@ public partial class JavaBlastEditorForm : ColorizedForm
     {
         MessageBox.Show("This feature might be re-implemented later");
         return;
+        // ReSharper disable HeuristicUnreachableCode
+#pragma warning disable CS0162 // Unreachable code detected
         if (filename == null)
         {
             var openFileDialog = new OpenFileDialog
@@ -1542,6 +1544,8 @@ public partial class JavaBlastEditorForm : ColorizedForm
         }
 
         ImportBlastLayer(layer);
+#pragma warning restore CS0162 // Unreachable code detected
+        // ReSharper enable HeuristicUnreachableCode
     }
 
     private void importBlastlayerFromCorruptedFileToolStripMenuItem_Click(object sender, EventArgs e)

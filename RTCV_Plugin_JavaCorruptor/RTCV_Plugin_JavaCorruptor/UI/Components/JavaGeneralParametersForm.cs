@@ -10,6 +10,8 @@ using RTCV.UI;
 using System.Threading;
 using System.Threading.Tasks;
 using RTCV.Common;
+using RTCV.CorruptCore;
+using System.Linq;
 
 namespace Java_Corruptor.UI.Components;
 
@@ -61,6 +63,15 @@ public partial class JavaGeneralParametersForm : ComponentForm, IBlockable
         ResetRandom();
         tbOutput.AutoWordSelection = true;
         tbOutput.AutoWordSelection = false;
+
+        string dir = Path.GetDirectoryName((string)AllSpec.VanguardSpec[VSPEC.OPENROMFILENAME]);
+        string script = Directory.GetFiles(Path.GetDirectoryName((string)AllSpec.VanguardSpec[VSPEC.OPENROMFILENAME])).FirstOrDefault(f => f.EndsWith(".jls"));
+        if (script != null)
+        {
+            tbProgram.Text = script;
+            S.GET<LaunchGeneratorForm>().LoadScript(script);
+            cbPostCorruptAction.Checked = true;
+        }
     }
 
     private void tbIntensity_Scroll(object sender, EventArgs e)
@@ -70,7 +81,7 @@ public partial class JavaGeneralParametersForm : ComponentForm, IBlockable
 
     private void btnGeneralParamsInfo_Click(object sender, EventArgs e)
     {
-        Process.Start("https://corrupt.wiki/rtcv/other-rtc-guides/java-corruptor-plugin#general-parameters");
+        Process.Start("https://corrupt.wiki/systems/java/java-corruptor-plugin#general-parameters");
     }
 
     private void btnSelectProgram_Click(object sender, EventArgs e)
@@ -78,6 +89,10 @@ public partial class JavaGeneralParametersForm : ComponentForm, IBlockable
         if (ofdProgram.ShowDialog() != DialogResult.OK)
             return;
         tbProgram.Text = ofdProgram.FileName;
+        if (!string.IsNullOrEmpty(tbProgram.Text))
+        {
+            S.GET<LaunchGeneratorForm>().LoadScript(tbProgram.Text);
+        }
     }
 
     private string _oldProgramPath = "";
@@ -86,6 +101,7 @@ public partial class JavaGeneralParametersForm : ComponentForm, IBlockable
         if (File.Exists(tbProgram.Text))
         {
             _oldProgramPath = tbProgram.Text;
+            S.GET<LaunchGeneratorForm>().LoadScript(tbProgram.Text);
             return;
         }
         MessageBox.Show($"The file \"{tbProgram.Text}\" doesn't exist!", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -94,50 +110,9 @@ public partial class JavaGeneralParametersForm : ComponentForm, IBlockable
 
     public void RunPostCorruptAction()
     {
-        if (!cbPostCorruptAction.Checked || tbProgram.Text == string.Empty)
+        if (!cbPostCorruptAction.Checked || CorruptionOptions.LaunchScript == null)
             return;
-        Process p = new()
-        {
-            StartInfo = new()
-            {
-                FileName = "cmd.exe",
-                Arguments = $"/c {tbProgram.Text}",
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                RedirectStandardError = true,
-                RedirectStandardOutput = true,
-                WorkingDirectory = Path.GetDirectoryName(tbProgram.Text)!,
-            },
-        };
-        p.OutputDataReceived += (_, args) =>
-        {
-            SyncObjectSingleton.FormExecute(form =>
-            {
-                form.tbOutput.SelectionStart = form.tbOutput.TextLength;
-                form.tbOutput.SelectionLength = 0;
-
-                form.tbOutput.SelectionColor = Color.White;
-                form.tbOutput.AppendText(args.Data + Environment.NewLine);
-                form.tbOutput.SelectionColor = form.tbOutput.ForeColor;
-                form.tbOutput.ScrollToCaret();
-            }, this);
-        };
-        p.ErrorDataReceived += (_, args) =>
-        {
-            SyncObjectSingleton.FormExecute(form =>
-            {
-                form.tbOutput.SelectionStart = form.tbOutput.TextLength;
-                form.tbOutput.SelectionLength = 0;
-
-                form.tbOutput.SelectionColor = Color.FromArgb(0xff, 0x40, 0x40);
-                form.tbOutput.AppendText(args.Data + Environment.NewLine);
-                form.tbOutput.SelectionColor = form.tbOutput.ForeColor;
-                form.tbOutput.ScrollToCaret();
-            }, this);
-        };
-        p.Start();
-        p.BeginOutputReadLine();
-        p.BeginErrorReadLine();
+        Task.Run(CorruptionOptions.LaunchScript.Execute);
     }
 
     private void cbPostCorruptAction_CheckedChanged(object sender, EventArgs e)
@@ -159,5 +134,17 @@ public partial class JavaGeneralParametersForm : ComponentForm, IBlockable
             S.SET(new MoreSettingsForm());
         S.GET<MoreSettingsForm>().Show();
         S.GET<MoreSettingsForm>().BringToFront();
+    }
+
+    private void btnCreateScript_Click(object sender, EventArgs e)
+    {
+        if (S.GET<LaunchGeneratorForm>().IsDisposed)
+            S.SET(new LaunchGeneratorForm());
+        S.GET<LaunchGeneratorForm>().Show();
+        S.GET<LaunchGeneratorForm>().BringToFront();
+    }
+
+    private void tbProgram_TextChanged(object sender, EventArgs e)
+    {
     }
 }

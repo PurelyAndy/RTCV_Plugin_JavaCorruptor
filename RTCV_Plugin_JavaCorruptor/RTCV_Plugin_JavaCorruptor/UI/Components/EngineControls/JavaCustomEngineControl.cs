@@ -48,7 +48,9 @@ public partial class JavaCustomEngineControl
         _replaceHighlighter.AddPattern(new(_blockCommentRegex), new(Color.FromArgb(106, 169, 101)));
         _replaceHighlighter.AddPattern(new(_lineCommentRegex), new(Color.FromArgb(106, 169, 101)));
         _replaceHighlighter.AddPattern(new(opcodePattern), new(Color.FromArgb(86, 156, 214)));
-        _replaceHighlighter.AddPattern(new("(?<=<)(if|else|random|label)"), new(Color.FromArgb(197, 134, 192)));
+        _replaceHighlighter.AddPattern(new(@"(?<=<|<\/)(if|else|random|label)"), new(Color.FromArgb(197, 134, 192)));
+        _replaceHighlighter.AddPattern(new(@"(?<=<)(\$\d+?)(?=>)"), new(Color.FromArgb(220, 220, 170)));
+        _replaceHighlighter.AddPattern(new(@"(\d+),(\d+)"), new(Color.FromArgb(180, 205, 168)));
         _replaceHighlighter.ReHighlight();
 
         tbFind.AutoWordSelection = true;

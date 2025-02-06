@@ -174,7 +174,7 @@ public static class JavaBlastTools
                         IgnoreDuplicateClasses = true;
                 }
 
-                AsmUtilities.Classes.TryAdd(classNode.Name, (classNode, fileBytes));
+                AsmUtilities.Classes.TryAdd(classNode.Name, (classNode, fileBytes, zipArchiveEntry.FullName));
             }
             else if (nonClassesToo && !zipArchiveEntry.FullName.EndsWith(".class"))
             {
@@ -224,7 +224,7 @@ public static class JavaBlastTools
                 if (!IgnoreDuplicateClasses)
                     IgnoreDuplicateClasses = true;
             }
-            AsmUtilities.Classes.TryAdd(classNode.Name, (classNode, classBytes));
+            AsmUtilities.Classes.TryAdd(classNode.Name, (classNode, classBytes, null));
         }
         stopwatch.Stop();
         NLog.LogManager.GetCurrentClassLogger().Info($"Loaded {classCount} classes in {stopwatch.ElapsedMilliseconds}ms");

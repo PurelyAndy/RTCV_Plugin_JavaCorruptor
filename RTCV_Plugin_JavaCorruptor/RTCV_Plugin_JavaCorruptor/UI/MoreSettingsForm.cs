@@ -112,20 +112,21 @@ namespace Java_Corruptor.UI
         {
             FlowLayoutPanel pn = new();
             TextBox tb = new();
-            Button btnClose = new();
+            Button btnRemove = new();
 
-            btnClose.Text = "X";
-            btnClose.ForeColor = Color.OrangeRed;
-            btnClose.Font = new Font("Consolas", 10);
-            tb.Width = flp.Width - 57;
-            btnClose.Width = 30;
-            btnClose.FlatStyle = FlatStyle.Flat;
-            btnClose.FlatAppearance.BorderSize = 0;
-            pn.Width = flp.Width;
+            pn.Width = flp.Width - 25;
             pn.Height = 30;
             pn.FlowDirection = FlowDirection.LeftToRight;
+            btnRemove.Text = "X";
+            btnRemove.ForeColor = Color.OrangeRed;
+            btnRemove.Font = new Font("Consolas", 10);
+            tb.Width = pn.Width - 40;
+            btnRemove.Width = 24;
+            btnRemove.Height = 24;
+            btnRemove.FlatStyle = FlatStyle.Flat;
+            btnRemove.FlatAppearance.BorderSize = 0;
 
-            btnClose.Click += (s, e) => {
+            btnRemove.Click += (s, e) => {
                 flp.Controls.Remove(pn);
                 if (flp == flpClasses)
                     CorruptionOptions.FilterClasses.Remove(tb.Text);
@@ -140,7 +141,7 @@ namespace Java_Corruptor.UI
             };
 
             pn.Controls.Add(tb);
-            pn.Controls.Add(btnClose);
+            pn.Controls.Add(btnRemove);
             flp.Controls.Add(pn);
             return pn;
         }

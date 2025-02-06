@@ -216,49 +216,6 @@ public partial class JavaGlitchHarvesterBlastForm : ComponentForm, IBlockable
         }
     }
 
-    public void SendRawToStash(object sender, EventArgs e) => SendRawToStash();
-    internal JavaStashKey SendRawToStash(bool bypassChecks = false)
-    {/* TODO: something about this
-        if (!btnSendRaw.Visible && !bypassChecks)
-        {
-            return null;
-        }
-
-        try
-        {
-            SetBlastButtonVisibility(false);
-
-            string romFilename = (string)AllSpec.VanguardSpec[VSPEC.OPENROMFILENAME];
-            if (romFilename == null)
-            {
-                return null;
-            }
-
-            if (romFilename.Contains("|"))
-            {
-                MessageBox.Show($"The Glitch Harvester attempted to corrupt a game bound to the following file:\n{romFilename}\n\nIt cannot be processed because the rom seems to be inside a Zip Archive\n(Bizhawk returned a filename with the chracter | in it)");
-                return null;
-            }
-
-            JavaStashKey sk = LocalNetCoreRouter.QueryRoute<JavaStashKey>(NetCore.Endpoints.CorruptCore, NetCore.Commands.Remote.KeyGetRawBlastLayer, true);
-
-            JavaStockpileManagerUISide.CurrentStashkey = sk;
-            JavaStockpileManagerUISide.StashHistory.Add(JavaStockpileManagerUISide.CurrentStashkey);
-
-            S.GET<JavaStashHistoryForm>().DontLoadSelectedStash = true;
-            S.GET<JavaStashHistoryForm>().RefreshStashHistorySelectLast();
-            S.GET<JavaStashHistoryForm>().DontLoadSelectedStash = true;
-            S.GET<JavaStockpileManagerForm>().dgvStockpile.ClearSelection();
-            S.GET<JavaStashHistoryForm>().DontLoadSelectedStash = false;
-        }
-        finally
-        {
-            SetBlastButtonVisibility(true);
-        }*/
-
-        return JavaStockpileManagerUISide.CurrentStashkey;
-    }
-
     public void BlastLayerToggle(object sender, EventArgs e)
     { //TODO: something about this
         /*if (JavaStockpileManagerUISide.CurrentStashkey?.BlastLayer?.Layer == null || JavaStockpileManagerUISide.CurrentStashkey?.BlastLayer?.Layer.Count == 0)
@@ -346,7 +303,6 @@ public partial class JavaGlitchHarvesterBlastForm : ComponentForm, IBlockable
     {
         btnCorrupt.Visible = visible;
         btnRerollSelected.Visible = visible;
-        btnSendRaw.Visible = visible;
 
         if (AllSpec.VanguardSpec[VSPEC.REPLACE_MANUALBLAST_WITH_GHCORRUPT] != null)
         {

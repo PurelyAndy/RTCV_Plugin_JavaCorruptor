@@ -16,7 +16,7 @@ public static class AsmUtilities
     public static readonly BidirectionalDictionary<int, string> Opcodes = new(159);
     public static readonly BidirectionalDictionary<int, string> Tags = new(9);
     public static readonly Dictionary<int, int> Types = new(159);
-    public static readonly ConcurrentDictionary<string, (ClassNode node, byte[] bytes)> Classes = [];
+    public static readonly ConcurrentDictionary<string, (ClassNode node, byte[] bytes, string path)> Classes = [];
     public static readonly ConcurrentDictionary<string, byte[]> NonClasses = [];
     
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();

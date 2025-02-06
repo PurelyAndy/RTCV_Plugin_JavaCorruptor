@@ -42,6 +42,7 @@ namespace Java_Corruptor.UI.Components
             this.btnOpenDisassembler = new System.Windows.Forms.Button();
             this.btnMoreSettings = new System.Windows.Forms.Button();
             this.ofdProgram = new System.Windows.Forms.OpenFileDialog();
+            this.btnCreateScript = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.tbIntensity)).BeginInit();
             this.SuspendLayout();
             // 
@@ -78,7 +79,7 @@ namespace Java_Corruptor.UI.Components
             this.cbUseLastSeed.AutoSize = true;
             this.cbUseLastSeed.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.cbUseLastSeed.ForeColor = System.Drawing.Color.White;
-            this.cbUseLastSeed.Location = new System.Drawing.Point(8, 90);
+            this.cbUseLastSeed.Location = new System.Drawing.Point(8, 74);
             this.cbUseLastSeed.Name = "cbUseLastSeed";
             this.cbUseLastSeed.Size = new System.Drawing.Size(108, 17);
             this.cbUseLastSeed.TabIndex = 212;
@@ -104,7 +105,8 @@ namespace Java_Corruptor.UI.Components
             // 
             // tbOutput
             // 
-            this.tbOutput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.tbOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbOutput.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.tbOutput.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -123,12 +125,12 @@ namespace Java_Corruptor.UI.Components
             this.cbPostCorruptAction.AutoSize = true;
             this.cbPostCorruptAction.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.cbPostCorruptAction.ForeColor = System.Drawing.Color.White;
-            this.cbPostCorruptAction.Location = new System.Drawing.Point(8, 74);
+            this.cbPostCorruptAction.Location = new System.Drawing.Point(8, 90);
             this.cbPostCorruptAction.Margin = new System.Windows.Forms.Padding(0);
             this.cbPostCorruptAction.Name = "cbPostCorruptAction";
-            this.cbPostCorruptAction.Size = new System.Drawing.Size(204, 17);
+            this.cbPostCorruptAction.Size = new System.Drawing.Size(196, 17);
             this.cbPostCorruptAction.TabIndex = 219;
-            this.cbPostCorruptAction.Text = "Launch a program after corrupting";
+            this.cbPostCorruptAction.Text = "Launch software after corrupting";
             this.cbPostCorruptAction.UseVisualStyleBackColor = true;
             this.cbPostCorruptAction.CheckedChanged += new System.EventHandler(this.cbPostCorruptAction_CheckedChanged);
             // 
@@ -139,7 +141,7 @@ namespace Java_Corruptor.UI.Components
             this.btnSelectProgram.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSelectProgram.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.btnSelectProgram.ForeColor = System.Drawing.Color.White;
-            this.btnSelectProgram.Location = new System.Drawing.Point(216, 74);
+            this.btnSelectProgram.Location = new System.Drawing.Point(208, 89);
             this.btnSelectProgram.Name = "btnSelectProgram";
             this.btnSelectProgram.Size = new System.Drawing.Size(40, 17);
             this.btnSelectProgram.TabIndex = 218;
@@ -150,16 +152,17 @@ namespace Java_Corruptor.UI.Components
             // 
             // tbProgram
             // 
-            this.tbProgram.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.tbProgram.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbProgram.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(96)))), ((int)(((byte)(96)))));
             this.tbProgram.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.tbProgram.ForeColor = System.Drawing.Color.White;
             this.tbProgram.Location = new System.Drawing.Point(2, 107);
             this.tbProgram.Name = "tbProgram";
-            this.tbProgram.Size = new System.Drawing.Size(268, 22);
+            this.tbProgram.Size = new System.Drawing.Size(210, 22);
             this.tbProgram.TabIndex = 217;
             this.tbProgram.Tag = "color:normal";
+            this.tbProgram.TextChanged += new System.EventHandler(this.tbProgram_TextChanged);
             this.tbProgram.LostFocus += new System.EventHandler(this.tbProgram_LostFocus);
             // 
             // btnOpenDisassembler
@@ -201,12 +204,30 @@ namespace Java_Corruptor.UI.Components
             // 
             this.ofdProgram.FileName = "openFileDialog1";
             // 
+            // btnCreateScript
+            // 
+            this.btnCreateScript.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCreateScript.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.btnCreateScript.FlatAppearance.BorderSize = 0;
+            this.btnCreateScript.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCreateScript.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.btnCreateScript.ForeColor = System.Drawing.Color.LightSkyBlue;
+            this.btnCreateScript.Location = new System.Drawing.Point(213, 107);
+            this.btnCreateScript.Name = "btnCreateScript";
+            this.btnCreateScript.Size = new System.Drawing.Size(57, 22);
+            this.btnCreateScript.TabIndex = 221;
+            this.btnCreateScript.Tag = "color:dark2";
+            this.btnCreateScript.Text = "Create";
+            this.btnCreateScript.UseVisualStyleBackColor = false;
+            this.btnCreateScript.Click += new System.EventHandler(this.btnCreateScript_Click);
+            // 
             // JavaGeneralParametersForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ClientSize = new System.Drawing.Size(272, 200);
+            this.Controls.Add(this.btnCreateScript);
             this.Controls.Add(this.tbOutput);
             this.Controls.Add(this.cbPostCorruptAction);
             this.Controls.Add(this.btnSelectProgram);
@@ -230,10 +251,9 @@ namespace Java_Corruptor.UI.Components
 
 		}
 
-		private System.Windows.Forms.RichTextBox tbOutput;
+		public System.Windows.Forms.RichTextBox tbOutput;
 		private System.Windows.Forms.CheckBox cbPostCorruptAction;
 		private System.Windows.Forms.Button btnSelectProgram;
-		private System.Windows.Forms.TextBox tbProgram;
 		private System.Windows.Forms.Button btnOpenDisassembler;
 		private System.Windows.Forms.Button btnMoreSettings;
 		private System.Windows.Forms.Button btnOptionsInfo;
@@ -242,6 +262,9 @@ namespace Java_Corruptor.UI.Components
 		public System.Windows.Forms.CheckBox cbUseLastSeed;
 		private OpenFileDialog ofdProgram;
 
-		#endregion
-	}
+        #endregion
+
+        private Button btnCreateScript;
+        public TextBox tbProgram;
+    }
 }

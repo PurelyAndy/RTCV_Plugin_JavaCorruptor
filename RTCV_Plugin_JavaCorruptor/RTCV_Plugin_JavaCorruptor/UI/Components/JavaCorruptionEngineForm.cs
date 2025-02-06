@@ -238,7 +238,7 @@ public partial class JavaCorruptionEngineForm : ComponentForm, IBlockable
                 foreach (string entry in BlastLayerCollection.MappedLayers.Keys)
                     keys.Add(entry.Split('.')[0]);
             int i = 0;
-            foreach ((string name, (ClassNode node, byte[] bytes) c) in AsmUtilities.Classes)
+            foreach ((string name, (ClassNode node, byte[] bytes, string path) c) in AsmUtilities.Classes)
             {
                 if (i++ % threadCount != start)
                     continue;
@@ -257,7 +257,7 @@ public partial class JavaCorruptionEngineForm : ComponentForm, IBlockable
                             ClassReader cr = new((sbyte[])(Array)c.bytes);
                             ClassNode clone = new();
                             cr.Accept(clone, 0);
-                            AsmUtilities.Classes[name] = (clone, c.bytes);
+                            AsmUtilities.Classes[name] = (clone, c.bytes, c.path);
                         }
 
                         if (result == CorruptionResult.Canceled)
@@ -267,12 +267,12 @@ public partial class JavaCorruptionEngineForm : ComponentForm, IBlockable
                             ClassReader cr = new((sbyte[])(Array)c.bytes);
                             ClassNode clone = new();
                             cr.Accept(clone, 0);
-                            AsmUtilities.Classes[name] = (clone, c.bytes);
+                            AsmUtilities.Classes[name] = (clone, c.bytes, c.path);
                         }
-                        modifiedClasses.TryAdd(name + ".class", classWriter.ToByteArray());
+                        modifiedClasses.TryAdd(c.path, classWriter.ToByteArray());
                     }
                     else
-                        resources.TryAdd(name + ".class", c.bytes);
+                        resources.TryAdd(c.path, c.bytes);
                 }
                 else
                 {
@@ -294,7 +294,7 @@ public partial class JavaCorruptionEngineForm : ComponentForm, IBlockable
                             ClassReader cr = new((sbyte[])(Array)c.bytes);
                             ClassNode clone = new();
                             cr.Accept(clone, 0);
-                            AsmUtilities.Classes[name] = (clone, c.bytes);
+                            AsmUtilities.Classes[name] = (clone, c.bytes, c.path);
                             throw;
                         }
                     }
@@ -302,14 +302,14 @@ public partial class JavaCorruptionEngineForm : ComponentForm, IBlockable
                     if (result == CorruptionResult.Canceled)
                         return;
                     if (result == CorruptionResult.Unmodified)
-                        resources.TryAdd(name + ".class", c.bytes);
+                        resources.TryAdd(c.path, c.bytes);
                     else
                     {
                         ClassReader cr = new((sbyte[])(Array)c.bytes);
                         ClassNode clone = new();
                         cr.Accept(clone, 0);
-                        AsmUtilities.Classes[name] = (clone, c.bytes);
-                        modifiedClasses.TryAdd(name + ".class", classWriter!.ToByteArray());
+                        AsmUtilities.Classes[name] = (clone, c.bytes, c.path);
+                        modifiedClasses.TryAdd(c.path, classWriter!.ToByteArray());
                     }
                 }
             }

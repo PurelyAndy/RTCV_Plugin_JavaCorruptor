@@ -14,5 +14,6 @@ namespace Java_Corruptor
         public static bool UseDomains = false;
         public static List<string> FilterClasses = [];
         public static List<string> FilterMethods = [];
+        public static LaunchScript LaunchScript = new();
     }
 }

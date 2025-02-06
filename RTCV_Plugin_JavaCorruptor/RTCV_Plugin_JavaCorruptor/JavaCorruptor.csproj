@@ -36,6 +36,7 @@
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <PlatformTarget>x64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -55,13 +56,9 @@
     <PlatformTarget>x64</PlatformTarget>
     <LangVersion>latest</LangVersion>
     <ErrorReport>prompt</ErrorReport>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <!--
-    <Reference Include="JavaTemplatePlugin">
-      <HintPath>..\..\..\FileStub-Vanguard\FileStub\bin\Debug\TEMPLATES\JavaTemplatePlugin.dll</HintPath>
-    </Reference>
-	-->
     <Reference Include="NLog">
       <HintPath>..\..\..\..\..\..\.nuget\packages\nlog\5.1.1\lib\net46\NLog.dll</HintPath>
     </Reference>
@@ -80,6 +77,7 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Memory">
       <HintPath>..\..\..\FileStub-Vanguard\FileStub\bin\Debug\System.Memory.dll</HintPath>
     </Reference>
@@ -120,7 +118,9 @@
     <Compile Include="JavaStockpile.cs" />
     <Compile Include="JavaStockpileManagerUISide.cs" />
     <Compile Include="JsonConverters\JavaBlastUnitConverter.cs" />
-    <Compile Include="OpcodesWithNoOperands.cs" />
+    <Compile Include="LaunchScript.cs" />
+    <Compile Include="OpcodeGroups.cs" />
+    <Compile Include="NoOperandOpcodes.cs" />
     <Compile Include="PluginCore.cs" />
     <Compile Include="Range.cs" />
     <Compile Include="Routing\PluginConnectorEMU.cs" />
@@ -221,6 +221,12 @@
     </Compile>
     <Compile Include="UI\Components\JavaStashHistoryForm.designer.cs">
       <DependentUpon>JavaStashHistoryForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\LaunchGeneratorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\LaunchGeneratorForm.Designer.cs">
+      <DependentUpon>LaunchGeneratorForm.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\MoreSettingsForm.cs">
       <SubType>Form</SubType>
@@ -323,8 +329,13 @@
     <EmbeddedResource Include="UI\Components\JavaStashHistoryForm.resx">
       <DependentUpon>JavaStashHistoryForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\LaunchGeneratorForm.resx">
+      <DependentUpon>LaunchGeneratorForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\MoreSettingsForm.resx">
       <DependentUpon>MoreSettingsForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\PluginForm.resx">
       <DependentUpon>PluginForm.cs</DependentUpon>

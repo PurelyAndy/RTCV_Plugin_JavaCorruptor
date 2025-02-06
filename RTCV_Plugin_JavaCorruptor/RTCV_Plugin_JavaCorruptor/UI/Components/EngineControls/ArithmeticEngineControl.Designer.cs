@@ -49,7 +49,6 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.label2 = new System.Windows.Forms.Label();
             this.lbeInstructions = new RTCV.UI.Components.Controls.ListBoxExtended();
             this.cbSkipArrayAccess = new System.Windows.Forms.CheckBox();
-            this.btnPresets = new System.Windows.Forms.Button();
             this.engineGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbMaximum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbMinimum)).BeginInit();
@@ -57,7 +56,6 @@ namespace Java_Corruptor.UI.Components.EngineControls
             // 
             // engineGroupBox
             // 
-            this.engineGroupBox.Controls.Add(this.btnPresets);
             this.engineGroupBox.Controls.Add(this.cbSkipArrayAccess);
             this.engineGroupBox.Controls.Add(this.lbeInstructions);
             this.engineGroupBox.Controls.Add(this.label2);
@@ -92,7 +90,6 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.engineGroupBox.Controls.SetChildIndex(this.label2, 0);
             this.engineGroupBox.Controls.SetChildIndex(this.lbeInstructions, 0);
             this.engineGroupBox.Controls.SetChildIndex(this.cbSkipArrayAccess, 0);
-            this.engineGroupBox.Controls.SetChildIndex(this.btnPresets, 0);
             this.engineGroupBox.Controls.SetChildIndex(this.placeholderComboBox, 0);
             // 
             // label19
@@ -348,15 +345,6 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.cbSkipArrayAccess.Text = "Skip array accesses";
             this.cbSkipArrayAccess.UseVisualStyleBackColor = true;
             // 
-            // btnPresets
-            // 
-            this.btnPresets.BackColor = System.Drawing.Color.Transparent;
-            this.btnPresets.Location = new System.Drawing.Point(417, 12);
-            this.btnPresets.Name = "btnPresets";
-            this.btnPresets.Size = new System.Drawing.Size(20, 20);
-            this.btnPresets.TabIndex = 178;
-            this.btnPresets.UseVisualStyleBackColor = false;
-            // 
             // ArithmeticEngineControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -390,6 +378,5 @@ namespace Java_Corruptor.UI.Components.EngineControls
         private Label label2;
         public ListBoxExtended lbeInstructions;
         public CheckBox cbSkipArrayAccess;
-        private Button btnPresets;
     }
 }

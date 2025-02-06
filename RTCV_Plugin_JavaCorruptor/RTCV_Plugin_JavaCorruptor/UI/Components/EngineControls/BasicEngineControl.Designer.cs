@@ -103,9 +103,10 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.lbValues.Location = new System.Drawing.Point(3, 25);
             this.lbValues.Name = "lbValues";
             this.lbValues.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
-            this.lbValues.Size = new System.Drawing.Size(207, 117);
+            this.lbValues.Size = new System.Drawing.Size(210, 117);
             this.lbValues.TabIndex = 139;
             this.lbValues.Tag = "color:dark3";
+            this.lbValues.SelectedIndexChanged += new System.EventHandler(this.lbValues_SelectedIndexChanged);
             // 
             // lbVectorEngineValueText1
             // 
@@ -144,9 +145,10 @@ namespace Java_Corruptor.UI.Components.EngineControls
             this.lbLimiters.Location = new System.Drawing.Point(3, 25);
             this.lbLimiters.Name = "lbLimiters";
             this.lbLimiters.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
-            this.lbLimiters.Size = new System.Drawing.Size(196, 117);
+            this.lbLimiters.Size = new System.Drawing.Size(201, 117);
             this.lbLimiters.TabIndex = 146;
             this.lbLimiters.Tag = "color:dark3";
+            this.lbLimiters.SelectedIndexChanged += new System.EventHandler(this.lbLimiters_SelectedIndexChanged);
             // 
             // lbVectorEngineLimiterText1
             // 

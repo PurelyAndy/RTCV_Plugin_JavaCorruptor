@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{393455EB-91E6-4D88-8490-FE61DD7F0916}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>JavaTemplatePlugin</RootNamespace>
+    <AssemblyName>JavaTemplatePlugin</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\FileStub-Vanguard\FileStub\bin\Debug\TEMPLATES\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\FileStub-Vanguard\FileStub\bin\Release\TEMPLATES\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CmlLib.Core, Version=4.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\CmlLib.Core.4.0.4\lib\netstandard2.0\CmlLib.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="CmlLib.Core.Commons, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\CmlLib.Core.Commons.4.0.0\lib\netstandard2.0\CmlLib.Core.Commons.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=1.4.2.13, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\SharpZipLib.1.4.2\lib\netstandard2.0\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\References\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SevenZip, Version=19.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\LZMA-SDK.19.0.0\lib\net20\SevenZip.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.IO.Compression.ZipFile, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\System.IO.Compression.ZipFile.4.3.0\lib\net46\System.IO.Compression.ZipFile.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Threading.Tasks.Dataflow, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\System.Threading.Tasks.Dataflow.8.0.1\lib\netstandard2.0\System.Threading.Tasks.Dataflow.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <!-- someone please tell me how to get the right version it needs to be 4.0.4.1 and i just happened to find it here but something depends on a new version so i can't add it the right way from nuget because it detects it as a downgrade -->
+    <!-- oh and also everything else below here has the same issue -->
+    <Reference Include="System.Runtime.CompilerServices.Unsafe">
+      <HintPath>..\..\..\..\Packages\.nuget\packages\system.runtime.compilerservices.unsafe\4.5.3\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+    </Reference>
+    <Reference Include="System.Text.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
+      <HintPath>..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\System.Text.Json.8.0.5\lib\netstandard2.0\System.Text.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Buffers">
+      <HintPath>..\..\..\..\Packages\.nuget\packages\system.buffers\4.4.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics.Vectors, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\Packages\.nuget\packages\system.numerics.vectors\4.4.0\lib\netstandard2.0\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Java.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Java.Designer.cs">
+      <DependentUpon>Java.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LaunchScript.cs" />
+    <Compile Include="Minecraft.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Minecraft.Designer.cs">
+      <DependentUpon>Minecraft.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Plugin.cs" />
+    <Compile Include="ProjectZomboid.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProjectZomboid.Designer.cs">
+      <DependentUpon>ProjectZomboid.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\FileStub-Vanguard\FileStub\FileStub.csproj">
+      <Project>{3e02b2ba-0900-4bcf-a416-821c949e6c85}</Project>
+      <Name>FileStub</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\RTCV\Source\Libraries\CorruptCore\CorruptCore.csproj">
+      <Project>{b5633a86-dc66-4723-88eb-7dfc95458072}</Project>
+      <Name>CorruptCore</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Java.resx">
+      <DependentUpon>Java.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Minecraft.resx">
+      <DependentUpon>Minecraft.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProjectZomboid.resx">
+      <DependentUpon>ProjectZomboid.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+         Other similar extension points exist, see Microsoft.Common.targets.
+    <Target Name="BeforeBuild">
+    </Target>
+    <Target Name="AfterBuild">
+    </Target>
+    -->
+</Project>

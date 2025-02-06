@@ -31,7 +31,7 @@ public static class Extensions
         return newText + text;
     }
 
-    public static void Deconstruct(this KeyValuePair<string, (ClassNode, byte[])> kvp, out string a, out (ClassNode, byte[]) b)
+    public static void Deconstruct(this KeyValuePair<string, (ClassNode, byte[], string)> kvp, out string a, out (ClassNode, byte[], string) b)
     {
         (a, b) = (kvp.Key, kvp.Value);
     }
