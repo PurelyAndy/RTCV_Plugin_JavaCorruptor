@@ -21,7 +21,7 @@ public class Java_Corruptor : IPlugin
 
     // >>> Make sure you rename BOTH the namespace and class (Very important)
     public string Description => "Corrupt Java programs with ease!";
-    public string Author => "NoSkillPureAndy";
+    public string Author => "PurelyAndy";
     public Version Version => new(1, 1, 0);
 
     //-----[ Plugin loading workflow ]-----

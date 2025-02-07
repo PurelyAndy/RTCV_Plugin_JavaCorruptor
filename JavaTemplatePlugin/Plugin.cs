@@ -10,7 +10,7 @@ namespace JavaTemplatePlugin
         public string Name => "Java Template";
         public string Description => "Targets .JAR files in FileStub, with presets for Minecraft and Project Zomboid";
         public string Author => "PurelyAndy";
-        public Version Version => new(1, 0, 0);
+        public Version Version => new(1, 1, 0);
         public bool Start() => true;
     }
 }
