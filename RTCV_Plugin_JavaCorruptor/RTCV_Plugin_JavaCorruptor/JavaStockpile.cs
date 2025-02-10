@@ -52,7 +52,7 @@ internal class JavaStockpile
             CleanTempFolder(ref sks, ref saveProgress);
 
             CopyReferencedFiles(sks, includeReferencedFiles, ref saveProgress);
-
+            
             CreateStockpileJson(ref sks, ref saveProgress);
 
             CreateAndReplaceStockpileZip(ref sks, compress, ref saveProgress);

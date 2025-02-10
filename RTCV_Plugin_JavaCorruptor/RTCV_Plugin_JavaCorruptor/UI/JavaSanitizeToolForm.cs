@@ -282,11 +282,10 @@ public partial class JavaSanitizeToolForm : RTCV.UI.Modular.ColorizedForm
     private void AddToStockpile(object sender, EventArgs e)
     {
         JavaStashKey oldSk = (JavaStashKey)_sanitizer.GetFinalStashKey().Clone();
-        JavaStashKey newSk = new(RtcCore.GetRandomKey(), oldSk.ParentKey, null)
+        JavaStashKey newSk = new(RtcCore.GetRandomKey(), oldSk.ParentKey, (SerializedInsnBlastLayerCollection)oldSk.BlastLayer.Clone(), oldSk.LaunchScript)
         {
             JarFilename = oldSk.JarFilename,
             GameName = oldSk.GameName,
-            BlastLayer = (SerializedInsnBlastLayerCollection)oldSk.BlastLayer.Clone(),
         };
         JavaStockpileManagerUISide.StashHistory.Add(newSk);
 
@@ -315,11 +314,10 @@ public partial class JavaSanitizeToolForm : RTCV.UI.Modular.ColorizedForm
     private void AddToStash(object sender, EventArgs e)
     {
         JavaStashKey oldSk = (JavaStashKey)_sanitizer.GetFinalStashKey().Clone();
-        JavaStashKey newSk = new(RtcCore.GetRandomKey(), oldSk.ParentKey, null)
+        JavaStashKey newSk = new(RtcCore.GetRandomKey(), oldSk.ParentKey, (SerializedInsnBlastLayerCollection)oldSk.BlastLayer.Clone(), oldSk.LaunchScript)
         {
             JarFilename = oldSk.JarFilename,
             GameName = oldSk.GameName,
-            BlastLayer = (SerializedInsnBlastLayerCollection)oldSk.BlastLayer.Clone(),
         };
         JavaStockpileManagerUISide.StashHistory.Add(newSk);
 
@@ -380,11 +378,10 @@ internal class JavaFastSanitizer
     public JavaFastSanitizer(JavaStashKey originalStashkey, SerializedInsnBlastLayer blClone)
     {
         //Create StashKey clone
-        internalSK = new(RtcCore.GetRandomKey(), originalStashkey.ParentKey, null)
+        internalSK = new(RtcCore.GetRandomKey(), originalStashkey.ParentKey, new(blClone), originalStashkey.LaunchScript)
         {
             JarFilename = originalStashkey.JarFilename,
             GameName = originalStashkey.GameName,
-            BlastLayer = new(blClone),
         };
         OriginalLayer = blClone;
         shownHalf = [..OriginalLayer.Layer];

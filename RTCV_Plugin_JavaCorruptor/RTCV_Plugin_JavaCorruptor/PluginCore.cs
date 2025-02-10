@@ -10,6 +10,7 @@ using Java_Corruptor.Javanguard;
 using RTCV.CorruptCore;
 using System.Reflection;
 using System.Linq;
+using Java_Corruptor.UI.Components;
 using RTCV.UI.Modular;
 
 namespace Java_Corruptor;
@@ -44,6 +45,7 @@ public class Java_Corruptor : IPlugin
     public static RTCSide CurrentSide = RTCSide.Server;
     public static PluginForm PluginForm;
     internal static PluginConnectorRTC connectorRTC;
+    private static string _lastRomPath = "";
 
     // the name of the plugin is auto-generated from the class name.
     public string Name => nameof(Java_Corruptor).Replace("_"," ");
@@ -137,6 +139,23 @@ public class Java_Corruptor : IPlugin
         }
         else
             ChangePluginVisibility(true);
+
+        if (!CorruptModeInfo.Live)
+        {
+            string openRom = (string)eas.partialSpec[VSPEC.OPENROMFILENAME];
+            if (string.IsNullOrEmpty(openRom))
+                return;
+            if (openRom != _lastRomPath)
+            {
+                _lastRomPath = openRom;
+                string dir = Path.GetDirectoryName(openRom);
+                string script = Directory.GetFiles(dir).FirstOrDefault(f => f.EndsWith(".jls"));
+                if (script != null)
+                {
+                    S.GET<JavaGeneralParametersForm>().UpdateLaunchScript(script);
+                }
+            }
+        }
     }
 
     public bool Stop()

@@ -31,7 +31,16 @@ namespace JavaTemplatePlugin
             while (!versionsTask.IsCompleted) ;
             foreach (IVersionMetadata version in versionsTask.Result)
             {
-                cbVersion.Items.Add(version.Name);
+                string name = version.Name;
+                if (name.EndsWith("_rtc"))
+                    continue;
+                string folderLocation = $@"{VersionsFolder}{name}";
+                if (!Directory.GetFiles(folderLocation).Any(file => file.EndsWith(".jar")))
+                    continue;
+                if (!Directory.GetFiles(folderLocation).Any(file => file.EndsWith(".json")))
+                    continue;
+                
+                cbVersion.Items.Add(name);
             }
         }
 
@@ -91,13 +100,21 @@ namespace JavaTemplatePlugin
             entry?.Delete();
             ZipArchiveEntry? entry2 = zipArchive.GetEntry("META-INF/MOJANGCS.RSA");
             entry2?.Delete();
+            ZipArchiveEntry? entry3 = zipArchive.GetEntry("META-INF/MOJANG_C.SF");
+            entry3?.Delete();
+            ZipArchiveEntry? entry4 = zipArchive.GetEntry("META-INF/MOJANG_C.DSA");
+            entry4?.Delete();
+            ZipArchiveEntry? entry5 = zipArchive.GetEntry("META-INF/CODESIGN.SF");
+            entry5?.Delete();
+            ZipArchiveEntry? entry6 = zipArchive.GetEntry("META-INF/CODESIGN.RSA");
+            entry6?.Delete();
             string versionJson = File.ReadAllText($@"{folderLocation}\{version}.json");
             JObject versionData = JObject.Parse(versionJson);
 
             // remove the "downloads" entry from the json if it exists, so that this version can be launched from the official launcher
             versionData.Remove("downloads");
             // correct the id
-            versionData["id"] = "1.21.1_rtc";
+            versionData["id"] += "_rtc";
 
             // save the json
             string newVersionJson = versionData.ToString();

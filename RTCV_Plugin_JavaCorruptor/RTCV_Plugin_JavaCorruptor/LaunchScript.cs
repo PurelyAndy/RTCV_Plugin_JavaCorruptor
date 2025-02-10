@@ -13,7 +13,7 @@ using RTCV.NetCore;
 
 namespace Java_Corruptor
 {
-    internal class LaunchScript
+    public class LaunchScript
     {
         public List<ScriptStage> Stages { get; set; } = [];
         public LaunchScript() { }

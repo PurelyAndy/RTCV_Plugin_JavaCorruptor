@@ -142,7 +142,7 @@ public partial class JavaCorruptionEngineForm : ComponentForm, IBlockable
         return modified ? CorruptionResult.Modified : CorruptionResult.Unmodified;
     }
     
-    internal void Corrupt(bool useEngine = false)
+    internal void Corrupt(LaunchScript launchScript = null, bool useEngine = false)
     {
         JavaGeneralParametersForm gpForm = S.GET<JavaGeneralParametersForm>();
         gpForm.ResetRandom();
@@ -172,7 +172,7 @@ public partial class JavaCorruptionEngineForm : ComponentForm, IBlockable
             CorruptFileStub(useEngine);
         }
         
-        gpForm.RunPostCorruptAction();
+        gpForm.RunPostCorruptAction(launchScript);
         
         if (!useEngine)
             SelectedEngine = engine;

@@ -87,6 +87,7 @@ namespace Java_Corruptor.UI
             this.rOMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.replaceRomFromGHToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.replaceRomFromFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.replaceLaunchScriptFromFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sanitizeDuplicatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rasterizeVMDsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -818,7 +819,8 @@ namespace Java_Corruptor.UI
             // 
             this.rOMToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.replaceRomFromGHToolStripMenuItem,
-            this.replaceRomFromFileToolStripMenuItem});
+            this.replaceRomFromFileToolStripMenuItem,
+            this.replaceLaunchScriptFromFileToolStripMenuItem});
             this.rOMToolStripMenuItem.Name = "rOMToolStripMenuItem";
             this.rOMToolStripMenuItem.Size = new System.Drawing.Size(38, 20);
             this.rOMToolStripMenuItem.Tag = "";
@@ -837,6 +839,13 @@ namespace Java_Corruptor.UI
             this.replaceRomFromFileToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.replaceRomFromFileToolStripMenuItem.Text = "Replace JAR from File";
             this.replaceRomFromFileToolStripMenuItem.Click += new System.EventHandler(this.ReplaceRomFromFile);
+            // 
+            // replaceLaunchScriptFromFileToolStripMenuItem
+            // 
+            this.replaceLaunchScriptFromFileToolStripMenuItem.Name = "replaceLaunchScriptFromFileToolStripMenuItem";
+            this.replaceLaunchScriptFromFileToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.replaceLaunchScriptFromFileToolStripMenuItem.Text = "Replace Launch Script from File";
+            this.replaceLaunchScriptFromFileToolStripMenuItem.Click += new System.EventHandler(this.ReplaceLaunchScriptFromFile);
             // 
             // toolsToolStripMenuItem
             // 
@@ -1029,6 +1038,7 @@ namespace Java_Corruptor.UI
 		private System.Windows.Forms.ToolStripMenuItem runRomWithoutBlastlayerToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem replaceRomFromGHToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem replaceRomFromFileToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem replaceLaunchScriptFromFileToolStripMenuItem;
 		private System.Windows.Forms.Panel panel2;
 		private System.Windows.Forms.ToolStripMenuItem blastLayerToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem loadFromFileblToolStripMenuItem;

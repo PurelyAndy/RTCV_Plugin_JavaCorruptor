@@ -54,7 +54,7 @@ public static class JavaStockpileManagerUISide
         else
             JavaCorruptionEngineForm.BlastLayerCollection = bl;
         
-        ceForm.Corrupt();
+        ceForm.Corrupt(sk.LaunchScript);
         AllSpec.VanguardSpec.Update(VSPEC.OPENROMFILENAME, oldJarName);
 
         return isCorruptionApplied;
@@ -71,7 +71,7 @@ public static class JavaStockpileManagerUISide
         }
 
         //We make it without the blastlayer so we can send it across and use the cached version without needing a prototype
-        CurrentStashkey = new(RtcCore.GetRandomKey(), psk.ParentKey, null)
+        CurrentStashkey = new(RtcCore.GetRandomKey(), psk.ParentKey, null, psk.LaunchScript)
         {
             JarFilename = psk.JarFilename,
             GameName = psk.GameName,
@@ -116,7 +116,7 @@ public static class JavaStockpileManagerUISide
         }*/
 
         //We make it without the blastlayer so we can send it across and use the cached version without needing a prototype
-        CurrentStashkey = new(RtcCore.GetRandomKey(), psk.ParentKey, null)
+        CurrentStashkey = new(RtcCore.GetRandomKey(), psk.ParentKey, null, psk.LaunchScript)
         {
             JarFilename = psk.JarFilename,
             GameName = psk.GameName,
@@ -132,7 +132,7 @@ public static class JavaStockpileManagerUISide
                 true
             }, true);*/
         JavaCorruptionEngineForm ceForm = S.GET<JavaCorruptionEngineForm>();
-        ceForm.Corrupt(true);
+        ceForm.Corrupt(null, true);
         SerializedInsnBlastLayerCollection bl = JavaCorruptionEngineForm.BlastLayerCollection;
         bool isCorruptionApplied = bl?.MappedLayers?.Count > 0;
         
@@ -178,7 +178,7 @@ public static class JavaStockpileManagerUISide
 
             bl.Layer = new(bl.Layer.Layer.Distinct().ToList());
 
-            CurrentStashkey = new(RtcCore.GetRandomKey(), master.ParentKey, bl)
+            CurrentStashkey = new(RtcCore.GetRandomKey(), master.ParentKey, bl, master.LaunchScript)
             {
                 JarFilename = master.JarFilename,
                 GameName = master.GameName,
@@ -206,7 +206,7 @@ public static class JavaStockpileManagerUISide
 
             JavaCorruptionEngineForm.BlastLayerCollection = bl;
 
-            ceForm.Corrupt();
+            ceForm.Corrupt(CurrentStashkey.LaunchScript);
             AllSpec.VanguardSpec.Update(VSPEC.OPENROMFILENAME, oldJarName);
 
 

@@ -20,6 +20,7 @@ internal class JavaStashKey : ICloneable, INote
     public string Note { get; set; }
     public string Key { get; set; }
     public string ParentKey { get; set; }
+    public LaunchScript LaunchScript { get; set; }
     public SerializedInsnBlastLayerCollection BlastLayer { get; set; }
 
     public string Alias
@@ -31,8 +32,9 @@ internal class JavaStashKey : ICloneable, INote
     public JavaStashKey() => StashKeyConstructor(RtcCore.GetRandomKey(), null, new());
 
     public JavaStashKey(string key, string parentkey, SerializedInsnBlastLayerCollection blastlayer) => StashKeyConstructor(key, parentkey, blastlayer);
+    public JavaStashKey(string key, string parentkey, SerializedInsnBlastLayerCollection blastlayer, LaunchScript launchScript) => StashKeyConstructor(key, parentkey, blastlayer, launchScript);
 
-    private void StashKeyConstructor(string key, string parentkey, SerializedInsnBlastLayerCollection blastlayer)
+    private void StashKeyConstructor(string key, string parentkey, SerializedInsnBlastLayerCollection blastlayer, LaunchScript launchScript = null)
     {
         Key = key;
         ParentKey = parentkey;
@@ -41,6 +43,7 @@ internal class JavaStashKey : ICloneable, INote
         JarFilename = (string)AllSpec.VanguardSpec?[VSPEC.OPENROMFILENAME] ?? "ERROR";
         JarShortFilename = Path.GetFileName(JarFilename);
         GameName = Path.GetFileNameWithoutExtension(JarFilename);
+        LaunchScript = launchScript ?? CorruptionOptions.LaunchScript;
     }
 
     public override string ToString()
@@ -64,7 +67,7 @@ internal class JavaStashKey : ICloneable, INote
         foreach (SerializedInsnBlastUnit unit in (IList<SerializedInsnBlastUnit>)BlastLayer) {
             blc.Add((SerializedInsnBlastUnit)unit.Clone());
         }
-        JavaStashKey sk = new(Key, ParentKey, blc)
+        JavaStashKey sk = new(Key, ParentKey, blc, LaunchScript)
         {
             JarFilename = JarFilename,
             JarShortFilename = JarShortFilename,

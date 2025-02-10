@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Costura.Fody.6.0.0\build\Costura.Fody.props" Condition="Exists('..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Costura.Fody.6.0.0\build\Costura.Fody.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -39,6 +40,9 @@
     </Reference>
     <Reference Include="CmlLib.Core.Commons, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\CmlLib.Core.Commons.4.0.0\lib\netstandard2.0\CmlLib.Core.Commons.dll</HintPath>
+    </Reference>
+    <Reference Include="Costura, Version=6.0.0.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
+      <HintPath>..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Costura.Fody.6.0.0\lib\netstandard2.0\Costura.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=1.4.2.13, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\SharpZipLib.1.4.2\lib\netstandard2.0\ICSharpCode.SharpZipLib.dll</HintPath>
@@ -137,6 +141,16 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Fody.6.8.2\build\Fody.targets" Condition="Exists('..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Fody.6.8.2\build\Fody.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Fody.6.8.2\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Fody.6.8.2\build\Fody.targets'))" />
+    <Error Condition="!Exists('..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Costura.Fody.6.0.0\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Costura.Fody.6.0.0\build\Costura.Fody.props'))" />
+    <Error Condition="!Exists('..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Costura.Fody.6.0.0\build\Costura.Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Costura.Fody.6.0.0\build\Costura.Fody.targets'))" />
+  </Target>
+  <Import Project="..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Costura.Fody.6.0.0\build\Costura.Fody.targets" Condition="Exists('..\..\Bizhawk50X-Vanguard\Real-Time Corruptor\BizHawk_RTC\packages\Costura.Fody.6.0.0\build\Costura.Fody.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
          Other similar extension points exist, see Microsoft.Common.targets.
     <Target Name="BeforeBuild">

@@ -1148,6 +1148,25 @@ public partial class JavaBlastEditorForm : ColorizedForm
         CurrentSk.GameName = temp.GameName;
     }
 
+    private void ReplaceLaunchScriptFromFile(object sender, EventArgs e)
+    {
+        OpenFileDialog openRomDialog = new()
+        {
+            Title = "Open Launch Script File",
+            Filter = "Java Launch Scripts|*.jls",
+            RestoreDirectory = true,
+        };
+
+        if (openRomDialog.ShowDialog() != DialogResult.OK)
+        {
+            return;
+        }
+        
+        string filename = openRomDialog.FileName;
+        
+        CurrentSk.LaunchScript = JsonHelper.Deserialize<LaunchScript>(File.ReadAllText(filename));
+    }
+
     private void SaveBlastLayerToFile(object sender, EventArgs e)
     {
         //If there's no blastlayer file already set, don't quicksave

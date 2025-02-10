@@ -63,15 +63,13 @@ public partial class JavaGeneralParametersForm : ComponentForm, IBlockable
         ResetRandom();
         tbOutput.AutoWordSelection = true;
         tbOutput.AutoWordSelection = false;
+    }
 
-        string dir = Path.GetDirectoryName((string)AllSpec.VanguardSpec[VSPEC.OPENROMFILENAME]);
-        string script = Directory.GetFiles(Path.GetDirectoryName((string)AllSpec.VanguardSpec[VSPEC.OPENROMFILENAME])).FirstOrDefault(f => f.EndsWith(".jls"));
-        if (script != null)
-        {
-            tbProgram.Text = script;
-            S.GET<LaunchGeneratorForm>().LoadScript(script);
-            cbPostCorruptAction.Checked = true;
-        }
+    public void UpdateLaunchScript(string path)
+    {
+        tbProgram.Text = path;
+        S.GET<LaunchGeneratorForm>().LoadScript(path);
+        cbPostCorruptAction.Checked = true;
     }
 
     private void tbIntensity_Scroll(object sender, EventArgs e)
@@ -108,11 +106,12 @@ public partial class JavaGeneralParametersForm : ComponentForm, IBlockable
         tbProgram.Text = _oldProgramPath;
     }
 
-    public void RunPostCorruptAction()
+    public void RunPostCorruptAction(LaunchScript launchScript)
     {
-        if (!cbPostCorruptAction.Checked || CorruptionOptions.LaunchScript == null)
+        if (launchScript == null && !cbPostCorruptAction.Checked || CorruptionOptions.LaunchScript == null)
             return;
-        Task.Run(CorruptionOptions.LaunchScript.Execute);
+        launchScript ??= CorruptionOptions.LaunchScript;
+        Task.Run(launchScript.Execute);
     }
 
     private void cbPostCorruptAction_CheckedChanged(object sender, EventArgs e)
