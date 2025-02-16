@@ -145,7 +145,7 @@ internal class JavaStockpile
         {
             bool failure = false;
             //Gotta do this on the UI thread.
-            SyncObjectSingleton.FormExecute(() =>
+            SyncObjectSingleton.FormExecute(new(() =>
             {
                 // We need to handle if they aren't including referenced files but the file is within the working dir where they'll get deleted (temp, sks, etc)
                 foreach (JavaStashKey key in sks.StashKeys)
@@ -159,7 +159,7 @@ internal class JavaStockpile
                         return;
                     }
                 }
-            });
+            }));
 
             if (failure)
             {
