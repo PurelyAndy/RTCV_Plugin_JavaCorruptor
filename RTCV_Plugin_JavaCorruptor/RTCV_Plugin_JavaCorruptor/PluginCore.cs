@@ -23,7 +23,7 @@ public class Java_Corruptor : IPlugin
     // >>> Make sure you rename BOTH the namespace and class (Very important)
     public string Description => "Corrupt Java programs with ease!";
     public string Author => "PurelyAndy";
-    public Version Version => new(1, 1, 0);
+    public Version Version => new(1, 1, 1);
 
     //-----[ Plugin loading workflow ]-----
 
@@ -124,7 +124,7 @@ public class Java_Corruptor : IPlugin
                     Logging.GlobalLogger.Info(
                         $"Not connected to FileStub or JavaStub ({vanguardName}), Java Corruptor plugin will be hidden.");
                     ChangePluginVisibility(false);
-                    break;
+                    return;
             }
         }
         
@@ -140,21 +140,24 @@ public class Java_Corruptor : IPlugin
         else
             ChangePluginVisibility(true);
 
-        if (!CorruptModeInfo.Live)
+        if (CorruptModeInfo.Live)
+            return;
+        
+        string openRom = (string)eas.partialSpec[VSPEC.OPENROMFILENAME];
+        if (string.IsNullOrEmpty(openRom))
+            return;
+        if (openRom == _lastRomPath)
+            return;
+            
+        _lastRomPath = openRom;
+        string dir = Path.GetDirectoryName(openRom);
+        if (dir is null)
+            return;
+            
+        string script = Directory.GetFiles(dir).FirstOrDefault(f => f.EndsWith(".jls"));
+        if (script != null)
         {
-            string openRom = (string)eas.partialSpec[VSPEC.OPENROMFILENAME];
-            if (string.IsNullOrEmpty(openRom))
-                return;
-            if (openRom != _lastRomPath)
-            {
-                _lastRomPath = openRom;
-                string dir = Path.GetDirectoryName(openRom);
-                string script = Directory.GetFiles(dir).FirstOrDefault(f => f.EndsWith(".jls"));
-                if (script != null)
-                {
-                    S.GET<JavaGeneralParametersForm>().UpdateLaunchScript(script);
-                }
-            }
+            S.GET<JavaGeneralParametersForm>().UpdateLaunchScript(script);
         }
     }
 
