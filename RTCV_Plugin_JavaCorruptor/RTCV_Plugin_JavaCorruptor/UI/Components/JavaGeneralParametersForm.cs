@@ -108,7 +108,7 @@ public partial class JavaGeneralParametersForm : ComponentForm, IBlockable
 
     public void RunPostCorruptAction(LaunchScript launchScript)
     {
-        if (launchScript == null && !cbPostCorruptAction.Checked || CorruptionOptions.LaunchScript == null)
+        if (!cbPostCorruptAction.Checked || (launchScript == null && CorruptionOptions.LaunchScript == null))
             return;
         launchScript ??= CorruptionOptions.LaunchScript;
         Task.Run(launchScript.Execute);

@@ -98,12 +98,14 @@ public partial class JavaGlitchHarvesterBlastForm : ComponentForm, IBlockable
 
     public void OneTimeExecute()
     {
-        //Disable autocorrupt
-        S.GET<CoreForm>().AutoCorrupt = false;
-
         if (ghMode == GlitchHarvesterMode.CORRUPT)
         {
             IsCorruptionApplied = JavaStockpileManagerUISide.ApplyStashkey(JavaStockpileManagerUISide.CurrentStashkey, loadBeforeOperation);
+        }
+        else if (ghMode == GlitchHarvesterMode.INJECT)
+        {
+            IsCorruptionApplied = StockpileManagerUISide.InjectFromStashkey(StockpileManagerUISide.CurrentStashkey, loadBeforeOperation);
+            S.GET<StashHistoryForm>().RefreshStashHistory();
         }
     }
 
