@@ -161,6 +161,7 @@ partial class JavaGlitchHarvesterBlastForm
             this.Controls.Add(this.btnCorrupt);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.MinimumSize = new System.Drawing.Size(272, 56);
             this.Name = "JavaGlitchHarvesterBlastForm";
             this.Tag = "color:dark1";
             this.Text = "Blast Tools";

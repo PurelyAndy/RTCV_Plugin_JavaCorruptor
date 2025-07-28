@@ -240,6 +240,7 @@ namespace Java_Corruptor.UI.Components
             this.Controls.Add(this.tbIntensity);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MinimumSize = new System.Drawing.Size(272, 200);
             this.Name = "JavaGeneralParametersForm";
             this.Tag = "color:dark1";
             this.Text = "General Parameters";

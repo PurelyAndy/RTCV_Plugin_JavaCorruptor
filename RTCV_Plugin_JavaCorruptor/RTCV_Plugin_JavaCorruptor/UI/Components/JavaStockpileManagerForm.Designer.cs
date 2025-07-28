@@ -402,6 +402,7 @@ namespace Java_Corruptor.UI.Components
             this.Controls.Add(this.btnClearStockpile);
             this.Controls.Add(this.btnStockpileDOWN);
             this.Controls.Add(this.btnStockpileUP);
+            this.MinimumSize = new System.Drawing.Size(464, 152);
             this.Name = "JavaStockpileManagerForm";
             this.Tag = "color:dark1";
             this.Text = "Stockpile Manager";

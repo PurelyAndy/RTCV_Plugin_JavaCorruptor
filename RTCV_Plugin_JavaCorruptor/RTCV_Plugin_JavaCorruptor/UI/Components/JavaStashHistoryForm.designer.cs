@@ -152,6 +152,7 @@ namespace Java_Corruptor.UI.Components
             this.Controls.Add(this.btnStashUP);
             this.Controls.Add(this.lbStashHistory);
             this.DoubleBuffered = true;
+            this.MinimumSize = new System.Drawing.Size(128, 128);
             this.Name = "JavaStashHistoryForm";
             this.Tag = "color:dark1";
             this.Text = "Stash History";

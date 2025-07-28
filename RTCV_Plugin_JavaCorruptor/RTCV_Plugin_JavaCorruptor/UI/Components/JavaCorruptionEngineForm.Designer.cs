@@ -142,6 +142,7 @@
             this.Controls.Add(this.javaCustomEngineControl1);
             this.Controls.Add(this.functionEngineControl1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.MinimumSize = new System.Drawing.Size(464, 200);
             this.Name = "JavaCorruptionEngineForm";
             this.Tag = "color:dark1";
             this.Text = "Corruption Engine";
